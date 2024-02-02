@@ -1,0 +1,70 @@
+.post-container {
+	display: flex;
+	gap: 20px;
+	padding: 10px;
+	max-width: 900px;
+
+	border-top: 1px solid #ddd;
+}
+
+.post > * {
+	padding: 5px;
+}
+
+.post-score {
+	max-width: 60px;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.post-score span {
+	font-size: 20px;
+}
+
+.post-score button {
+	background: none;
+	border: none;
+
+	font-size: 25px;
+	padding: 0;
+
+	transition: all 0.2s ease-in-out;
+}
+
+.post-score button:hover {
+	transform: scale(1.2);
+}
+
+.post a {
+	text-decoration: none;
+}
+
+.post-link {
+	color: #ae3a0c;
+}
+
+.post-link-grey {
+	color: #aaa;
+}
+
+.post-title {
+	font-size: 18px;
+	margin-right: 10px;
+}
+
+.post-details {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+}
+
+.post-links-wrapper {
+	display: flex;
+	gap: 10px;
+}
+
+.wrapper {
+	margin-bottom: 8px;
+}
