@@ -67,14 +67,16 @@
 
 .post-wrapper {
 	margin-bottom: 8px;
-	text-align: left;
 }
 
 .post-description {
+	/* Code to make description two lines max */
 	overflow: hidden;
 	text-overflow: ellipsis;
 	display: -webkit-box;
 	-webkit-line-clamp: 2; /* number of lines to show */
 	line-clamp: 2;
 	-webkit-box-orient: vertical;
+
+	text-align: justify;
 }
