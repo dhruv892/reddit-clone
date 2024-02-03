@@ -5,20 +5,19 @@ const createPostSchema = zod.object({
     author: zod.string().min(1),
     createdAt: zod.string().min(1),
     comments: zod.array(zod.object({
-        content: zod.string().min(1),
-        createdAt: zod.string().min(1),
-        author: zod.string().min(1),
+        content: zod.string(),
+        createdAt: zod.string(),
+        author: zod.string(),
         votes: zod.object({
             upVotes: zod.number(),
             downVotes: zod.number(),
-        }),
-    })),
+        }).optional(),
+    })).optional(),
     votes: zod.object({
         upVotes: zod.number(),
         downVotes: zod.number(),
-    }),
+    }).optional(),
 });
-
 
 module.exports = {
     createPostSchema: createPostSchema

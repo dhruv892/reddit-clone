@@ -1,6 +1,7 @@
 import { useState } from "react";
 import moment from "moment";
 import "./post.css";
+import PropTypes from "prop-types";
 
 export default function Post({ post }) {
 	const [score, setScore] = useState(0);
@@ -25,16 +26,16 @@ export default function Post({ post }) {
 				</div>
 
 				<div className="post-wrapper">
-					<span className="post-description">{post.description}</span>
+					<span className="post-description">{post.content}</span>
 				</div>
 
 				<div className="post-wrapper">
-					Submitted {moment(post.time).fromNow()} by {post.author}
+					Submitted {moment(parseInt(post.createdAt)).fromNow()} by {post.author}
 				</div>
 
 				<div className="post-links-wrapper">
 					<a className="post-link" href={post.url}>
-						{post.num_comments ? `${post.num_comments} comments` : "comment"}
+						{post.comments ? `${post.comments.length} comments` : "comment"}
 					</a>
 					<a className="post-link-grey" href="/#">
 						share
@@ -53,3 +54,40 @@ export default function Post({ post }) {
 		</div>
 	);
 }
+
+// Post.propTypes = {
+// 	post: PropTypes.shape({
+// 		id: PropTypes.string,
+// 		title: PropTypes.string,
+// 		description: PropTypes.string,
+		
+// 	})
+// }
+
+const CommentPropTypes = {
+	votes: PropTypes.shape({
+		upVotes: PropTypes.number,
+		downVotes: PropTypes.number,
+	}),
+	content: PropTypes.string,
+	createdAt: PropTypes.string,
+	author: PropTypes.string,
+	_id: PropTypes.string,
+  };
+  
+  const PostPropTypes = {
+	_id: PropTypes.string.isRequired,
+	title: PropTypes.string.isRequired,
+	content: PropTypes.string,
+	author: PropTypes.string.isRequired,
+	createdAt: PropTypes.string.isRequired,
+	comments: PropTypes.arrayOf(PropTypes.shape(CommentPropTypes)),
+	upVotes: PropTypes.number.isRequired,
+	downVotes: PropTypes.number.isRequired,
+	__v: PropTypes.number.isRequired,
+  };
+  
+  Post.propTypes = {
+	post: PropTypes.shape(PostPropTypes),
+  };
+ 
