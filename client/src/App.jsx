@@ -2,6 +2,8 @@ import "./App.css";
 
 import { Home } from "./pages/home";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { RecoilRoot } from "recoil";
+import { PostPage } from "./pages/PostPage";
 
 // id,
 // title,
@@ -12,13 +14,16 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 // votes;
 
 function App() {
-	return(
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element= {<Home />} />
-      </Routes>
-    </BrowserRouter>
-  )
+	return (
+		<RecoilRoot>
+			<BrowserRouter>
+				<Routes>
+					<Route path="/" element={<Home />} />
+					<Route path="/post/:id" element={<PostPage />} />
+				</Routes>
+			</BrowserRouter>
+		</RecoilRoot>
+	);
 }
 
 export default App;
