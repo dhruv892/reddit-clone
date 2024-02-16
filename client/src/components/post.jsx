@@ -30,7 +30,8 @@ export default function Post({ post }) {
 				</div>
 
 				<div className="post-wrapper">
-					Submitted {moment(parseInt(post.createdAt)).fromNow()} by {post.author}
+					Submitted {moment(parseInt(post.createdAt)).fromNow()} by{" "}
+					{post.author}
 				</div>
 
 				<div className="post-links-wrapper">
@@ -60,7 +61,7 @@ export default function Post({ post }) {
 // 		id: PropTypes.string,
 // 		title: PropTypes.string,
 // 		description: PropTypes.string,
-		
+
 // 	})
 // }
 
@@ -73,9 +74,9 @@ const CommentPropTypes = {
 	createdAt: PropTypes.string,
 	author: PropTypes.string,
 	_id: PropTypes.string,
-  };
-  
-  const PostPropTypes = {
+};
+
+const PostPropTypes = {
 	_id: PropTypes.string.isRequired,
 	title: PropTypes.string.isRequired,
 	content: PropTypes.string,
@@ -85,9 +86,8 @@ const CommentPropTypes = {
 	upVotes: PropTypes.number.isRequired,
 	downVotes: PropTypes.number.isRequired,
 	__v: PropTypes.number.isRequired,
-  };
-  
-  Post.propTypes = {
+};
+
+Post.propTypes = {
 	post: PropTypes.shape(PostPropTypes),
-  };
- 
+};
