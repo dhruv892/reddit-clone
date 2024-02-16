@@ -4,6 +4,7 @@ import { Home } from "./pages/home";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { RecoilRoot } from "recoil";
 import { PostPage } from "./pages/PostPage";
+import { SignUpIn } from "./pages/SignUpIn";
 
 // id,
 // title,
@@ -20,6 +21,7 @@ function App() {
 				<Routes>
 					<Route path="/" element={<Home />} />
 					<Route path="/post/:id" element={<PostPage />} />
+					<Route path="/signupin" element={<SignUpIn />} />
 				</Routes>
 			</BrowserRouter>
 		</RecoilRoot>
