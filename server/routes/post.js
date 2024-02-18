@@ -31,18 +31,6 @@ const createPostSchema = zod.object({
         .optional(),
 });
 
-const addCommentSchema = zod.object({
-    content: zod.string(),
-    createdAt: zod.string(),
-    author: zod.string(),
-    votes: zod
-        .object({
-            upVotes: zod.number(),
-            downVotes: zod.number(),
-        })
-        .optional(),
-});
-
 const router = express.Router();
 
 // api/post/
@@ -74,7 +62,8 @@ router.post("/createPost", authMiddleware, async (req, res) => {
     }
 });
 
-router.post("/deletePost", async (req, res) => {
+// api/post/deletePost
+router.delete("/deletePost/:id", async (req, res) => {
     const postId = req.params.id;
     try {
         await Posts.findByIdAndDelete(postId);
@@ -84,9 +73,21 @@ router.post("/deletePost", async (req, res) => {
     }
 });
 
+const addCommentSchema = zod.object({
+    content: zod.string(),
+    createdAt: zod.string(),
+    author: zod.string(),
+    votes: zod
+        .object({
+            upVotes: zod.number(),
+            downVotes: zod.number(),
+        })
+        .optional(),
+});
+// api/post/addComment
 router.post("/addComment", async (req, res) => {
     const createPayload = req.body;
-    const parsedPayload = await this.addCommentSchema.safeParse(createPayload);
+    const parsedPayload = await addCommentSchema.safeParse(createPayload);
 
     if (!parsedPayload.success) {
         return res.status(411).json({
