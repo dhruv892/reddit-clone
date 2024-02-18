@@ -11,7 +11,9 @@ export default function Post({ post, handleRefreshPosts }) {
 
 	const deleteHandler = async () => {
 		try {
-			await axios.delete(`http://localhost:3000/deletePost/${post._id}`);
+			await axios.delete(
+				`http://localhost:3000/api/post/deletePost/${post._id}`
+			);
 			handleRefreshPosts();
 		} catch (error) {
 			console.log(error);

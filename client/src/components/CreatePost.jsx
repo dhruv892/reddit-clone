@@ -10,7 +10,7 @@ export function CreatePost({ handleRefreshPosts }) {
 	const onClickSubmitHandler = async () => {
 		try {
 			await axios.post(
-				`http://localhost:3000/createPost`,
+				`http://localhost:3000/api/post/createPost`,
 				{
 					title: title,
 					content: content,

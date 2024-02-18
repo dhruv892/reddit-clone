@@ -9,7 +9,7 @@ export const postAtom = atom({
 		key: "fetchPost",
 		get: async () => {
 			try {
-				const res = await axios.get("http://localhost:3000/posts");
+				const res = await axios.get("http://localhost:3000/api/post/");
 				return res.data.posts;
 			} catch (error) {
 				console.log(error);
