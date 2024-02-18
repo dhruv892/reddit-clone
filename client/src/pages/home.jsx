@@ -1,44 +1,37 @@
 import Post from "../components/post";
 import { CreatePost } from "../components/CreatePost";
-import { useRecoilValue } from "recoil";
-import { postAtom } from "../store/atoms";
-import { useState } from "react";
+import {
+    useRecoilValue,
+    useRecoilValueLoadable,
+    useRecoilRefresher_UNSTABLE,
+} from "recoil";
+import { postAtom, refreshPosts, fetchPost } from "../store/atoms";
+import { useEffect } from "react";
+// import { useState } from "react";
 export function Home() {
-	const posts = useRecoilValue(postAtom);
-	const [refreshPosts, setRefreshPosts] = useState(false);
+    const postsLoadable = useRecoilValueLoadable(postAtom);
+    const refreshPostsAtom = useRecoilRefresher_UNSTABLE(fetchPost);
+    const refresh = useRecoilValue(refreshPosts);
 
-	const handleRefreshPosts = () => {
-		setRefreshPosts(!refreshPosts);
-	};
+    useEffect(() => {
+        refreshPostsAtom();
+    }, [refresh, refreshPostsAtom]);
 
-	// const fetchPosts = async () => {
-	// 	try {
-	// 		const res = await axios.get("http://localhost:3000/posts");
-	// 		setPosts(res.data.posts);
-	// 		console.log()
-	// 	} catch (error) {
-	// 		console.log(error);
-	// 	}
-	// };
-	// useEffect(() => {
-	// 	fetchPosts();
-	// }, [refreshPosts]);
-
-	return (
-		<>
-			<CreatePost handleRefreshPosts={handleRefreshPosts} />
-			{posts.map(
-				(post) => (
-					console.log(post._id),
-					(
-						<Post
-							key={post._id}
-							post={post}
-							handleRefreshPosts={handleRefreshPosts}
-						/>
-					)
-				)
-			)}
-		</>
-	);
+    switch (postsLoadable.state) {
+        case "hasValue":
+            return (
+                <>
+                    <CreatePost />
+                    {postsLoadable.contents.map((post) => (
+                        <Post key={post._id} post={post} />
+                    ))}
+                </>
+            );
+        case "loading":
+            return <div>Loading...</div>;
+        case "hasError":
+            return <div>Error: {postsLoadable.contents.message}</div>;
+        default:
+            return null;
+    }
 }
