@@ -21,7 +21,9 @@ export function PostPage() {
 	return (
 		<div>
 			<p>{post.title}</p>
-			<p>{post.content}</p>
+			<pre>
+				<p>{post.content}</p>
+			</pre>
 			<p>
 				Submitted {moment(parseInt(post.createdAt)).fromNow()} by {post.author}
 			</p>
