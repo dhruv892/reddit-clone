@@ -20,6 +20,7 @@ mongoose
 // Initialize session middleware
 router.use(
     session({
+        name: "sessionForRedditClone",
         secret: process.env.SESSION_SECRET,
         resave: false,
         // sameSite: true,

@@ -85,23 +85,11 @@ function RenderPost({ post }) {
                                 ? `${post.comments.length} comments`
                                 : "comment"}
                         </a>
-                        <a className="post-link-grey" href="/#">
-                            share
-                        </a>
-                        <a className="post-link-grey" href="/#">
-                            save
-                        </a>
-                        <a className="post-link-grey" href="/#">
-                            hide
-                        </a>
-                        <a className="post-link-grey" href="/#">
-                            report
-                        </a>
-                        <a
-                            className="post-link-grey"
-                            href="/#"
-                            onClick={deleteHandler}
-                        >
+                        <a className="post-link-grey">share</a>
+                        <a className="post-link-grey">save</a>
+                        <a className="post-link-grey">hide</a>
+                        <a className="post-link-grey">report</a>
+                        <a className="post-link-grey" onClick={deleteHandler}>
                             delete
                         </a>
                     </div>

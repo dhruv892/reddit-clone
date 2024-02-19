@@ -25,7 +25,13 @@ const updateBody = zod.object({
 
 const router = express.Router();
 
-// router.use();
+// Method: GET
+// Route: /api/user/session
+router.get("/session", authMiddleware, (req, res) => {
+    res.status(200).json({
+        message: "Session is active",
+    });
+});
 
 // Method: POST
 // Route: /api/user/signup
