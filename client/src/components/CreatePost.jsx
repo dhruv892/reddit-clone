@@ -6,7 +6,6 @@ import { refreshPosts } from "../store/atoms";
 export function CreatePost() {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
-    const [author, setAuthor] = useState("");
     const setRefreshPosts = useSetRecoilState(refreshPosts);
 
     const onClickSubmitHandler = async () => {
@@ -16,7 +15,6 @@ export function CreatePost() {
                 {
                     title: title,
                     content: content,
-                    author: author,
                     createdAt: Date.now().toString(),
                 },
                 {
@@ -29,7 +27,6 @@ export function CreatePost() {
             setRefreshPosts((prev) => !prev);
             setTitle("");
             setContent("");
-            setAuthor("");
         } catch (error) {
             console.log("Error making POST request", error);
         }
@@ -55,14 +52,6 @@ export function CreatePost() {
                     }}
                 />
 
-                <input
-                    type="text"
-                    placeholder="author"
-                    value={author}
-                    onChange={(e) => {
-                        setAuthor(e.target.value);
-                    }}
-                />
                 <button onClick={onClickSubmitHandler}>Submit</button>
             </div>
         </>

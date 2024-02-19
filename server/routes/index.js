@@ -36,6 +36,5 @@ router.use(
 
 router.use("/user", userRouter);
 router.use("/post", postRouter);
-// router.use('/addComment/:id', postRouter);
 
 module.exports = router;

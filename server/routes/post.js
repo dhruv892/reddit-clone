@@ -1,7 +1,9 @@
 const express = require("express");
 const { Posts } = require("../db");
+const { User } = require("../db");
 const zod = require("zod");
 const { authMiddleware } = require("../middleware");
+// const { ObjectId } = require("mongoose").Types;
 
 const createPostSchema = zod.object({
     title: zod.string().min(1),
@@ -45,7 +47,15 @@ router.get("/", async (req, res) => {
 
 // api/post/createPost
 router.post("/createPost", authMiddleware, async (req, res) => {
-    const createPayload = req.body;
+    // id = new ObjectId(req.session.userId);
+    const user = await User.findById(req.session.userId);
+    console.log(user, user.username);
+    const createPayload = {
+        title: req.body.title,
+        content: req.body.content,
+        author: user.username,
+        createdAt: req.body.createdAt,
+    };
     const parsedPayload = await createPostSchema.safeParse(createPayload);
     console.log(parsedPayload);
     if (!parsedPayload.success) {
