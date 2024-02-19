@@ -1,21 +1,65 @@
 import { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export function SignUpIn() {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [usernameUp, setUsernameUp] = useState("");
     const [passwordUp, setPasswordUp] = useState("");
+    const [errUp, setErrUp] = useState(false);
     const [usernameIn, setUsernameIn] = useState("");
     const [passwordIn, setPasswordIn] = useState("");
+    const [errIn, setErrIn] = useState(false);
+    const navigate = useNavigate();
 
-    const signUpHandler = (e) => {
+    const signUpHandler = async (e) => {
         e.preventDefault();
-
+        setErrUp(false);
+        if (!usernameUp || !passwordUp || !firstName || !lastName) return;
+        await axios
+            .post(
+                "http://localhost:3000/api/user/signup",
+                {
+                    username: usernameUp,
+                    firstName: firstName,
+                    lastName: lastName,
+                    password: passwordUp,
+                },
+                {
+                    withCredentials: true,
+                }
+            )
+            .then(() => navigate("/"))
+            .catch((err) => {
+                console.log(err);
+                setErrUp(true);
+            });
         console.log(firstName, lastName, usernameUp, passwordUp);
     };
 
-    const signInHandler = (e) => {
+    const signInHandler = async (e) => {
         e.preventDefault();
+        setErrIn(false);
+
+        if (!usernameIn || !passwordIn) return;
+
+        await axios
+            .post(
+                "http://localhost:3000/api/user/signin",
+                {
+                    username: usernameIn,
+                    password: passwordIn,
+                },
+                {
+                    withCredentials: true,
+                }
+            )
+            .then(() => navigate("/"))
+            .catch((err) => {
+                console.log(err);
+                setErrIn(true);
+            });
 
         console.log(usernameIn, passwordIn);
     };
@@ -67,6 +111,9 @@ export function SignUpIn() {
                     </div>
                     <input type="submit" value="Sign up" />
                 </form>
+                {errUp ? (
+                    <p>Username already exists or something went wrong</p>
+                ) : null}
             </div>
 
             <div>
@@ -94,6 +141,7 @@ export function SignUpIn() {
                     </div>
                     <input type="submit" value="Sign in" />
                 </form>
+                {errIn ? <p>Incorrect username or password</p> : null}
             </div>
         </>
     );

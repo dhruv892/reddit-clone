@@ -23,6 +23,7 @@ export function CreatePost() {
                     headers: {
                         "Content-Type": "application/json",
                     },
+                    withCredentials: true,
                 }
             );
             setRefreshPosts((prev) => !prev);
@@ -30,7 +31,7 @@ export function CreatePost() {
             setContent("");
             setAuthor("");
         } catch (error) {
-            console.error("Error making POST request", error.message);
+            console.log("Error making POST request", error);
         }
     };
     return (

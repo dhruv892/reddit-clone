@@ -77,6 +77,7 @@ router.post("/signin", async (req, res) => {
     });
     if (user) {
         req.session.userId = user._id;
+        console.log(req.session.userId);
         // req.session.authorized = true;
         return res.json({
             message: "Logged in",

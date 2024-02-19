@@ -5,14 +5,23 @@ const cors = require("cors");
 const app = express();
 const rootRouter = require("./routes/index");
 
-app.use(cors());
+const corsOptions = {
+    origin: function (origin, callback) {
+        const allowedOrigins = [
+            "http://localhost:5173",
+            "http://another-origin.com",
+        ];
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+    credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use("/api", rootRouter);
-
-// app.get("/posts", postsController.getPosts);
-// app.post("/createPost", postsController.createPost);
-// app.delete("/deletePost/:id", postsController.deletePost);
-
-// app.get("/addComment/:id", postsController.addComment);
 
 app.listen(3000);

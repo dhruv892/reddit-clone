@@ -131,7 +131,6 @@ const PostPropTypes = {
     comments: PropTypes.arrayOf(PropTypes.shape(CommentPropTypes)),
     upVotes: PropTypes.number.isRequired,
     downVotes: PropTypes.number.isRequired,
-    __v: PropTypes.number.isRequired,
 };
 
 // Post.propTypes = {

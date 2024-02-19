@@ -16,7 +16,6 @@ export const fetchPost = selector({
 
 export const postAtom = atom({
     key: "postAtom",
-    // default: [],
     default: fetchPost,
 });
 
