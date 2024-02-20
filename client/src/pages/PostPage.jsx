@@ -4,6 +4,7 @@ import { useRecoilValueLoadable } from "recoil";
 import moment from "moment";
 import "./PostPage.css";
 import AddComment from "../components/AddComment";
+import { PostComments } from "../components/PostComments";
 
 export function PostPage() {
 	const postLoadable = useRecoilValueLoadable(postAtom);
@@ -32,22 +33,7 @@ export function PostPage() {
 			</pre>
 
 			<AddComment post={post} />
-
-			<div>
-				<p>Comments</p>
-				{post.comments.map((comment) => (
-					<div key={comment._id} className="post-comment">
-						<p>
-							{comment.author}{" "}
-							<span className="post-comment-time">
-								{moment(parseInt(comment.createdAt)).fromNow()}{" "}
-							</span>
-						</p>
-						<p>{comment.content}</p>
-						<span></span>
-					</div>
-				))}
-			</div>
+			<PostComments post={post} />
 		</div>
 	);
 }
