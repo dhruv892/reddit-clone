@@ -5,14 +5,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { RecoilRoot } from "recoil";
 import { PostPage } from "./pages/PostPage";
 import { SignUpIn } from "./pages/SignUpIn";
-
-// id,
-// title,
-// description,
-// author,
-// time,
-// comments;
-// votes;
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
 	return (
@@ -24,6 +18,7 @@ function App() {
 					<Route path="/signupin" element={<SignUpIn />} />
 				</Routes>
 			</BrowserRouter>
+			<ToastContainer />
 		</RecoilRoot>
 	);
 }
