@@ -1,4 +1,4 @@
-.post-container {
+.posts-container {
 	display: flex;
 	gap: 20px;
 	padding: 10px;
@@ -7,11 +7,11 @@
 	border-top: 1px solid #ddd;
 }
 
-.post > * {
+.posts > * {
 	padding: 5px;
 }
 
-.post-score {
+.posts-score {
 	max-width: 60px;
 
 	display: flex;
@@ -19,11 +19,11 @@
 	align-items: center;
 }
 
-.post-score span {
+.posts-score span {
 	font-size: 20px;
 }
 
-.post-score button {
+.posts-score button {
 	background: none;
 	border: none;
 
@@ -33,43 +33,43 @@
 	transition: all 0.2s ease-in-out;
 }
 
-.post-score button:hover {
+.posts-score button:hover {
 	transform: scale(1.2);
 }
 
-.post a {
+.posts a {
 	text-decoration: none;
 }
 
-.post-link {
+.posts-link {
 	color: #ae3a0c;
 }
 
-.post-link-grey {
+.posts-link-grey {
 	color: #aaa;
 }
 
-.post-title {
+.posts-title {
 	font-size: 18px;
 	margin-right: 10px;
 }
 
-.post-details {
+.posts-details {
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
 }
 
-.post-links-wrapper {
+.posts-links-wrapper {
 	display: flex;
 	gap: 10px;
 }
 
-.post-wrapper {
+.posts-wrapper {
 	margin-bottom: 8px;
 }
 
-.post-description {
+.posts-description {
 	/* Code to make description two lines max */
 	overflow: hidden;
 	text-overflow: ellipsis;

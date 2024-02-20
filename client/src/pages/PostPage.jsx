@@ -18,19 +18,17 @@ export function PostPage() {
 		case "hasError":
 			throw postLoadable.contents;
 	}
-
-	console.log(post.comments);
+	console.log(post)
 
 	return (
 		<div>
 			<p className="post-title">{post.title}</p>
+			<p className="post-">
+				{post.author} {moment(parseInt(post.createdAt)).fromNow()}
+			</p>
 			<pre>
 				<p className="post-content">{post.content}</p>
 			</pre>
-			<p>
-				Post submitted {moment(parseInt(post.createdAt)).fromNow()} by{" "}
-				{post.author}
-			</p>
 
 			<div>
 				<p>Comments</p>
