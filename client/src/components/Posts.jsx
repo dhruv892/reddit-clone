@@ -77,7 +77,16 @@ function RenderPost({ post }) {
 						<a className="posts-link" href={post.url}>
 							{post.comments ? `${post.comments.length} comments` : "comment"}
 						</a>
-						<a className="posts-link-grey">share</a>
+						<a
+							className="posts-link-grey"
+							onClick={() =>
+								navigator.clipboard.writeText(
+									`http://localhost:5173/post/${post._id}`
+								)
+							}
+						>
+							share
+						</a>
 						<a className="posts-link-grey">save</a>
 						<a className="posts-link-grey">hide</a>
 						<a className="posts-link-grey">report</a>
