@@ -95,7 +95,7 @@ const addCommentSchema = zod.object({
         .optional(),
 });
 // api/post/addComment
-router.post("/addComment", async (req, res) => {
+router.post("/addComment/:id", async (req, res) => {
     const createPayload = req.body;
     const parsedPayload = await addCommentSchema.safeParse(createPayload);
 
@@ -112,6 +112,7 @@ router.post("/addComment", async (req, res) => {
         const post = await Posts.findById(postId);
         post.comments.push(comment);
         await post.save();
+        console.log(post.comments);
         res.json({ msg: "Comment added" });
     } catch (err) {
         res.status(500).json({ msg: "Internal Server Error" });
