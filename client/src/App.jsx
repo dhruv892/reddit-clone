@@ -6,6 +6,7 @@ import { RecoilRoot } from "recoil";
 import { PostPage } from "./pages/PostPage";
 import { SignUpIn } from "./pages/SignUpIn";
 import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
 	return (
