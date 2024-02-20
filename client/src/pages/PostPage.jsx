@@ -3,6 +3,7 @@ import { postAtom } from "../store/atoms";
 import { useRecoilValueLoadable } from "recoil";
 import moment from "moment";
 import "./PostPage.css";
+import AddComment from "../components/AddComment";
 
 export function PostPage() {
 	const postLoadable = useRecoilValueLoadable(postAtom);
@@ -18,7 +19,7 @@ export function PostPage() {
 		case "hasError":
 			throw postLoadable.contents;
 	}
-	console.log(post)
+	console.log(post);
 
 	return (
 		<div>
@@ -29,6 +30,8 @@ export function PostPage() {
 			<pre>
 				<p className="post-content">{post.content}</p>
 			</pre>
+
+			<AddComment post={post} />
 
 			<div>
 				<p>Comments</p>
