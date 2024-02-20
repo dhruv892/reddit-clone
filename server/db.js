@@ -57,23 +57,25 @@ const postsSchema = new mongoose.Schema({
             author: String,
             votes: {
                 upVotes: {
-                    type: Number,
-                    default: 0,
+                    count: { type: Number, default: 0 },
+                    users: { type: [String], default: [] },
                 },
                 downVotes: {
-                    type: Number,
-                    default: 0,
+                    count: { type: Number, default: 0 },
+                    users: { type: [String], default: [] },
                 },
             },
         },
     ],
-    upVotes: {
-        type: Number,
-        default: 0,
-    },
-    downVotes: {
-        type: Number,
-        default: 0,
+    votes: {
+        upVotes: {
+            count: { type: Number, default: 0 },
+            users: { type: [String], default: [] },
+        },
+        downVotes: {
+            count: { type: Number, default: 0 },
+            users: { type: [String], default: [] },
+        },
     },
 });
 

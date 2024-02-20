@@ -18,8 +18,18 @@ const createPostSchema = zod.object({
                 author: zod.string(),
                 votes: zod
                     .object({
-                        upVotes: zod.number(),
-                        downVotes: zod.number(),
+                        upVotes: zod
+                            .object({
+                                count: zod.number().optional(),
+                                users: zod.array(zod.string()).optional(),
+                            })
+                            .optional(),
+                        downVotes: zod
+                            .object({
+                                count: zod.number(),
+                                users: zod.array(zod.string()),
+                            })
+                            .optional(),
                     })
                     .optional(),
             })
@@ -27,8 +37,18 @@ const createPostSchema = zod.object({
         .optional(),
     votes: zod
         .object({
-            upVotes: zod.number(),
-            downVotes: zod.number(),
+            upVotes: zod
+                .object({
+                    count: zod.number().optional(),
+                    users: zod.array(zod.string()).optional(),
+                })
+                .optional(),
+            downVotes: zod
+                .object({
+                    count: zod.number(),
+                    users: zod.array(zod.string()),
+                })
+                .optional(),
         })
         .optional(),
 });
@@ -96,7 +116,12 @@ const addCommentSchema = zod.object({
 });
 // api/post/addComment
 router.post("/addComment/:id", async (req, res) => {
-    const createPayload = req.body;
+    const user = await User.findById(req.session.userId);
+    const createPayload = {
+        content: req.body.content,
+        createdAt: req.body.createdAt,
+        author: user.username,
+    };
     const parsedPayload = await addCommentSchema.safeParse(createPayload);
 
     if (!parsedPayload.success) {
@@ -114,6 +139,64 @@ router.post("/addComment/:id", async (req, res) => {
         await post.save();
         console.log(post.comments);
         res.json({ msg: "Comment added" });
+    } catch (err) {
+        res.status(500).json({ msg: "Internal Server Error" });
+    }
+});
+
+// api/post/upvote/:id
+router.post("/upvote/:id", async (req, res) => {
+    const postId = req.params.id;
+    try {
+        const post = await Posts.findById(postId);
+        post.votes.upVotes.count += 1;
+        post.votes.upVotes.users.push(req.session.userId.toString());
+        await post.save();
+        res.json({ msg: "Upvoted" });
+    } catch (err) {
+        res.status(500).json({ msg: "Internal Server Error", err });
+    }
+});
+
+// api/post/downvote/:id
+router.post("/downvote/:id", async (req, res) => {
+    const postId = req.params.id;
+    try {
+        const post = await Posts.findById(postId);
+        post.votes.downVotes.count += 1;
+        post.votes.downVotes.users.push(req.session.userId.toString());
+        await post.save();
+        res.json({ msg: "Downvoted" });
+    } catch (err) {
+        res.status(500).json({ msg: "Internal Server Error" });
+    }
+});
+
+// api/post/upvoteComment/:id
+router.post("/upvoteComment/:id", async (req, res) => {
+    const commentId = req.params.id;
+    try {
+        const post = await Posts.findOne({ "comments._id": commentId });
+        const comment = post.comments.id(commentId);
+        comment.votes.upVotes.count += 1;
+        comment.votes.upVotes.users.push(req.session.userId.toString());
+        await post.save();
+        res.json({ msg: "Upvoted" });
+    } catch (err) {
+        res.status(500).json({ msg: "Internal Server Error" });
+    }
+});
+
+// api/post/downvoteComment/:id
+router.post("/downvoteComment/:id", async (req, res) => {
+    const commentId = req.params.id;
+    try {
+        const post = await Posts.findOne({ "comments._id": commentId });
+        const comment = post.comments.id(commentId);
+        comment.votes.downVotes.count += 1;
+        comment.votes.downVotes.users.push(req.session.userId.toString());
+        await post.save();
+        res.json({ msg: "Downvoted" });
     } catch (err) {
         res.status(500).json({ msg: "Internal Server Error" });
     }
