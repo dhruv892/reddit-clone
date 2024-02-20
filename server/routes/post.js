@@ -115,7 +115,7 @@ const addCommentSchema = zod.object({
         .optional(),
 });
 // api/post/addComment
-router.post("/addComment/:id", async (req, res) => {
+router.post("/addComment/:id", authMiddleware, async (req, res) => {
     const user = await User.findById(req.session.userId);
     const createPayload = {
         content: req.body.content,
