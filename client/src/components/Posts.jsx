@@ -93,8 +93,14 @@ function RenderPost({ post }) {
 
 const CommentPropTypes = {
 	votes: PropTypes.shape({
-		upVotes: PropTypes.number,
-		downVotes: PropTypes.number,
+		upVotes: PropTypes.shape({
+			count: PropTypes.number,
+			users: PropTypes.array,
+		}),
+		downVotes: PropTypes.shape({
+			count: PropTypes.number,
+			users: PropTypes.array,
+		}),
 	}),
 	content: PropTypes.string,
 	createdAt: PropTypes.string,

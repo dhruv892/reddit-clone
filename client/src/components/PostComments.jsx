@@ -5,6 +5,7 @@ import axios from "axios";
 
 export function PostComments({ post }) {
 	const voteHandler = async (comment, voteType) => {
+		// TODO: Write logic to check if the post is already up/down voted
 		switch (voteType) {
 			case "up":
 				try {
@@ -17,6 +18,14 @@ export function PostComments({ post }) {
 				}
 				break;
 			case "down":
+				try {
+					const response = await axios.post(
+						`http://localhost:3000/api/post/downvoteComment/${comment._id}`
+					);
+					console.log(response);
+				} catch (error) {
+					console.log(error);
+				}
 				break;
 		}
 	};
@@ -52,8 +61,14 @@ export function PostComments({ post }) {
 
 const CommentPropTypes = {
 	votes: PropTypes.shape({
-		upVotes: PropTypes.number,
-		downVotes: PropTypes.number,
+		upVotes: PropTypes.shape({
+			count: PropTypes.number,
+			users: PropTypes.array,
+		}),
+		downVotes: PropTypes.shape({
+			count: PropTypes.number,
+			users: PropTypes.array,
+		}),
 	}),
 	content: PropTypes.string,
 	createdAt: PropTypes.string,
