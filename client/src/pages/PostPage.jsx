@@ -6,11 +6,21 @@ import "./PostPage.css";
 import AddComment from "../components/AddComment";
 import { PostComments } from "../components/PostComments";
 import axios from "axios";
+import { refreshPosts } from "../store/atoms";
+import { useRecoilState, useRecoilRefresher_UNSTABLE } from "recoil";
+import { fetchPost } from "../store/atoms";
+import { useEffect } from "react";
 
 export function PostPage() {
     const postLoadable = useRecoilValueLoadable(postAtom);
     const params = useParams();
     axios.defaults.withCredentials = true;
+    const [refresh, setRefreshPosts] = useRecoilState(refreshPosts);
+    const refreshPostsAtom = useRecoilRefresher_UNSTABLE(fetchPost);
+
+    useEffect(() => {
+        refreshPostsAtom();
+    }, [refreshPostsAtom, refresh]);
 
     let post;
     switch (postLoadable.state) {
@@ -33,6 +43,7 @@ export function PostPage() {
                     const response = await axios.post(
                         `http://localhost:3000/api/post/upvote/${post._id}`
                     );
+                    setRefreshPosts((prev) => !prev);
                     console.log(response);
                 } catch (error) {
                     console.log(error);
@@ -43,6 +54,7 @@ export function PostPage() {
                     const response = await axios.post(
                         `http://localhost:3000/api/post/downvote/${post._id}`
                     );
+                    setRefreshPosts((prev) => !prev);
                     console.log(response);
                 } catch (error) {
                     console.log(error);
