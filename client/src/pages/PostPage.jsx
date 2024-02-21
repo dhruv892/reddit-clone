@@ -5,6 +5,7 @@ import moment from "moment";
 import "./PostPage.css";
 import AddComment from "../components/AddComment";
 import { PostComments } from "../components/PostComments";
+import axios from "axios";
 
 export function PostPage() {
 	const postLoadable = useRecoilValueLoadable(postAtom);
@@ -22,9 +23,44 @@ export function PostPage() {
 	}
 	console.log(post);
 
+	const voteHandler = async (post, voteType) => {
+		// http://localhost:3000/api/post/upvote/
+		switch (voteType) {
+			case "up":
+				try {
+					console.log("XDDDDDDDDD", post._id);
+					const response = await axios.post(
+						`http://localhost:3000/api/post/upvote/${post._id}`
+					);
+					console.log(response);
+				} catch (error) {
+					console.log(error);
+				}
+				break;
+			case "down":
+				try {
+					const response = await axios.post(
+						`http://localhost:3000/api/post/downvote/${post._id}`
+					);
+					console.log(response);
+				} catch (error) {
+					console.log(error);
+				}
+				break;
+		}
+		console.log(post, voteType);
+	};
+
 	return (
 		<div>
-			<p className="post-title">{post.title}</p>
+			<div className="postpage-wrapper">
+				<div className="postpage-score">
+					<button onClick={() => voteHandler(post, "up")}>&#11014;️</button>
+					<span>{post.votes.upVotes.count - post.votes.downVotes.count}</span>
+					<button onClick={() => voteHandler(post, "down")}>️&#11015;</button>
+				</div>
+				<p className="post-title">{post.title}</p>
+			</div>
 			<p className="post-">
 				{post.author} {moment(parseInt(post.createdAt)).fromNow()}
 			</p>
