@@ -5,6 +5,7 @@ import { refreshPosts, fetchPost } from "../store/atoms";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export function Home() {
 	const refreshPostsAtom = useRecoilRefresher_UNSTABLE(fetchPost);
@@ -35,8 +36,10 @@ export function Home() {
 				withCredentials: true,
 			});
 			setIsLoggedIn(false);
+			toast.success("Successfully logged out!");
 		} catch (error) {
 			console.error(error);
+			toast.error("Error occurred while logging out.");
 		}
 	};
 

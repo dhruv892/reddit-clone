@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useSetRecoilState, useRecoilValueLoadable } from "recoil";
 import { postAtom } from "../store/atoms";
 import { refreshPosts } from "../store/atoms";
+import { toast } from "react-toastify";
 
 export default function Posts() {
 	const postsLoadable = useRecoilValueLoadable(postAtom);
@@ -39,6 +40,11 @@ function RenderPost({ post }) {
 		} catch (error) {
 			console.log(error);
 		}
+	};
+
+	const shareHandler = () => {
+		navigator.clipboard.writeText(`http://localhost:5173/post/${post._id}`);
+		toast.info("Post link copied to clipboard!");
 	};
 
 	return (
@@ -77,14 +83,7 @@ function RenderPost({ post }) {
 						<a className="posts-link" href={post.url}>
 							{post.comments ? `${post.comments.length} comments` : "comment"}
 						</a>
-						<a
-							className="posts-link-grey"
-							onClick={() =>
-								navigator.clipboard.writeText(
-									`http://localhost:5173/post/${post._id}`
-								)
-							}
-						>
+						<a className="posts-link-grey" onClick={shareHandler}>
 							share
 						</a>
 						<a className="posts-link-grey">save</a>
