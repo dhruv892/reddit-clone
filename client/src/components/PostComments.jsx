@@ -2,9 +2,12 @@ import moment from "moment";
 import PropTypes from "prop-types";
 import "./PostComments.css";
 import axios from "axios";
+import { refreshPosts } from "../store/atoms";
+import { useSetRecoilState } from "recoil";
 
 export function PostComments({ post }) {
     axios.defaults.withCredentials = true;
+    const setRefreshPosts = useSetRecoilState(refreshPosts);
     const voteHandler = async (comment, voteType) => {
         // TODO: Write logic to check if the post is already up/down voted
         switch (voteType) {
@@ -23,6 +26,7 @@ export function PostComments({ post }) {
                     const response = await axios.post(
                         `http://localhost:3000/api/post/downvoteComment/${comment._id}`
                     );
+
                     console.log(response);
                 } catch (error) {
                     console.log(error);
@@ -37,12 +41,17 @@ export function PostComments({ post }) {
             {post.comments.map((comment) => (
                 <div key={comment._id} className="post-comment-wrapper">
                     <div className="post-comment-score">
-                        <button onClick={() => voteHandler(comment, "up")}>
+                        <button
+                            onClick={() => {
+                                voteHandler(comment, "up");
+                                setRefreshPosts((prev) => !prev);
+                            }}
+                        >
                             &#11014;️
                         </button>
                         <span>
-                            {post.votes.upVotes.count -
-                                post.votes.downVotes.count}
+                            {comment.votes.upVotes.count -
+                                comment.votes.downVotes.count}
                         </span>
                         <button onClick={() => voteHandler(comment, "down")}>
                             ️&#11015;
