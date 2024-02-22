@@ -4,6 +4,7 @@ import "./PostComments.css";
 import axios from "axios";
 import { refreshPosts } from "../store/atoms";
 import { useSetRecoilState } from "recoil";
+import { checkUpVotes, checkDownVotes } from "../util/VotingMethods";
 
 export function PostComments({ post, userId }) {
 	axios.defaults.withCredentials = true;
@@ -12,7 +13,7 @@ export function PostComments({ post, userId }) {
 		if (!userId) return;
 		if (voteType === "up" && comment.votes.upVotes.users.includes(userId))
 			return;
-		if (voteType === "down" && comment.votes.upVotes.users.includes(userId))
+		if (voteType === "down" && comment.votes.downVotes.users.includes(userId))
 			return;
 		try {
 			const response = await axios.post(
@@ -25,13 +26,6 @@ export function PostComments({ post, userId }) {
 		}
 	};
 
-	const checkUpVotes = (comment) => {
-		if (comment.votes.upVotes.users.includes(userId)) return "upvoted";
-	};
-	const checkDownVotes = (comment) => {
-		if (comment.votes.downVotes.users.includes(userId)) return "downvoted";
-	};
-
 	return (
 		<div>
 			<h4>Comments</h4>
@@ -39,7 +33,7 @@ export function PostComments({ post, userId }) {
 				<div key={comment._id} className="post-comment-wrapper">
 					<div className="post-comment-score">
 						<button
-							className={checkUpVotes(comment)}
+							className={checkUpVotes(comment, userId)}
 							onClick={() => {
 								voteHandler(comment, "up");
 							}}
@@ -50,7 +44,7 @@ export function PostComments({ post, userId }) {
 							{comment.votes.upVotes.count - comment.votes.downVotes.count}
 						</span>
 						<button
-							className={checkDownVotes(comment)}
+							className={checkDownVotes(comment, userId)}
 							onClick={() => voteHandler(comment, "down")}
 						>
 							️&#11015;

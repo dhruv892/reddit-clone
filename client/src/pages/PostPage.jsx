@@ -10,6 +10,7 @@ import { refreshPosts } from "../store/atoms";
 import { useRecoilState, useRecoilRefresher_UNSTABLE } from "recoil";
 import { fetchPost } from "../store/atoms";
 import { useEffect, useState } from "react";
+import { checkDownVotes, checkUpVotes } from "../util/VotingMethods";
 
 export function PostPage() {
 	const postLoadable = useRecoilValueLoadable(postAtom);
@@ -35,13 +36,6 @@ export function PostPage() {
 		} catch (error) {
 			console.log("User is not authenticated");
 		}
-	};
-
-	const checkUpVotes = () => {
-		if (post.votes.upVotes.users.includes(userId)) return "upvoted";
-	};
-	const checkDownVotes = () => {
-		if (post.votes.downVotes.users.includes(userId)) return "downvoted";
 	};
 
 	useEffect(() => {
@@ -83,14 +77,14 @@ export function PostPage() {
 			<div className="postpage-wrapper">
 				<div className="postpage-score">
 					<button
-						className={checkUpVotes()}
+						className={checkUpVotes(post, userId)}
 						onClick={() => voteHandler(post, "up")}
 					>
 						&#11014;️
 					</button>
 					<span>{post.votes.upVotes.count - post.votes.downVotes.count}</span>
 					<button
-						className={checkDownVotes()}
+						className={checkDownVotes(post, userId)}
 						onClick={() => voteHandler(post, "down")}
 					>
 						️&#11015;
