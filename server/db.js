@@ -45,28 +45,33 @@ const userSchema = new mongoose.Schema({
 
 const User = new mongoose.model("User", userSchema);
 
+const commentSchema = new mongoose.Schema({
+    content: String,
+    createdAt: String,
+    author: String,
+    votes: {
+        upVotes: {
+            count: { type: Number, default: 0 },
+            users: { type: [String], default: [] },
+        },
+        downVotes: {
+            count: { type: Number, default: 0 },
+            users: { type: [String], default: [] },
+        },
+    },
+    replyingTo: { type: String, default: "" },
+    // replies: [this],
+});
+commentSchema.add({
+    replies: [commentSchema],
+});
+
 const postsSchema = new mongoose.Schema({
     title: String,
     content: String,
     author: String,
     createdAt: String,
-    comments: [
-        {
-            content: String,
-            createdAt: String,
-            author: String,
-            votes: {
-                upVotes: {
-                    count: { type: Number, default: 0 },
-                    users: { type: [String], default: [] },
-                },
-                downVotes: {
-                    count: { type: Number, default: 0 },
-                    users: { type: [String], default: [] },
-                },
-            },
-        },
-    ],
+    comments: [commentSchema],
     votes: {
         upVotes: {
             count: { type: Number, default: 0 },

@@ -145,7 +145,7 @@ router.post("/addComment/:id", authMiddleware, async (req, res) => {
 });
 
 // api/post/upvote/:id
-router.post("/upvote/:id", async (req, res) => {
+router.post("/upvote/:id", authMiddleware, async (req, res) => {
     const postId = req.params.id;
     try {
         const post = await Posts.findById(postId);
@@ -167,7 +167,7 @@ router.post("/upvote/:id", async (req, res) => {
 });
 
 // api/post/downvote/:id
-router.post("/downvote/:id", async (req, res) => {
+router.post("/downvote/:id", authMiddleware, async (req, res) => {
     const postId = req.params.id;
     try {
         const post = await Posts.findById(postId);
@@ -187,7 +187,7 @@ router.post("/downvote/:id", async (req, res) => {
 });
 
 // api/post/upvoteComment/:id
-router.post("/upvoteComment/:id", async (req, res) => {
+router.post("/upvoteComment/:id", authMiddleware, async (req, res) => {
     const commentId = req.params.id;
     try {
         const post = await Posts.findOne({ "comments._id": commentId });
@@ -215,7 +215,7 @@ router.post("/upvoteComment/:id", async (req, res) => {
 });
 
 // api/post/downvoteComment/:id
-router.post("/downvoteComment/:id", async (req, res) => {
+router.post("/downvoteComment/:id", authMiddleware, async (req, res) => {
     const commentId = req.params.id;
     try {
         const post = await Posts.findOne({ "comments._id": commentId });
@@ -236,6 +236,77 @@ router.post("/downvoteComment/:id", async (req, res) => {
         res.json({ msg: "Downvoted" });
     } catch (err) {
         res.status(500).json({ msg: "Internal Server Error" });
+    }
+});
+
+// function findCommentById(comments, id) {
+//     for (const comment of comments) {
+//         if (comment._id.toString() === id.toString()) {
+//             return comment;
+//         }
+//         if (comment.replies.length > 0) {
+//             const found = findCommentById(comment.replies, id);
+//             if (found) {
+//                 return found;
+//             }
+//         }
+//     }
+//     return null;
+// }
+
+const replySchema = zod.object({
+    content: zod.string(),
+    createdAt: zod.string(),
+    author: zod.string(),
+    votes: zod
+        .object({
+            upVotes: zod.number(),
+            downVotes: zod.number(),
+        })
+        .optional(),
+});
+
+// api/post/comments/reply/:id
+router.post("/comments/reply/:id", authMiddleware, async (req, res) => {
+    const user = await User.findById(req.session.userId);
+    const createPayload = {
+        content: req.body.content,
+        createdAt: req.body.createdAt,
+        author: user.username,
+    };
+    const parsedPayload = await replySchema.safeParse(createPayload);
+
+    if (!parsedPayload.success) {
+        return res.status(411).json({
+            msg: "Payload is not valid",
+            errors: parsedPayload.error,
+        });
+    }
+    const commentId = req.params.id;
+    try {
+        const post = await Posts.findOne({ "comments._id": commentId });
+        if (!post) {
+            return res.status(404).json({ message: "Post not found" });
+        }
+        const comment = post.comments.id(commentId);
+        // const comment = findCommentById(post.comments, commentId);
+        // if (!comment) {
+        //     return res.status(404).json({ message: "Comment not found" });
+        // }
+        // console.log("Comment found", comment);
+        // const comment = post.comments.id(commentId);
+        const reply = {
+            content: req.body.content,
+            createdAt: req.body.createdAt,
+            author: req.session.userId,
+            replyingTo: commentId,
+        };
+
+        comment.replies.push(reply);
+        await post.save();
+        res.json({ msg: "Replied" });
+    } catch (err) {
+        res.status(500).json({ msg: "Internal Server Error", error: err });
     }
 });
 
