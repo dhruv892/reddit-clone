@@ -5,7 +5,7 @@ import axios from "axios";
 import { refreshPosts } from "../store/atoms";
 import { useSetRecoilState } from "recoil";
 
-export function PostComments({ post }) {
+export function PostComments({ post, userId }) {
     axios.defaults.withCredentials = true;
     const setRefreshPosts = useSetRecoilState(refreshPosts);
     const voteHandler = async (comment, voteType) => {
@@ -13,21 +13,41 @@ export function PostComments({ post }) {
         switch (voteType) {
             case "up":
                 try {
-                    const response = await axios.post(
-                        `http://localhost:3000/api/post/upvoteComment/${comment._id}`
-                    );
-                    console.log(response);
+                    if (!userId) {
+                        return;
+                    }
+                    if (comment.votes.upVotes.users.includes(userId)) {
+                        return;
+                    } else {
+                        console.log(comment.votes.upVotes.users.userId);
+                        const response = await axios.post(
+                            `http://localhost:3000/api/post/upvoteComment/${comment._id}`
+                        );
+                        setRefreshPosts((prev) => !prev);
+                        console.log(response);
+                    }
+                    // const response = await axios.post(
+                    //     `http://localhost:3000/api/post/upvoteComment/${comment._id}`
+                    // );
+                    // console.log(response);
                 } catch (error) {
                     console.log(error);
                 }
                 break;
             case "down":
                 try {
-                    const response = await axios.post(
-                        `http://localhost:3000/api/post/downvoteComment/${comment._id}`
-                    );
-
-                    console.log(response);
+                    if (!userId) {
+                        return;
+                    }
+                    if (comment.votes.downVotes.users.includes(userId)) {
+                        return;
+                    } else {
+                        const response = await axios.post(
+                            `http://localhost:3000/api/post/downvoteComment/${comment._id}`
+                        );
+                        setRefreshPosts((prev) => !prev);
+                        console.log(response);
+                    }
                 } catch (error) {
                     console.log(error);
                 }
@@ -44,7 +64,6 @@ export function PostComments({ post }) {
                         <button
                             onClick={() => {
                                 voteHandler(comment, "up");
-                                setRefreshPosts((prev) => !prev);
                             }}
                         >
                             &#11014;️
@@ -110,4 +129,5 @@ const PostPropTypes = {
 
 PostComments.propTypes = {
     post: PropTypes.shape(PostPropTypes),
+    userId: PropTypes?.string,
 };

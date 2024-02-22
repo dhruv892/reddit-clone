@@ -149,6 +149,14 @@ router.post("/upvote/:id", async (req, res) => {
     const postId = req.params.id;
     try {
         const post = await Posts.findById(postId);
+        if (
+            post.votes.downVotes.users.includes(req.session.userId.toString())
+        ) {
+            post.votes.downVotes.count -= 1;
+            post.votes.downVotes.users = post.votes.downVotes.users.filter(
+                (id) => id !== req.session.userId.toString()
+            );
+        }
         post.votes.upVotes.count += 1;
         post.votes.upVotes.users.push(req.session.userId.toString());
         await post.save();
@@ -163,6 +171,12 @@ router.post("/downvote/:id", async (req, res) => {
     const postId = req.params.id;
     try {
         const post = await Posts.findById(postId);
+        if (post.votes.upVotes.users.includes(req.session.userId.toString())) {
+            post.votes.upVotes.count -= 1;
+            post.votes.upVotes.users = post.votes.upVotes.users.filter(
+                (id) => id !== req.session.userId.toString()
+            );
+        }
         post.votes.downVotes.count += 1;
         post.votes.downVotes.users.push(req.session.userId.toString());
         await post.save();
@@ -178,6 +192,19 @@ router.post("/upvoteComment/:id", async (req, res) => {
     try {
         const post = await Posts.findOne({ "comments._id": commentId });
         const comment = post.comments.id(commentId);
+
+        if (
+            comment.votes.downVotes.users.includes(
+                req.session.userId.toString()
+            )
+        ) {
+            comment.votes.downVotes.count -= 1;
+            comment.votes.downVotes.users =
+                comment.votes.downVotes.users.filter(
+                    (id) => id !== req.session.userId.toString()
+                );
+        }
+
         comment.votes.upVotes.count += 1;
         comment.votes.upVotes.users.push(req.session.userId.toString());
         await post.save();
@@ -193,6 +220,16 @@ router.post("/downvoteComment/:id", async (req, res) => {
     try {
         const post = await Posts.findOne({ "comments._id": commentId });
         const comment = post.comments.id(commentId);
+
+        if (
+            comment.votes.upVotes.users.includes(req.session.userId.toString())
+        ) {
+            comment.votes.upVotes.count -= 1;
+            comment.votes.upVotes.users = comment.votes.upVotes.users.filter(
+                (id) => id !== req.session.userId.toString()
+            );
+        }
+
         comment.votes.downVotes.count += 1;
         comment.votes.downVotes.users.push(req.session.userId.toString());
         await post.save();
