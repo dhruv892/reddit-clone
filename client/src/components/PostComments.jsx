@@ -25,6 +25,13 @@ export function PostComments({ post, userId }) {
 		}
 	};
 
+	const checkUpVotes = (comment) => {
+		if (comment.votes.upVotes.users.includes(userId)) return "upvoted";
+	};
+	const checkDownVotes = (comment) => {
+		if (comment.votes.downVotes.users.includes(userId)) return "downvoted";
+	};
+
 	return (
 		<div>
 			<h4>Comments</h4>
@@ -32,6 +39,7 @@ export function PostComments({ post, userId }) {
 				<div key={comment._id} className="post-comment-wrapper">
 					<div className="post-comment-score">
 						<button
+							className={checkUpVotes(comment)}
 							onClick={() => {
 								voteHandler(comment, "up");
 							}}
@@ -41,7 +49,10 @@ export function PostComments({ post, userId }) {
 						<span>
 							{comment.votes.upVotes.count - comment.votes.downVotes.count}
 						</span>
-						<button onClick={() => voteHandler(comment, "down")}>
+						<button
+							className={checkDownVotes(comment)}
+							onClick={() => voteHandler(comment, "down")}
+						>
 							️&#11015;
 						</button>
 					</div>
