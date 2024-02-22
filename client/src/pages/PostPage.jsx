@@ -1,16 +1,21 @@
 import { useParams } from "react-router";
-import { postAtom } from "../store/atoms";
-import { useRecoilValueLoadable } from "recoil";
+import { postAtom, refreshPosts, fetchPost } from "../store/atoms";
 import moment from "moment";
 import "./PostPage.css";
 import AddComment from "../components/AddComment";
 import { PostComments } from "../components/PostComments";
 import axios from "axios";
-import { refreshPosts } from "../store/atoms";
-import { useRecoilState, useRecoilRefresher_UNSTABLE } from "recoil";
-import { fetchPost } from "../store/atoms";
+import {
+	useRecoilState,
+	useRecoilRefresher_UNSTABLE,
+	useRecoilValueLoadable,
+} from "recoil";
 import { useEffect, useState } from "react";
-import { checkDownVotes, checkUpVotes } from "../util/VotingMethods";
+import {
+	checkDownVotes,
+	checkUpVotes,
+	postVoteHandler,
+} from "../util/VotingMethods";
 
 export function PostPage() {
 	const postLoadable = useRecoilValueLoadable(postAtom);
@@ -57,19 +62,8 @@ export function PostPage() {
 	}
 
 	const voteHandler = async (post, voteType) => {
-		if (!userId) return;
-		if (voteType === "up" && post.votes.upVotes.users.includes(userId)) return;
-		if (voteType === "down" && post.votes.downVotes.users.includes(userId))
-			return;
-		try {
-			const response = await axios.post(
-				`http://localhost:3000/api/post/${voteType}vote/${post._id}`
-			);
-			setRefreshPosts((prev) => !prev);
-			console.log(response);
-		} catch (error) {
-			console.log(error);
-		}
+		await postVoteHandler(post, voteType, userId);
+		setRefreshPosts((prev) => !prev);
 	};
 
 	return (
@@ -90,11 +84,13 @@ export function PostPage() {
 						️&#11015;
 					</button>
 				</div>
-				<p className="post-title">{post.title}</p>
+				<div className="postpage-title-wrapper">
+					<p className="post-title">{post.title}</p>
+					<p className="post-">
+						{post.author} {moment(parseInt(post.createdAt)).fromNow()}
+					</p>
+				</div>
 			</div>
-			<p className="post-">
-				{post.author} {moment(parseInt(post.createdAt)).fromNow()}
-			</p>
 			<pre>
 				<p className="post-content">{post.content}</p>
 			</pre>

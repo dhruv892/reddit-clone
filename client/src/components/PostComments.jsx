@@ -4,26 +4,18 @@ import "./PostComments.css";
 import axios from "axios";
 import { refreshPosts } from "../store/atoms";
 import { useSetRecoilState } from "recoil";
-import { checkUpVotes, checkDownVotes } from "../util/VotingMethods";
+import {
+	checkUpVotes,
+	checkDownVotes,
+	commentVoteHandler,
+} from "../util/VotingMethods";
 
 export function PostComments({ post, userId }) {
 	axios.defaults.withCredentials = true;
 	const setRefreshPosts = useSetRecoilState(refreshPosts);
 	const voteHandler = async (comment, voteType) => {
-		if (!userId) return;
-		if (voteType === "up" && comment.votes.upVotes.users.includes(userId))
-			return;
-		if (voteType === "down" && comment.votes.downVotes.users.includes(userId))
-			return;
-		try {
-			const response = await axios.post(
-				`http://localhost:3000/api/post/${voteType}voteComment/${comment._id}`
-			);
-			setRefreshPosts((prev) => !prev);
-			console.log(response);
-		} catch (error) {
-			console.log(error);
-		}
+		await commentVoteHandler(comment, voteType, userId);
+		setRefreshPosts((prev) => !prev);
 	};
 
 	return (

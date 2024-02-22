@@ -29,3 +29,12 @@
 	background-color: white;
 	padding: 10px;
 }
+
+.postpage-wrapper {
+	display: flex;
+	gap: 20px;
+}
+
+p {
+	text-align: justify;
+}
