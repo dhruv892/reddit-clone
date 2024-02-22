@@ -6,128 +6,97 @@ import { refreshPosts } from "../store/atoms";
 import { useSetRecoilState } from "recoil";
 
 export function PostComments({ post, userId }) {
-    axios.defaults.withCredentials = true;
-    const setRefreshPosts = useSetRecoilState(refreshPosts);
-    const voteHandler = async (comment, voteType) => {
-        // TODO: Write logic to check if the post is already up/down voted
-        switch (voteType) {
-            case "up":
-                try {
-                    if (!userId) {
-                        return;
-                    }
-                    if (comment.votes.upVotes.users.includes(userId)) {
-                        return;
-                    } else {
-                        console.log(comment.votes.upVotes.users.userId);
-                        const response = await axios.post(
-                            `http://localhost:3000/api/post/upvoteComment/${comment._id}`
-                        );
-                        setRefreshPosts((prev) => !prev);
-                        console.log(response);
-                    }
-                    // const response = await axios.post(
-                    //     `http://localhost:3000/api/post/upvoteComment/${comment._id}`
-                    // );
-                    // console.log(response);
-                } catch (error) {
-                    console.log(error);
-                }
-                break;
-            case "down":
-                try {
-                    if (!userId) {
-                        return;
-                    }
-                    if (comment.votes.downVotes.users.includes(userId)) {
-                        return;
-                    } else {
-                        const response = await axios.post(
-                            `http://localhost:3000/api/post/downvoteComment/${comment._id}`
-                        );
-                        setRefreshPosts((prev) => !prev);
-                        console.log(response);
-                    }
-                } catch (error) {
-                    console.log(error);
-                }
-                break;
-        }
-    };
+	axios.defaults.withCredentials = true;
+	const setRefreshPosts = useSetRecoilState(refreshPosts);
+	const voteHandler = async (comment, voteType) => {
+		if (!userId) return;
+		if (voteType === "up" && comment.votes.upVotes.users.includes(userId))
+			return;
+		if (voteType === "down" && comment.votes.upVotes.users.includes(userId))
+			return;
+		try {
+			const response = await axios.post(
+				`http://localhost:3000/api/post/${voteType}voteComment/${comment._id}`
+			);
+			setRefreshPosts((prev) => !prev);
+			console.log(response);
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
-    return (
-        <div>
-            <h4>Comments</h4>
-            {post.comments.map((comment) => (
-                <div key={comment._id} className="post-comment-wrapper">
-                    <div className="post-comment-score">
-                        <button
-                            onClick={() => {
-                                voteHandler(comment, "up");
-                            }}
-                        >
-                            &#11014;️
-                        </button>
-                        <span>
-                            {comment.votes.upVotes.count -
-                                comment.votes.downVotes.count}
-                        </span>
-                        <button onClick={() => voteHandler(comment, "down")}>
-                            ️&#11015;
-                        </button>
-                    </div>
-                    <div>
-                        <p>
-                            <b>{comment.author} </b>
-                            <span className="post-comment-time">
-                                {moment(parseInt(comment.createdAt)).fromNow()}{" "}
-                            </span>
-                        </p>
-                        <p>{comment.content}</p>
-                    </div>
-                </div>
-            ))}
-        </div>
-    );
+	return (
+		<div>
+			<h4>Comments</h4>
+			{post.comments.map((comment) => (
+				<div key={comment._id} className="post-comment-wrapper">
+					<div className="post-comment-score">
+						<button
+							onClick={() => {
+								voteHandler(comment, "up");
+							}}
+						>
+							&#11014;️
+						</button>
+						<span>
+							{comment.votes.upVotes.count - comment.votes.downVotes.count}
+						</span>
+						<button onClick={() => voteHandler(comment, "down")}>
+							️&#11015;
+						</button>
+					</div>
+					<div>
+						<p>
+							<b>{comment.author} </b>
+							<span className="post-comment-time">
+								{moment(parseInt(comment.createdAt)).fromNow()}{" "}
+							</span>
+						</p>
+						<p>{comment.content}</p>
+					</div>
+				</div>
+			))}
+		</div>
+	);
 }
 
 const CommentPropTypes = {
-    votes: PropTypes.shape({
-        upVotes: PropTypes.shape({
-            count: PropTypes.number,
-            users: PropTypes.array,
-        }),
-        downVotes: PropTypes.shape({
-            count: PropTypes.number,
-            users: PropTypes.array,
-        }),
-    }),
-    content: PropTypes.string,
-    createdAt: PropTypes.string,
-    author: PropTypes.string,
-    _id: PropTypes.string,
+	votes: PropTypes.shape({
+		upVotes: PropTypes.shape({
+			count: PropTypes.number,
+			users: PropTypes.array,
+		}),
+		downVotes: PropTypes.shape({
+			count: PropTypes.number,
+			users: PropTypes.array,
+		}),
+	}),
+	content: PropTypes.string,
+	createdAt: PropTypes.string,
+	author: PropTypes.string,
+	_id: PropTypes.string,
 };
 
 const PostPropTypes = {
-    _id: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    content: PropTypes.string,
-    author: PropTypes.string.isRequired,
-    createdAt: PropTypes.string.isRequired,
-    comments: PropTypes.arrayOf(PropTypes.shape(CommentPropTypes)),
-    votes: PropTypes.shape({
-        upVotes: PropTypes.shape({
-            count: PropTypes.number,
-            users: PropTypes.array,
-        }),
-        downVotes: PropTypes.shape({
-            count: PropTypes.number,
-            users: PropTypes.array,
-        }),
-    }),
+	_id: PropTypes.string.isRequired,
+	title: PropTypes.string.isRequired,
+	content: PropTypes.string,
+	author: PropTypes.string.isRequired,
+	createdAt: PropTypes.string.isRequired,
+	comments: PropTypes.arrayOf(PropTypes.shape(CommentPropTypes)),
+	votes: PropTypes.shape({
+		upVotes: PropTypes.shape({
+			count: PropTypes.number,
+			users: PropTypes.array,
+		}),
+		downVotes: PropTypes.shape({
+			count: PropTypes.number,
+			users: PropTypes.array,
+		}),
+	}),
 };
 
 PostComments.propTypes = {
-    post: PropTypes.shape(PostPropTypes),
-    userId: PropTypes?.string,
+	post: PropTypes.shape(PostPropTypes),
+	userId: PropTypes?.string,
 };
