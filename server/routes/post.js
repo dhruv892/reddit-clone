@@ -239,6 +239,60 @@ router.post("/downvoteComment/:id", authMiddleware, async (req, res) => {
     }
 });
 
+// api/post/upvoteReply/:id
+router.post("/upvoteReply/:id", authMiddleware, async (req, res) => {
+    const replyId = req.params.id;
+    try {
+        const post = await Posts.findOne({ "comments.replies._id": replyId });
+        const comment = post.comments.find((comment) =>
+            comment.replies.id(replyId)
+        );
+        const reply = comment.replies.id(replyId);
+
+        if (
+            reply.votes.downVotes.users.includes(req.session.userId.toString())
+        ) {
+            reply.votes.downVotes.count -= 1;
+            reply.votes.downVotes.users = reply.votes.downVotes.users.filter(
+                (id) => id !== req.session.userId.toString()
+            );
+        }
+
+        reply.votes.upVotes.count += 1;
+        reply.votes.upVotes.users.push(req.session.userId.toString());
+        await post.save();
+        res.json({ msg: "Upvoted" });
+    } catch (err) {
+        res.status(500).json({ msg: "Internal Server Error" });
+    }
+});
+
+// api/post/downvoteReply/:id
+router.post("/downvoteReply/:id", authMiddleware, async (req, res) => {
+    const replyId = req.params.id;
+    try {
+        const post = await Posts.findOne({ "comments.replies._id": replyId });
+        const comment = post.comments.find((comment) =>
+            comment.replies.id(replyId)
+        );
+        const reply = comment.replies.id(replyId);
+
+        if (reply.votes.upVotes.users.includes(req.session.userId.toString())) {
+            reply.votes.upVotes.count -= 1;
+            reply.votes.upVotes.users = reply.votes.upVotes.users.filter(
+                (id) => id !== req.session.userId.toString()
+            );
+        }
+
+        reply.votes.downVotes.count += 1;
+        reply.votes.downVotes.users.push(req.session.userId.toString());
+        await post.save();
+        res.json({ msg: "Upvoted" });
+    } catch (err) {
+        res.status(500).json({ msg: "Internal Server Error" });
+    }
+});
+
 // function findCommentById(comments, id) {
 //     for (const comment of comments) {
 //         if (comment._id.toString() === id.toString()) {
