@@ -10,9 +10,9 @@ export const checkDownVotes = (item, userId) => {
 
 export const postVoteHandler = async (post, voteType, userId) => {
     if (!userId) return;
-    if (voteType === "up" && post.votes.upVotes.users.includes(userId)) return;
-    if (voteType === "down" && post.votes.downVotes.users.includes(userId))
-        return;
+    // if (voteType === "up" && post.votes.upVotes.users.includes(userId)) return;
+    // if (voteType === "down" && post.votes.downVotes.users.includes(userId))
+    //     return;
     try {
         const response = await axios.post(
             `http://localhost:3000/api/post/${voteType}vote/${post._id}`
@@ -34,6 +34,8 @@ export const commentVoteHandler = async (comment, voteType, userId) => {
             `http://localhost:3000/api/post/${voteType}voteComment/${comment._id}`
         );
         console.log(response);
+        console.log(response.status);
+        return "done";
     } catch (error) {
         console.log(error);
     }
