@@ -149,6 +149,9 @@ router.post("/upvote/:id", authMiddleware, async (req, res) => {
     const postId = req.params.id;
     try {
         const post = await Posts.findById(postId);
+        if (post.votes.upVotes.users.includes(req.session.userId.toString())) {
+            return res.status(409).json({ msg: "Already upvoted" });
+        }
         if (
             post.votes.downVotes.users.includes(req.session.userId.toString())
         ) {
@@ -171,6 +174,11 @@ router.post("/downvote/:id", authMiddleware, async (req, res) => {
     const postId = req.params.id;
     try {
         const post = await Posts.findById(postId);
+        if (
+            post.votes.downVotes.users.includes(req.session.userId.toString())
+        ) {
+            return res.status(409).json({ msg: "Already downvoted" });
+        }
         if (post.votes.upVotes.users.includes(req.session.userId.toString())) {
             post.votes.upVotes.count -= 1;
             post.votes.upVotes.users = post.votes.upVotes.users.filter(
@@ -193,6 +201,11 @@ router.post("/upvoteComment/:id", authMiddleware, async (req, res) => {
         const post = await Posts.findOne({ "comments._id": commentId });
         const comment = post.comments.id(commentId);
 
+        if (
+            comment.votes.upVotes.users.includes(req.session.userId.toString())
+        ) {
+            return res.status(409).json({ msg: "Already upvoted" });
+        }
         if (
             comment.votes.downVotes.users.includes(
                 req.session.userId.toString()
@@ -220,6 +233,14 @@ router.post("/downvoteComment/:id", authMiddleware, async (req, res) => {
     try {
         const post = await Posts.findOne({ "comments._id": commentId });
         const comment = post.comments.id(commentId);
+
+        if (
+            comment.votes.downVotes.users.includes(
+                req.session.userId.toString()
+            )
+        ) {
+            return res.status(409).json({ msg: "Already downvoted" });
+        }
 
         if (
             comment.votes.upVotes.users.includes(req.session.userId.toString())

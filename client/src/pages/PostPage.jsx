@@ -120,7 +120,7 @@ export function PostPage() {
                         // console.log([...prev, userId]);
                     });
                     setUpVoteUsers((prev) => {
-                        return prev.filter((id) => id != userId.toString());
+                        return prev.filter((id) => id != userId);
                     });
                     // console.log(downVoteUsers);
                     // post.votes.downVotes.users.push(userId);
@@ -174,7 +174,17 @@ export function PostPage() {
             </pre>
 
             <AddComment post={post} />
-            <PostComments post={post} userId={userId} />
+            <h4>Comments</h4>
+            {post.comments.length > 0
+                ? post.comments.map((comment) => (
+                      <PostComments
+                          key={comment._id}
+                          comment={comment}
+                          userId={userId}
+                      />
+                  ))
+                : null}
+            {/* <PostComments post={post} userId={userId} /> */}
         </div>
     );
 }
