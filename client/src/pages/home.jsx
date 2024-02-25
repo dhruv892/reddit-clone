@@ -1,4 +1,4 @@
-import Posts from "../components/Posts";
+import { RenderPosts } from "../components/RenderPosts";
 import { CreatePost } from "../components/CreatePost";
 import { useRecoilValue, useRecoilRefresher_UNSTABLE } from "recoil";
 import { refreshPosts, fetchPost } from "../store/atoms";
@@ -6,12 +6,17 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useRecoilValueLoadable } from "recoil";
+import { postAtom } from "../store/atoms";
+// import { use } from "../../../server/routes/post";
 
 export function Home() {
     const refreshPostsAtom = useRecoilRefresher_UNSTABLE(fetchPost);
     const refresh = useRecoilValue(refreshPosts);
     const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [posts, setPosts] = useState([]);
+    // const [posts, setPosts] = useState([]);
     // const [userId, setUserId] = useState("");
 
     const fetchSessionData = async () => {
@@ -44,26 +49,51 @@ export function Home() {
         }
     };
 
+    const postsLoadable = useRecoilValueLoadable(postAtom);
+
     useEffect(() => {
         refreshPostsAtom();
         fetchSessionData();
     }, [refresh, refreshPostsAtom, isLoggedIn]);
 
-    return (
-        <>
-            {!isLoggedIn ? (
-                <button
-                    onClick={() => {
-                        navigate("/signUpIn");
-                    }}
-                >
-                    SignUpIn
-                </button>
-            ) : (
-                <button onClick={() => logoutHandler()}>Log out</button>
-            )}
-            <CreatePost />
-            <Posts />
-        </>
-    );
+    useEffect(() => {
+        if (postsLoadable.state === "hasValue") {
+            setPosts(postsLoadable.contents);
+        }
+    }, [postsLoadable]);
+
+    const setPostsHandler = (newPost) => {
+        setPosts((prev) => [...prev, newPost]);
+    };
+
+    switch (postsLoadable.state) {
+        case "hasValue":
+            return (
+                <>
+                    {!isLoggedIn ? (
+                        <button
+                            onClick={() => {
+                                navigate("/signUpIn");
+                            }}
+                        >
+                            SignUpIn
+                        </button>
+                    ) : (
+                        <button onClick={() => logoutHandler()}>Log out</button>
+                    )}
+                    <CreatePost setPostsHandler={setPostsHandler} />
+                    {posts.map((post) => (
+                        <RenderPosts key={post._id} post={post} />
+                    ))}
+                    {/* <Posts /> */}
+                </>
+            );
+
+        case "loading":
+            return <div>Loading...</div>;
+        case "hasError":
+            return <div>Error: {postsLoadable.contents.message}</div>;
+        default:
+            return null;
+    }
 }

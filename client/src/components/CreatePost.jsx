@@ -1,16 +1,17 @@
 import { useState } from "react";
 import axios from "axios";
-import { useSetRecoilState } from "recoil";
-import { refreshPosts } from "../store/atoms";
+// import { useSetRecoilState } from "recoil";
+// import { refreshPosts } from "../store/atoms";
+import PropTypes from "prop-types";
 
-export function CreatePost() {
+export function CreatePost({ setPostsHandler }) {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
-    const setRefreshPosts = useSetRecoilState(refreshPosts);
+    // const setRefreshPosts = useSetRecoilState(refreshPosts);
 
     const onClickSubmitHandler = async () => {
         try {
-            await axios.post(
+            const res = await axios.post(
                 `http://localhost:3000/api/post/createPost`,
                 {
                     title: title,
@@ -24,7 +25,9 @@ export function CreatePost() {
                     withCredentials: true,
                 }
             );
-            setRefreshPosts((prev) => !prev);
+            console.log(res.data.post);
+            setPostsHandler(res.data.post);
+            // setRefreshPosts((prev) => !prev);
             setTitle("");
             setContent("");
         } catch (error) {
@@ -57,3 +60,7 @@ export function CreatePost() {
         </>
     );
 }
+
+CreatePost.propTypes = {
+    setPostsHandler: PropTypes.func,
+};

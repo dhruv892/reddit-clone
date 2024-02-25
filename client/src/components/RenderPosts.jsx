@@ -4,29 +4,29 @@ import "./posts.css";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useSetRecoilState, useRecoilValueLoadable } from "recoil";
-import { postAtom } from "../store/atoms";
+import { useSetRecoilState } from "recoil";
 import { refreshPosts } from "../store/atoms";
 import { toast } from "react-toastify";
 
-export default function Posts() {
-    const postsLoadable = useRecoilValueLoadable(postAtom);
+// export default function Posts() {
+//     const postsLoadable = useRecoilValueLoadable(postAtom);
 
-    switch (postsLoadable.state) {
-        case "hasValue":
-            return postsLoadable.contents.map((post) => (
-                <RenderPost key={post._id} post={post} />
-            ));
-        case "loading":
-            return <div>Loading...</div>;
-        case "hasError":
-            return <div>Error: {postsLoadable.contents.message}</div>;
-        default:
-            return null;
-    }
-}
+//     switch (postsLoadable.state) {
+//         case "hasValue":
 
-function RenderPost({ post }) {
+//             return postsLoadable.contents.map((post) => (
+//                 <RenderPost key={post._id} post={post} />
+//             ));
+//         case "loading":
+//             return <div>Loading...</div>;
+//         case "hasError":
+//             return <div>Error: {postsLoadable.contents.message}</div>;
+//         default:
+//             return null;
+//     }
+// }
+
+export function RenderPosts({ post }) {
     const [score, setScore] = useState(0);
     const navigate = useNavigate();
     const setRefreshPosts = useSetRecoilState(refreshPosts);
@@ -151,6 +151,6 @@ const PostPropTypes = {
 //     userId: PropTypes.string,
 // };
 
-RenderPost.propTypes = {
+RenderPosts.propTypes = {
     post: PropTypes.shape(PostPropTypes),
 };

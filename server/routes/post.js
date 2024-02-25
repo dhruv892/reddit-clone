@@ -85,8 +85,9 @@ router.post("/createPost", authMiddleware, async (req, res) => {
     }
 
     try {
-        Posts.create(parsedPayload.data);
-        res.json({ msg: "Post created" });
+        const post = await Posts.create(parsedPayload.data);
+        const posts = await Posts.find({});
+        res.json({ msg: "Post created", posts: posts, post: post });
     } catch (err) {
         res.status(500).json({ msg: "Internal Server Error" });
     }
