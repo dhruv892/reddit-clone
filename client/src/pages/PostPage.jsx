@@ -29,6 +29,7 @@ export function PostPage() {
     const [postVotes, setPostVotes] = useState(0);
     const [upVoteUsers, setUpVoteUsers] = useState([]);
     const [downVoteUsers, setDownVoteUsers] = useState([]);
+    const [comments, setComments] = useState([]);
 
     const fetchSessionData = async () => {
         try {
@@ -63,6 +64,7 @@ export function PostPage() {
                 setPostVotes(upVotes - downVotes);
                 setUpVoteUsers(post.votes.upVotes.users);
                 setDownVoteUsers(post.votes.downVotes.users);
+                setComments(post.comments);
             }
         }
     }, [postLoadable, params.id]);
@@ -137,6 +139,10 @@ export function PostPage() {
         // }
     };
 
+    const setCommentsHandler = (updatedComments) => {
+        setComments(updatedComments);
+    };
+
     return (
         <div>
             <div className="postpage-wrapper">
@@ -173,10 +179,10 @@ export function PostPage() {
                 <p className="post-content">{post.content}</p>
             </pre>
 
-            <AddComment post={post} />
+            <AddComment post={post} setCommentsHandler={setCommentsHandler} />
             <h4>Comments</h4>
-            {post.comments.length > 0
-                ? post.comments.map((comment) => (
+            {comments.length > 0
+                ? comments.map((comment) => (
                       <PostComments
                           key={comment._id}
                           comment={comment}

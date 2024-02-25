@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { refreshPosts } from "../store/atoms";
 import { useSetRecoilState } from "recoil";
 
-export default function AddComment({ post }) {
+export default function AddComment({ post, setCommentsHandler }) {
     const [content, setContent] = useState("");
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const setRefreshPosts = useSetRecoilState(refreshPosts);
@@ -38,6 +38,7 @@ export default function AddComment({ post }) {
                 }
             );
             setRefreshPosts((prev) => !prev);
+            setCommentsHandler(response.data.comments);
             console.log(response);
             setContent("");
         } catch (error) {
@@ -103,4 +104,5 @@ const PostPropTypes = {
 
 AddComment.propTypes = {
     post: PropTypes.shape(PostPropTypes),
+    setCommentsHandler: PropTypes.func,
 };

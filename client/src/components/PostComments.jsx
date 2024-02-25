@@ -11,7 +11,6 @@ import {
     // commentVoteHandler,
     // replyVoteHandler,
 } from "../util/VotingMethods";
-// import { use } from "../../../server/routes/post";
 // import { set } from "mongoose";
 
 export function PostComments({ comment, userId }) {
@@ -23,6 +22,7 @@ export function PostComments({ comment, userId }) {
     const [downVoteUsers, setDownVoteUsers] = useState([]);
     const [doReply, setDoReply] = useState(false);
     const [replyContent, setReplyContent] = useState("");
+    const [replies, setReplies] = useState([]);
 
     useEffect(() => {
         if (!comment) return;
@@ -32,6 +32,7 @@ export function PostComments({ comment, userId }) {
         setCommentVotes(upVotes - downVotes);
         setUpVoteUsers(comment.votes.upVotes.users);
         setDownVoteUsers(comment.votes.downVotes.users);
+        setReplies(comment.replies);
 
         // setUpVoteUsers();
     }, [comment]);
@@ -83,13 +84,15 @@ export function PostComments({ comment, userId }) {
     const replyClickHandler = async (comment) => {
         if (!replyContent) return;
         try {
-            await axios.post(
+            const res = await axios.post(
                 `http://localhost:3000/api/post/comments/reply/${comment._id}`,
                 {
                     content: replyContent,
                     createdAt: Date.now().toString(),
                 }
             );
+
+            setReplies(res.data.replies);
             setRefreshPosts((prev) => !prev);
             setReplyContent("");
             setDoReply(false);
@@ -159,8 +162,8 @@ export function PostComments({ comment, userId }) {
                             </button>
                         </div>
                     )}
-                    {comment.replies.length > 0
-                        ? comment.replies.map((reply) => (
+                    {replies.length > 0
+                        ? replies.map((reply) => (
                               <ReplyComponent
                                   key={reply._id}
                                   reply={reply}
@@ -184,7 +187,7 @@ function ReplyComponent({ reply, userId }) {
 
     useEffect(() => {
         if (!reply) return;
-        console.log(reply);
+        // console.log(reply);
         const upVotes = reply.votes.upVotes.count;
         const downVotes = reply.votes.downVotes.count;
         setReplyVotes(upVotes - downVotes);

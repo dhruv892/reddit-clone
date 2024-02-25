@@ -138,7 +138,7 @@ router.post("/addComment/:id", authMiddleware, async (req, res) => {
         post.comments.push(comment);
         await post.save();
         console.log(post.comments);
-        res.json({ msg: "Comment added" });
+        res.json({ msg: "Comment added", comments: post.comments });
     } catch (err) {
         res.status(500).json({ msg: "Internal Server Error" });
     }
@@ -379,7 +379,7 @@ router.post("/comments/reply/:id", authMiddleware, async (req, res) => {
 
         comment.replies.push(reply);
         await post.save();
-        res.json({ msg: "Replied" });
+        res.json({ msg: "Replied", replies: comment.replies });
     } catch (err) {
         res.status(500).json({ msg: "Internal Server Error", error: err });
     }
