@@ -55,15 +55,20 @@ export default function AddComment({ post, setCommentsHandler }) {
 	}
 
 	return (
-		<div className="bg-zinc-900">
+		<div className="bg-zinc-900 rounded-lg flex gap-5 p-4 mt-5">
 			<input
-				className="bg-zinc-800 placeholder:text-zinc-500"
+				className="bg-zinc-800 placeholder:text-zinc-500 flex-grow p-2 rounded-lg border:"
 				type="text"
 				value={content}
 				onChange={(e) => setContent(e.target.value)}
-				placeholder="content"
+				placeholder="Comment"
 			/>
-			<button onClick={submitHandler}>Add comment</button>
+			<button
+				className="p-3 flex-initial rounded-lg bg-zinc-700"
+				onClick={submitHandler}
+			>
+				Add comment
+			</button>
 		</div>
 	);
 }

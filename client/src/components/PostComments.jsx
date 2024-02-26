@@ -4,13 +4,7 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import { refreshPosts } from "../store/atoms";
 import { useSetRecoilState } from "recoil";
-import {
-	checkUpVotes,
-	checkDownVotes,
-	// commentVoteHandler,
-	// replyVoteHandler,
-} from "../util/VotingMethods";
-// import { set } from "mongoose";
+import { ReplyComponent } from "./ReplyComponent";
 
 export function PostComments({ comment, userId }) {
 	axios.defaults.withCredentials = true;
@@ -99,62 +93,62 @@ export function PostComments({ comment, userId }) {
 	};
 
 	return (
-		<div>
-			<div >
-				<div >
-					<button
-						onClick={() => {
-							// !checkUpVotes(comment, userId)
-							voteHandler("up");
-							// : null;
-						}}
-					>
-						&#11014;️
-					</button>
-					<span>{commentVotes}</span>
-					<button
-						onClick={() => {
-							// !checkDownVotes(comment, userId)
-							voteHandler("down");
-							// : null;
-						}}
-					>
-						️&#11015;
-					</button>
-				</div>
-				<div>
-					<p>
-						<b>{comment.author} </b>
-						<span >
-							{moment(parseInt(comment.createdAt)).fromNow()}{" "}
-						</span>
-					</p>
+		<div className="flex gap-5 m-2 p-2">
+			<div className="flex flex-col flex-initial align-center gap-1">
+				<button
+					onClick={() => {
+						// !checkUpVotes(comment, userId)
+						voteHandler("up");
+						// : null;
+					}}
+				>
+					&#11014;️
+				</button>
+				<span className="text-center">{commentVotes}</span>
+				<button
+					onClick={() => {
+						// !checkDownVotes(comment, userId)
+						voteHandler("down");
+						// : null;
+					}}
+				>
+					️&#11015;
+				</button>
+			</div>
+			<div className="flex-grow">
+				<p className="mb-1">
+					<span className="font-bold">{comment.author} </span>
+					<span className="text-zinc-500 ml-1">
+						{moment(parseInt(comment.createdAt)).fromNow()}{" "}
+					</span>
+				</p>
 
-					<p>{comment.content}</p>
-					{!doReply ? (
-						<p
-							style={{
-								color: "gray",
+				<p className="mb-1">{comment.content}</p>
+				{!doReply ? (
+					<span
+						style={{
+							color: "gray",
+						}}
+						onClick={() => {
+							setDoReply(true);
+						}}
+					>
+						reply
+					</span>
+				) : (
+					<div>
+						<input
+							type="text"
+							placeholder="Reply"
+							value={replyContent}
+							onChange={(e) => {
+								setReplyContent(e.target.value);
 							}}
-							onClick={() => {
-								setDoReply(true);
-							}}
-						>
-							reply
-						</p>
-					) : (
-						<div>
-							<input
-								type="text"
-								placeholder="Reply"
-								value={replyContent}
-								onChange={(e) => {
-									setReplyContent(e.target.value);
-								}}
-							/>
-							<button onClick={() => replyClickHandler(comment)}>Reply</button>
-						</div>
-					)}
+						/>
+						<button onClick={() => replyClickHandler(comment)}>Reply</button>
+					</div>
+				)}
+				<div className="border-l border-l-zinc-50">
 					{replies.length > 0
 						? replies.map((reply) => (
 								<ReplyComponent key={reply._id} reply={reply} userId={userId} />
@@ -164,102 +158,6 @@ export function PostComments({ comment, userId }) {
 				</div>
 			</div>
 		</div>
-	);
-}
-
-function ReplyComponent({ reply, userId }) {
-	const [replyVotes, setReplyVotes] = useState(0);
-	const [upVoteUsers, setUpVoteUsers] = useState([]);
-	const [downVoteUsers, setDownVoteUsers] = useState([]);
-
-	// const setRefreshPosts = useSetRecoilState(refreshPosts);
-
-	useEffect(() => {
-		if (!reply) return;
-		// console.log(reply);
-		const upVotes = reply.votes.upVotes.count;
-		const downVotes = reply.votes.downVotes.count;
-		setReplyVotes(upVotes - downVotes);
-		setUpVoteUsers(reply.votes.upVotes.users);
-		setDownVoteUsers(reply.votes.downVotes.users);
-
-		// setUpVoteUsers();
-	}, [reply]);
-
-	const rVoteHandler = async (voteType) => {
-		if (!userId) return;
-
-		if (voteType === "up" && upVoteUsers.includes(userId)) return;
-		if (voteType === "down" && downVoteUsers.includes(userId)) return;
-		try {
-			await axios.post(
-				`http://localhost:3000/api/post/${voteType}voteReply/${reply._id}`
-			);
-			switch (voteType) {
-				case "up":
-					console.log(userId);
-					console.log(upVoteUsers);
-					downVoteUsers.includes(userId)
-						? setReplyVotes((prev) => prev + 2)
-						: setReplyVotes((prev) => prev + 1);
-					setUpVoteUsers((prev) => [...prev, userId]);
-					setDownVoteUsers((prev) => prev.filter((id) => id !== userId));
-					break;
-				case "down":
-					console.log(userId);
-					// console.log(downVoteUsers);
-					upVoteUsers.includes(userId)
-						? setReplyVotes((prev) => prev - 2)
-						: setReplyVotes((prev) => prev - 1);
-					setDownVoteUsers((prev) => {
-						return [...prev, userId];
-						// console.log([...prev, userId]);
-					});
-					setUpVoteUsers((prev) => {
-						return prev.filter((id) => id != userId);
-					});
-					break;
-			}
-		} catch (error) {
-			console.log(error);
-		}
-	};
-
-	return (
-		<>
-			<div key={reply._id} >
-				<div >
-					<button
-						onClick={() => {
-							// !checkUpVotes(reply, userId)
-							rVoteHandler("up");
-							// : null;
-						}}
-					>
-						&#11014;️
-					</button>
-					<span>{replyVotes}</span>
-					<button
-						onClick={() => {
-							// !checkDownVotes(reply, userId)
-							rVoteHandler("down");
-							// : null;
-						}}
-					>
-						️&#11015;
-					</button>
-				</div>
-				<div>
-					<p>
-						<b>{reply.author} </b>
-						<span >
-							{moment(parseInt(reply.createdAt)).fromNow()}{" "}
-						</span>
-					</p>
-					<p>{reply.content}</p>
-				</div>
-			</div>
-		</>
 	);
 }
 
@@ -280,31 +178,7 @@ const CommentPropTypes = {
 	_id: PropTypes.string,
 };
 
-// const PostPropTypes = {
-//     _id: PropTypes.string.isRequired,
-//     title: PropTypes.string.isRequired,
-//     content: PropTypes.string,
-//     author: PropTypes.string.isRequired,
-//     createdAt: PropTypes.string.isRequired,
-//     comments: PropTypes.arrayOf(PropTypes.shape(CommentPropTypes)),
-//     votes: PropTypes.shape({
-//         upVotes: PropTypes.shape({
-//             count: PropTypes.number,
-//             users: PropTypes.array,
-//         }),
-//         downVotes: PropTypes.shape({
-//             count: PropTypes.number,
-//             users: PropTypes.array,
-//         }),
-//     }),
-// };
-
 PostComments.propTypes = {
 	comment: PropTypes.shape(CommentPropTypes),
-	userId: PropTypes?.string,
-};
-
-ReplyComponent.propTypes = {
-	reply: PropTypes.shape(CommentPropTypes),
 	userId: PropTypes?.string,
 };
