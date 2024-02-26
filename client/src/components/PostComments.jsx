@@ -1,7 +1,6 @@
 import moment from "moment";
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import "./PostComments.css";
 import axios from "axios";
 import { refreshPosts } from "../store/atoms";
 import { useSetRecoilState } from "recoil";

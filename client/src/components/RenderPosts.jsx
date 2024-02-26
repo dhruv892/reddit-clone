@@ -1,6 +1,5 @@
 import { useState } from "react";
 import moment from "moment";
-import "./posts.css";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
