@@ -69,7 +69,7 @@ export function Home() {
     switch (postsLoadable.state) {
         case "hasValue":
             return (
-                <>
+                <div className="max-w-3xl mx-auto text-wrap text-gray-200">
                     {!isLoggedIn ? (
                         <button
                             onClick={() => {
@@ -86,7 +86,7 @@ export function Home() {
                         <RenderPosts key={post._id} post={post} />
                     ))}
                     {/* <Posts /> */}
-                </>
+                </div>
             );
 
         case "loading":
