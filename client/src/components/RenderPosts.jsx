@@ -26,124 +26,107 @@ import { toast } from "react-toastify";
 // }
 
 export function RenderPosts({ post }) {
-    const [score, setScore] = useState(0);
-    const navigate = useNavigate();
-    const setRefreshPosts = useSetRecoilState(refreshPosts);
+	const [score, setScore] = useState(0);
+	const navigate = useNavigate();
+	const setRefreshPosts = useSetRecoilState(refreshPosts);
 
-    const deleteHandler = async () => {
-        try {
-            await axios.delete(
-                `http://localhost:3000/api/post/deletePost/${post._id}`
-            );
-            setRefreshPosts((prev) => !prev);
-        } catch (error) {
-            console.log(error);
-        }
-    };
+	const deleteHandler = async () => {
+		try {
+			await axios.delete(
+				`http://localhost:3000/api/post/deletePost/${post._id}`
+			);
+			setRefreshPosts((prev) => !prev);
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
-    const shareHandler = () => {
-        navigator.clipboard.writeText(`http://localhost:5173/post/${post._id}`);
-        toast.info("Post link copied to clipboard!");
-    };
+	const shareHandler = () => {
+		navigator.clipboard.writeText(`http://localhost:5173/post/${post._id}`);
+		toast.info("Post link copied to clipboard!");
+	};
 
-    return (
-        <>
-            <div className="posts-container">
-                <div className="posts-score">
-                    <button onClick={() => setScore(score + 1)}>
-                        &#11014;️
-                    </button>
-                    <span>
-                        {post.votes.upVotes.count - post.votes.downVotes.count}
-                    </span>
-                    <button onClick={() => setScore(score - 1)}>
-                        ️&#11015;
-                    </button>
-                </div>
+	return (
+		<>
+			<div>
+				<div>
+					<button onClick={() => setScore(score + 1)}>&#11014;️</button>
+					<span>{post.votes.upVotes.count - post.votes.downVotes.count}</span>
+					<button onClick={() => setScore(score - 1)}>️&#11015;</button>
+				</div>
 
-                <div className="posts-image">
-                    {post.thumbnail !== "self" && (
-                        <img src={post.thumbnail} alt="" />
-                    )}
-                </div>
+				<div>
+					{post.thumbnail !== "self" && <img src={post.thumbnail} alt="" />}
+				</div>
 
-                <div className="posts-details">
-                    <div className="posts-wrapper">
-                        <a
-                            onClick={() => navigate(`/post/${post._id}`)}
-                            className="posts-link"
-                        >
-                            <span className="posts-title">{post.title}</span>
-                        </a>
-                    </div>
+				<div>
+					<div>
+						<a onClick={() => navigate(`/post/${post._id}`)}>
+							<span>{post.title}</span>
+						</a>
+					</div>
 
-                    <div className="posts-wrapper">
-                        <span className="posts-description">
-                            {post.content}
-                        </span>
-                    </div>
+					<div>
+						<span>{post.content}</span>
+					</div>
 
-                    <div className="posts-wrapper">
-                        Submitted {moment(parseInt(post.createdAt)).fromNow()}{" "}
-                        by {post.author}
-                    </div>
+					<div>
+						Submitted {moment(parseInt(post.createdAt)).fromNow()} by{" "}
+						{post.author}
+					</div>
 
-                    <div className="posts-links-wrapper">
-                        <a className="posts-link" href={post.url}>
-                            {post.comments
-                                ? `${post.comments.length} comments`
-                                : "comment"}
-                        </a>
-                        <a className="posts-link-grey" onClick={shareHandler}>
-                            share
-                        </a>
-                        <a className="posts-link-grey">save</a>
-                        <a className="posts-link-grey">hide</a>
-                        <a className="posts-link-grey">report</a>
-                        <a className="posts-link-grey" onClick={deleteHandler}>
-                            delete
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </>
-    );
+					<div>
+						<a href={post.url}>
+							{post.comments ? `${post.comments.length} comments` : "comment"}
+						</a>
+						<a onClick={shareHandler}>
+							share
+						</a>
+						<a>save</a>
+						<a>hide</a>
+						<a>report</a>
+						<a>delete</a>
+					</div>
+				</div>
+			</div>
+		</>
+	);
 }
 
 const CommentPropTypes = {
-    votes: PropTypes.shape({
-        upVotes: PropTypes.shape({
-            count: PropTypes.number,
-            users: PropTypes.array,
-        }),
-        downVotes: PropTypes.shape({
-            count: PropTypes.number,
-            users: PropTypes.array,
-        }),
-    }),
-    content: PropTypes.string,
-    createdAt: PropTypes.string,
-    author: PropTypes.string,
-    _id: PropTypes.string,
+	votes: PropTypes.shape({
+		upVotes: PropTypes.shape({
+			count: PropTypes.number,
+			users: PropTypes.array,
+		}),
+		downVotes: PropTypes.shape({
+			count: PropTypes.number,
+			users: PropTypes.array,
+		}),
+	}),
+	content: PropTypes.string,
+	createdAt: PropTypes.string,
+	author: PropTypes.string,
+	_id: PropTypes.string,
 };
 
 const PostPropTypes = {
-    _id: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    content: PropTypes.string,
-    author: PropTypes.string.isRequired,
-    createdAt: PropTypes.string.isRequired,
-    comments: PropTypes.arrayOf(PropTypes.shape(CommentPropTypes)),
-    votes: PropTypes.shape({
-        upVotes: PropTypes.shape({
-            count: PropTypes.number,
-            users: PropTypes.array,
-        }),
-        downVotes: PropTypes.shape({
-            count: PropTypes.number,
-            users: PropTypes.array,
-        }),
-    }),
+	_id: PropTypes.string.isRequired,
+	title: PropTypes.string.isRequired,
+	content: PropTypes.string,
+	author: PropTypes.string.isRequired,
+	createdAt: PropTypes.string.isRequired,
+	comments: PropTypes.arrayOf(PropTypes.shape(CommentPropTypes)),
+	votes: PropTypes.shape({
+		upVotes: PropTypes.shape({
+			count: PropTypes.number,
+			users: PropTypes.array,
+		}),
+		downVotes: PropTypes.shape({
+			count: PropTypes.number,
+			users: PropTypes.array,
+		}),
+	}),
 };
 
 // Posts.propTypes = {
@@ -151,5 +134,5 @@ const PostPropTypes = {
 // };
 
 RenderPosts.propTypes = {
-    post: PropTypes.shape(PostPropTypes),
+	post: PropTypes.shape(PostPropTypes),
 };

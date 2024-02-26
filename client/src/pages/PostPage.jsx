@@ -142,10 +142,9 @@ export function PostPage() {
 
 	return (
 		<div>
-			<div className="postpage-wrapper">
-				<div className="postpage-score">
+			<div>
+				<div>
 					<button
-						className={checkUpVotes(post, userId)}
 						onClick={() => {
 							// !checkUpVotes(post, userId) &&
 							voteHandler(post, "up");
@@ -155,7 +154,6 @@ export function PostPage() {
 					</button>
 					<span>{postVotes}</span>
 					<button
-						className={checkDownVotes(post, userId)}
 						onClick={() =>
 							// !checkDownVotes(post, userId) &&
 							voteHandler(post, "down")
@@ -164,15 +162,15 @@ export function PostPage() {
 						️&#11015;
 					</button>
 				</div>
-				<div className="postpage-title-wrapper">
-					<p className="post-title">{post.title}</p>
-					<p className="post-">
+				<div >
+					<p >{post.title}</p>
+					<p >
 						{post.author} {moment(parseInt(post.createdAt)).fromNow()}
 					</p>
 				</div>
 			</div>
 			<pre>
-				<p className="post-content">{post.content}</p>
+				<p >{post.content}</p>
 			</pre>
 
 			<AddComment post={post} setCommentsHandler={setCommentsHandler} />
