@@ -14,6 +14,8 @@ import // checkDownVotes,
 // checkUpVotes,
 // postVoteHandler,
 "../util/VotingMethods";
+import { UpVoteLogo } from "../components/UpVote";
+import { DownVoteLogo } from "../components/DownVote";
 // import { set } from "mongoose";
 
 export function PostPage() {
@@ -150,7 +152,7 @@ export function PostPage() {
 							voteHandler(post, "up");
 						}}
 					>
-						&#11014;️
+						<UpVoteLogo />
 					</button>
 					<span className="text-center">{postVotes}</span>
 					<button
@@ -160,7 +162,7 @@ export function PostPage() {
 							voteHandler(post, "down")
 						}
 					>
-						️&#11015;
+						<DownVoteLogo />
 					</button>
 				</div>
 				<div className="ml-4">

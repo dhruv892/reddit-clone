@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { refreshPosts } from "../store/atoms";
 import { toast } from "react-toastify";
+import { UpVoteLogo } from "./UpVote";
+import { DownVoteLogo } from "./DownVote";
 
 // export default function Posts() {
 //     const postsLoadable = useRecoilValueLoadable(postAtom);
@@ -51,11 +53,15 @@ export function RenderPosts({ post }) {
 			<div className="bg-zinc-900 mb-4 p-4 rounded-lg flex gap-1">
 				<div>
 					<div className="flex flex-col mr-2 flex-initial align-center">
-						<button onClick={() => setScore(score + 1)}>&#11014;️</button>
+						<button onClick={() => setScore(score + 1)}>
+							<UpVoteLogo />
+						</button>
 						<span className="text-center">
 							{post.votes.upVotes.count - post.votes.downVotes.count}
 						</span>
-						<button onClick={() => setScore(score - 1)}>️&#11015;</button>
+						<button onClick={() => setScore(score - 1)}>
+							<DownVoteLogo />
+						</button>
 					</div>
 				</div>
 

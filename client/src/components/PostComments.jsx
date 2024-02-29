@@ -5,6 +5,8 @@ import axios from "axios";
 import { refreshPosts } from "../store/atoms";
 import { useSetRecoilState } from "recoil";
 import { ReplyComponent } from "./ReplyComponent";
+import { UpVoteLogo } from "./UpVote";
+import { DownVoteLogo } from "./DownVote";
 
 export function PostComments({ comment, userId }) {
 	axios.defaults.withCredentials = true;
@@ -94,25 +96,27 @@ export function PostComments({ comment, userId }) {
 
 	return (
 		<div className="flex gap-5 m-2 p-2">
-			<div className="flex flex-col flex-initial align-center gap-1">
+			<div className="flex flex-col flex-initial align-center">
 				<button
+					className="p-1"
 					onClick={() => {
 						// !checkUpVotes(comment, userId)
 						voteHandler("up");
 						// : null;
 					}}
 				>
-					&#11014;️
+					<UpVoteLogo />
 				</button>
 				<span className="text-center">{commentVotes}</span>
 				<button
+					className="p-1"
 					onClick={() => {
 						// !checkDownVotes(comment, userId)
 						voteHandler("down");
 						// : null;
 					}}
 				>
-					️&#11015;
+					<DownVoteLogo />
 				</button>
 			</div>
 			<div className="flex-grow">

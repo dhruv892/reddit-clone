@@ -2,6 +2,8 @@ import moment from "moment";
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
+import { UpVoteLogo } from "./UpVote";
+import { DownVoteLogo } from "./DownVote";
 
 export function ReplyComponent({ reply, userId }) {
 	const [replyVotes, setReplyVotes] = useState(0);
@@ -63,25 +65,27 @@ export function ReplyComponent({ reply, userId }) {
 
 	return (
 		<div key={reply._id} className="flex gap-5 mt-4 pl-4">
-			<div className="flex flex-col flex-initial align-center gap-1">
+			<div className="flex flex-col flex-initial align-center">
 				<button
+					className="p-1"
 					onClick={() => {
 						// !checkUpVotes(reply, userId)
 						rVoteHandler("up");
 						// : null;
 					}}
 				>
-					&#11014;️
+					<UpVoteLogo />
 				</button>
 				<span className="text-center">{replyVotes}</span>
 				<button
+					className="p-1"
 					onClick={() => {
 						// !checkDownVotes(reply, userId)
 						rVoteHandler("down");
 						// : null;
 					}}
 				>
-					️&#11015;
+					<DownVoteLogo />
 				</button>
 			</div>
 			<div>
