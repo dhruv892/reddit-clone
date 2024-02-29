@@ -48,44 +48,54 @@ export function RenderPosts({ post }) {
 
 	return (
 		<>
-			<div>
+			<div className="bg-zinc-900 mb-4 p-4 rounded-lg flex gap-1">
 				<div>
-					<button onClick={() => setScore(score + 1)}>&#11014;️</button>
-					<span>{post.votes.upVotes.count - post.votes.downVotes.count}</span>
-					<button onClick={() => setScore(score - 1)}>️&#11015;</button>
+					<div className="flex flex-col mr-2 flex-initial align-center">
+						<button onClick={() => setScore(score + 1)}>&#11014;️</button>
+						<span className="text-center">
+							{post.votes.upVotes.count - post.votes.downVotes.count}
+						</span>
+						<button onClick={() => setScore(score - 1)}>️&#11015;</button>
+					</div>
 				</div>
 
 				<div>
-					{post.thumbnail !== "self" && <img src={post.thumbnail} alt="" />}
-				</div>
-
-				<div>
 					<div>
-						<a onClick={() => navigate(`/post/${post._id}`)}>
-							<span>{post.title}</span>
-						</a>
+						{post.thumbnail !== "self" && <img src={post.thumbnail} alt="" />}
 					</div>
-
 					<div>
-						<span>{post.content}</span>
+						<div>
+							<a
+								className="text-xl font-bold cursor-pointer hover:underline"
+								onClick={() => navigate(`/post/${post._id}`)}
+							>
+								<span>{post.title}</span>
+							</a>
+						</div>
 					</div>
-
 					<div>
-						Submitted {moment(parseInt(post.createdAt)).fromNow()} by{" "}
+						<span className="text-justify line-clamp-2 mt-2">
+							{post.content}
+						</span>
+					</div>
+					<div className="mt-2 text-gray-300 text-sm">
+						Posted {moment(parseInt(post.createdAt)).fromNow()} by{" "}
 						{post.author}
 					</div>
-
-					<div>
+					<div className="mt-2 text-gray-300 flex space-x-2 text-sm ">
 						<a href={post.url}>
 							{post.comments ? `${post.comments.length} comments` : "comment"}
 						</a>
-						<a onClick={shareHandler}>
+						<a
+							className="cursor-pointer hover:underline"
+							onClick={shareHandler}
+						>
 							share
 						</a>
-						<a>save</a>
-						<a>hide</a>
-						<a>report</a>
-						<a>delete</a>
+						<a className="cursor-pointer hover:underline">save</a>
+						<a className="cursor-pointer hover:underline">hide</a>
+						<a className="cursor-pointer hover:underline">report</a>
+						<a className="cursor-pointer hover:underline">delete</a>
 					</div>
 				</div>
 			</div>
