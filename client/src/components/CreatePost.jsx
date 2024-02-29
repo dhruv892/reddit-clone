@@ -7,6 +7,7 @@ import PropTypes from "prop-types";
 export function CreatePost({ setPostsHandler }) {
 	const [title, setTitle] = useState("");
 	const [content, setContent] = useState("");
+	const [expand, setExpand] = useState(false);
 	// const setRefreshPosts = useSetRecoilState(refreshPosts);
 
 	const onClickSubmitHandler = async () => {
@@ -30,40 +31,47 @@ export function CreatePost({ setPostsHandler }) {
 			// setRefreshPosts((prev) => !prev);
 			setTitle("");
 			setContent("");
+			setExpand(false);
 		} catch (error) {
 			console.log("Error making POST request", error);
 		}
 	};
 	return (
 		<>
-			<div className="flex flex-col min-w-[50%] gap-2">
-				<input
-					className="bg-zinc-800 placeholder:text-zinc-500 p-2 rounded-lg"
-					type="text"
-					placeholder="Title"
-					value={title}
-					onChange={(e) => {
-						setTitle(e.target.value);
-					}}
-				/>
-
-				<textarea
-					className="bg-zinc-800 placeholder:text-zinc-500 p-2 rounded-lg"
-					type="text"
-					placeholder="content"
-					value={content}
-					onChange={(e) => {
-						setContent(e.target.value);
-					}}
-				/>
-
-				<button
-					className="p-3 flex-initial rounded-lg bg-zinc-700"
-					onClick={onClickSubmitHandler}
-				>
-					Submit
-				</button>
-			</div>
+			<button onClick={() => setExpand((e) => !e)} className="bg-zinc-700 mt-2">
+				Toggle create post
+			</button>
+			{expand && (
+				<>
+					<p className="text-xl bold my-5">Add Post</p>
+					<div className="flex flex-col min-w-[50%] gap-2">
+						<input
+							className="bg-zinc-800 placeholder:text-zinc-500 p-2 rounded-lg"
+							type="text"
+							placeholder="Title"
+							value={title}
+							onChange={(e) => {
+								setTitle(e.target.value);
+							}}
+						/>
+						<textarea
+							className="bg-zinc-800 placeholder:text-zinc-500 p-2 rounded-lg"
+							type="text"
+							placeholder="content"
+							value={content}
+							onChange={(e) => {
+								setContent(e.target.value);
+							}}
+						/>
+						<button
+							className="p-3 flex-initial rounded-lg bg-zinc-700"
+							onClick={onClickSubmitHandler}
+						>
+							Submit
+						</button>
+					</div>
+				</>
+			)}
 		</>
 	);
 }

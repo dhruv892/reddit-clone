@@ -70,13 +70,18 @@ export function Home() {
 		case "hasValue":
 			return (
 				<div className="max-w-4xl mx-auto text-wrap text-gray-200">
-					<div className="bg-zinc-900 p-10 self-start my-5 rounded flex flex-col items-center justify-center">
+					<div className="bg-zinc-900 p-5 self-start my-5 rounded flex flex-col items-center justify-center">
 						{isLoggedIn ? (
-							<CreatePost setPostsHandler={setPostsHandler} />
+							<>
+								<button className="bg-zinc-800" onClick={logoutHandler}>
+									Log out
+								</button>
+								<CreatePost setPostsHandler={setPostsHandler} />
+							</>
 						) : (
 							<SignInComponent />
 						)}
-						{!isLoggedIn ? (
+						{!isLoggedIn && (
 							<div className="mt-5 flex flex-col">
 								<p>Not registered? Sign up below!</p>
 								<button
@@ -88,8 +93,6 @@ export function Home() {
 									Sign Up
 								</button>
 							</div>
-						) : (
-							<button onClick={logoutHandler}>Log out</button>
 						)}
 					</div>
 					{posts.map((post) => (
