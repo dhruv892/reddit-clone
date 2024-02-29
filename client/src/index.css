@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
-@tailwind utilities
+@tailwind utilities;
+
+@layer base {
+	button {
+		@apply text-white py-2 px-4 rounded;
+	}
+
+	input[type="submit"] {
+		@apply text-white py-2 px-4 rounded bg-zinc-800;
+	}
+
+	input {
+		@apply bg-zinc-800 placeholder:text-zinc-500 flex-grow p-2 rounded-lg;
+	}
+}

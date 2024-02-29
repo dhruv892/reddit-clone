@@ -80,7 +80,7 @@ export function RenderPosts({ post }) {
 					</div>
 					<div className="mt-2 text-gray-300 text-sm">
 						Posted {moment(parseInt(post.createdAt)).fromNow()} by{" "}
-						{post.author}
+						<span className="font-semibold text-gray-100">{post.author}</span>
 					</div>
 					<div className="mt-2 text-gray-300 flex space-x-2 text-sm ">
 						<a href={post.url}>

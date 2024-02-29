@@ -140,10 +140,11 @@ export function PostPage() {
 	};
 
 	return (
-		<div className="mt-5 p-5 max-w-3xl mx-auto text-wrap text-gray-300 bg-zinc-900">
+		<div className="mt-5 p-5 max-w-4xl mx-auto text-wrap text-gray-300 bg-zinc-900 pr-6">
 			<div className="flex">
 				<div className="flex flex-col mr-2 flex-initial align-center gap-1">
 					<button
+						className="p-0"
 						onClick={() => {
 							// !checkUpVotes(post, userId) &&
 							voteHandler(post, "up");
@@ -153,6 +154,7 @@ export function PostPage() {
 					</button>
 					<span className="text-center">{postVotes}</span>
 					<button
+						className="p-0"
 						onClick={() =>
 							// !checkDownVotes(post, userId) &&
 							voteHandler(post, "down")
@@ -164,14 +166,17 @@ export function PostPage() {
 				<div className="ml-4">
 					<div>
 						<p className="text-gray-400 text-sm">
-							posted by {post.author}{" "}
+							Posted by{" "}
+							<span className="font-semibold text-gray-100">{post.author}</span>{" "}
 							{moment(parseInt(post.createdAt)).fromNow()}
 						</p>
 						<p className="text-gray-200 text-3xl">{post.title}</p>
 					</div>
 
 					<div>
-						<p className="text-justify mt-2">{post.content}</p>
+						<p className="text-justify mt-2 whitespace-pre-line">
+							{post.content}
+						</p>
 					</div>
 					<br />
 					<div className="flex text-zinc-500">
@@ -188,15 +193,17 @@ export function PostPage() {
 				<AddComment post={post} setCommentsHandler={setCommentsHandler} />
 				<p className="text-2xl pl-4">Comments</p>
 				<div className="divide-y divide-slate-50 py-2">
-					{comments.length > 0
-						? comments.map((comment) => (
-								<PostComments
-									key={comment._id}
-									comment={comment}
-									userId={userId}
-								/>
-						  ))
-						: null}
+					{comments.length > 0 ? (
+						comments.map((comment) => (
+							<PostComments
+								key={comment._id}
+								comment={comment}
+								userId={userId}
+							/>
+						))
+					) : (
+						<p className="ml-4 mt-2 font-bold">No Comments yet</p>
+					)}
 				</div>
 			</div>
 			{/* <PostComments post={post} userId={userId} /> */}

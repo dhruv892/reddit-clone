@@ -36,7 +36,7 @@ export function CreatePost({ setPostsHandler }) {
 	};
 	return (
 		<>
-			<div>
+			<div className="flex flex-col min-w-[50%] gap-2">
 				<input
 					className="bg-zinc-800 placeholder:text-zinc-500 p-2 rounded-lg"
 					type="text"

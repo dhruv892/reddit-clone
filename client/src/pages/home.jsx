@@ -8,7 +8,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useRecoilValueLoadable } from "recoil";
 import { postAtom } from "../store/atoms";
-// import { use } from "../../../server/routes/post";
+import { SignInComponent } from "../components/SignInComponent";
 
 export function Home() {
 	const refreshPostsAtom = useRecoilRefresher_UNSTABLE(fetchPost);
@@ -69,27 +69,32 @@ export function Home() {
 	switch (postsLoadable.state) {
 		case "hasValue":
 			return (
-				<div className="flex mx-auto max-w-4xl gap-10">
-					<div className="max-w-3xl text-wrap text-gray-200">
-						{!isLoggedIn ? (
-							<button
-								onClick={() => {
-									navigate("/signUpIn");
-								}}
-							>
-								SignUpIn
-							</button>
+				<div className="max-w-4xl mx-auto text-wrap text-gray-200">
+					<div className="bg-zinc-900 p-10 self-start my-5 rounded flex flex-col items-center justify-center">
+						{isLoggedIn ? (
+							<CreatePost setPostsHandler={setPostsHandler} />
 						) : (
-							<button onClick={() => logoutHandler()}>Log out</button>
+							<SignInComponent />
 						)}
-						{isLoggedIn ? <CreatePost setPostsHandler={setPostsHandler} /> : ""}
-						{posts.map((post) => (
-							<RenderPosts key={post._id} post={post} />
-						))}
+						{!isLoggedIn ? (
+							<div className="mt-5 flex flex-col">
+								<p>Not registered? Sign up below!</p>
+								<button
+									className="bg-zinc-800 mt-2"
+									onClick={() => {
+										navigate("/signUpIn");
+									}}
+								>
+									Sign Up
+								</button>
+							</div>
+						) : (
+							<button onClick={logoutHandler}>Log out</button>
+						)}
 					</div>
-
-					<div className="bg-zinc-900 p-10">
-					</div>
+					{posts.map((post) => (
+						<RenderPosts key={post._id} post={post} />
+					))}
 				</div>
 			);
 
