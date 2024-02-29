@@ -38,54 +38,48 @@ export function SignUpIn() {
 	};
 
 	return (
-		<>
-			<div>
-				<form onSubmit={signUpHandler}>
-					<h1>Sign Up</h1>
-					<div>
-						<label>First Name</label>
-						<input
-							type="text"
-							name="firstName"
-							value={firstName}
-							onChange={(e) => setFirstName(e.target.value)}
-							placeholder="First Name"
-						/>
-					</div>
-					<div>
-						<label>Last Name</label>
-						<input
-							type="text"
-							name="lastName"
-							value={lastName}
-							onChange={(e) => setLastName(e.target.value)}
-							placeholder="Last Name"
-						/>
-					</div>
-					<div>
-						<label>Username</label>
-						<input
-							type="text"
-							name="usernameUp"
-							value={usernameUp}
-							onChange={(e) => setUsernameUp(e.target.value)}
-							placeholder="Username"
-						/>
-					</div>
-					<div>
-						<label>Password</label>
-						<input
-							type="password"
-							name="passwordUp"
-							value={passwordUp}
-							onChange={(e) => setPasswordUp(e.target.value)}
-							placeholder="Password"
-						/>
-					</div>
-					<input type="submit" value="Sign up" />
-				</form>
-				{errUp ? <p>Username already exists or something went wrong</p> : null}
-			</div>
-		</>
+		<div className="text-gray-200 max-w-xl mx-auto mt-[10%] bg-zinc-900 p-5">
+			<form className="flex flex-col gap-2 " onSubmit={signUpHandler}>
+				<h1 className="text-2xl font-bold mb-3">Sign Up</h1>
+				<label className="font-semibold">First Name</label>
+				<input
+					type="text"
+					className="mb-3"
+					name="firstName"
+					value={firstName}
+					onChange={(e) => setFirstName(e.target.value)}
+					placeholder="First Name"
+				/>
+				<label className="font-semibold">Last Name</label>
+				<input
+					type="text"
+					className="mb-3"
+					name="lastName"
+					value={lastName}
+					onChange={(e) => setLastName(e.target.value)}
+					placeholder="Last Name"
+				/>
+				<label className="font-semibold">Username</label>
+				<input
+					className="mb-3"
+					type="text"
+					name="usernameUp"
+					value={usernameUp}
+					onChange={(e) => setUsernameUp(e.target.value)}
+					placeholder="Username"
+				/>
+				<label className="font-semibold">Password</label>
+				<input
+					className="mb-3"
+					type="password"
+					name="passwordUp"
+					value={passwordUp}
+					onChange={(e) => setPasswordUp(e.target.value)}
+					placeholder="Password"
+				/>
+				<input type="submit" value="Sign up" />
+			</form>
+			{errUp ? <p>Username already exists or something went wrong</p> : null}
+		</div>
 	);
 }

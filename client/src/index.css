@@ -12,6 +12,6 @@
 	}
 
 	input {
-		@apply bg-zinc-800 placeholder:text-zinc-500 flex-grow p-2 rounded-lg;
+		@apply bg-zinc-800 placeholder:text-zinc-500 flex-grow p-2 rounded-lg focus:outline-zinc-500;
 	}
 }

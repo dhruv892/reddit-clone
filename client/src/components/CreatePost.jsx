@@ -44,7 +44,7 @@ export function CreatePost({ setPostsHandler }) {
 			{expand && (
 				<>
 					<p className="text-xl bold my-5">Add Post</p>
-					<div className="flex flex-col min-w-[50%] gap-2">
+					<div className="flex flex-col min-w-[70%] gap-2">
 						<input
 							className="bg-zinc-800 placeholder:text-zinc-500 p-2 rounded-lg"
 							type="text"
@@ -55,7 +55,7 @@ export function CreatePost({ setPostsHandler }) {
 							}}
 						/>
 						<textarea
-							className="bg-zinc-800 placeholder:text-zinc-500 p-2 rounded-lg"
+							className="bg-zinc-800 placeholder:text-zinc-500 p-2 rounded-lg min-h-[50%]"
 							type="text"
 							placeholder="content"
 							value={content}

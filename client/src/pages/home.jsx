@@ -83,7 +83,7 @@ export function Home() {
 						)}
 						{!isLoggedIn && (
 							<div className="mt-5 flex flex-col">
-								<p>Not registered? Sign up below!</p>
+								<p>Dont have an account? Sign up below!</p>
 								<button
 									className="bg-zinc-800 mt-2"
 									onClick={() => {
