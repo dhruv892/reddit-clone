@@ -58,7 +58,7 @@ export default function AddComment({ post, setCommentsHandler }) {
 	return (
 		<div className="bg-zinc-900 rounded-lg p-4 mt-5">
 			<form className="flex gap-5" onSubmit={submitHandler}>
-				<input
+				<textarea
 					className="bg-zinc-800 placeholder:text-zinc-500 flex-grow p-2 rounded-lg"
 					type="text"
 					value={content}
@@ -66,7 +66,7 @@ export default function AddComment({ post, setCommentsHandler }) {
 					placeholder="Comment"
 				/>
 				<button
-					className="py-2 px-4 flex-initial rounded-lg bg-zinc-700"
+					className="py-2 px-4 flex-initial self-start rounded-lg bg-zinc-700"
 					onClick={submitHandler}
 				>
 					Add comment

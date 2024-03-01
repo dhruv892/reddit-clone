@@ -181,11 +181,17 @@ export function PostPage() {
 						</p>
 					</div>
 					<br />
-					<div className="flex text-zinc-500">
+					<div className="flex gap-2 text-zinc-500">
 						<div>{comments.length} comments</div>
-						<div className="ml-2 hover:bg-zinc-800">share</div>
-						<div className="ml-2 hover:bg-zinc-800">save</div>
-						<div className="ml-2 hover:bg-zinc-800">...</div>
+						<div className="hover:bg-zinc-800 hover:text-zinc-400 hover:cursor-pointer">
+							share
+						</div>
+						<div className="hover:bg-zinc-800 hover:text-zinc-400 hover:cursor-pointer">
+							save
+						</div>
+						<div className="hover:bg-zinc-800 hover:text-zinc-400 hover:cursor-pointer">
+							...
+						</div>
 					</div>
 					<br />
 				</div>

@@ -134,7 +134,7 @@ export function PostComments({ comment, userId }) {
 					</span>
 				</p>
 
-				<p className="mb-1">{comment.content}</p>
+				<p className="mb-1 text-justify whitespace-pre-line">{comment.content}</p>
 				{!doReply ? (
 					<span
 						style={{
