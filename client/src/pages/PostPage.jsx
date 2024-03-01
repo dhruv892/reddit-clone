@@ -45,8 +45,6 @@ export function PostPage() {
 			if (response.status === 200) {
 				setIsLoggedIn(true);
 				setUserId(response.data.userId);
-				setIsUpvoted(checkUpVotes(post, userId));
-				setisDownvoted(checkDownVotes(post, userId));
 			}
 		} catch (error) {
 			console.log("User is not authenticated");
@@ -70,9 +68,12 @@ export function PostPage() {
 				setUpVoteUsers(post.votes.upVotes.users);
 				setDownVoteUsers(post.votes.downVotes.users);
 				setComments(post.comments);
+				setIsUpvoted(checkUpVotes(post, userId));
+				setisDownvoted(checkDownVotes(post, userId));
+				console.log(isUpvoted, isDownVoted);
 			}
 		}
-	}, [postLoadable, params.id]);
+	}, [postLoadable, params.id, userId, isUpvoted, isDownVoted]);
 
 	let post;
 

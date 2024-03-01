@@ -1,11 +1,11 @@
 import axios from "axios";
 
 export const checkUpVotes = (item, userId) => {
-	if (item.votes.upVotes.users.includes(userId)) return true;
+	return item.votes.upVotes.users.includes(userId);
 };
 
 export const checkDownVotes = (item, userId) => {
-	if (item.votes.downVotes.users.includes(userId)) return true;
+	return item.votes.downVotes.users.includes(userId);
 };
 
 export const postVoteHandler = async (post, voteType, userId) => {
