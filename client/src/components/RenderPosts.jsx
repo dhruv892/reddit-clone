@@ -1,4 +1,4 @@
-import { useState } from "react";
+// import { useEffect, useState } from "react";
 import moment from "moment";
 import PropTypes from "prop-types";
 // import axios from "axios";
@@ -6,42 +6,10 @@ import { useNavigate } from "react-router-dom";
 // import { useSetRecoilState } from "recoil";
 // import { refreshPosts } from "../store/atoms";
 import { toast } from "react-toastify";
-import { UpVoteLogo } from "./UpVote";
-import { DownVoteLogo } from "./DownVote";
+import { VotingComponent } from "./VotingComponent";
 
-// export default function Posts() {
-//     const postsLoadable = useRecoilValueLoadable(postAtom);
-
-//     switch (postsLoadable.state) {
-//         case "hasValue":
-
-//             return postsLoadable.contents.map((post) => (
-//                 <RenderPost key={post._id} post={post} />
-//             ));
-//         case "loading":
-//             return <div>Loading...</div>;
-//         case "hasError":
-//             return <div>Error: {postsLoadable.contents.message}</div>;
-//         default:
-//             return null;
-//     }
-// }
-
-export function RenderPosts({ post }) {
-    const [score, setScore] = useState(0);
+export function RenderPosts({ post, userId }) {
     const navigate = useNavigate();
-    // const setRefreshPosts = useSetRecoilState(refreshPosts);
-
-    // const deleteHandler = async () => {
-    // 	try {
-    // 		await axios.delete(
-    // 			`http://localhost:3000/api/post/deletePost/${post._id}`
-    // 		);
-    // 		setRefreshPosts((prev) => !prev);
-    // 	} catch (error) {
-    // 		console.log(error);
-    // 	}
-    // };
 
     const shareHandler = () => {
         navigator.clipboard.writeText(`http://localhost:5173/post/${post._id}`);
@@ -53,16 +21,12 @@ export function RenderPosts({ post }) {
             <div className="bg-zinc-900 mb-4 p-4 rounded-lg flex gap-1">
                 <div>
                     <div className="flex flex-col mr-2 flex-initial align-center">
-                        <button onClick={() => setScore(score + 1)}>
-                            <UpVoteLogo />
-                        </button>
-                        <span className="text-center">
-                            {post.votes.upVotes.count -
-                                post.votes.downVotes.count}
-                        </span>
-                        <button onClick={() => setScore(score - 1)}>
-                            <DownVoteLogo />
-                        </button>
+                        <VotingComponent
+                            votes={post.votes}
+                            userId={userId}
+                            type={"post"}
+                            itemId={post._id}
+                        />
                     </div>
                 </div>
 
@@ -152,10 +116,7 @@ const PostPropTypes = {
     }),
 };
 
-// Posts.propTypes = {
-//     userId: PropTypes.string,
-// };
-
 RenderPosts.propTypes = {
     post: PropTypes.shape(PostPropTypes),
+    userId: PropTypes.string,
 };

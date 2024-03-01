@@ -16,6 +16,7 @@ export function Home() {
     const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [posts, setPosts] = useState([]);
+    const [userId, setUserId] = useState("");
     // const [posts, setPosts] = useState([]);
     // const [userId, setUserId] = useState("");
     const isLoggedInHandler = () => {
@@ -31,7 +32,7 @@ export function Home() {
             );
             if (response.status === 200) {
                 setIsLoggedIn(true);
-                // setUserId(response.data.userId);
+                setUserId(response.data.userId);
             }
         } catch (error) {
             console.log("User is not authenticated");
@@ -103,7 +104,11 @@ export function Home() {
                         )}
                     </div>
                     {posts.map((post) => (
-                        <RenderPosts key={post._id} post={post} />
+                        <RenderPosts
+                            key={post._id}
+                            post={post}
+                            userId={userId}
+                        />
                     ))}
                 </div>
             );
