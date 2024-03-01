@@ -7,6 +7,7 @@ import { useSetRecoilState } from "recoil";
 import { ReplyComponent } from "./ReplyComponent";
 import { UpVoteLogo } from "./UpVote";
 import { DownVoteLogo } from "./DownVote";
+import { checkDownVotes, checkUpVotes } from "../util/VotingMethods";
 
 export function PostComments({ comment, userId }) {
 	axios.defaults.withCredentials = true;
@@ -18,6 +19,8 @@ export function PostComments({ comment, userId }) {
 	const [doReply, setDoReply] = useState(false);
 	const [replyContent, setReplyContent] = useState("");
 	const [replies, setReplies] = useState([]);
+	const [isUpvoted, setIsUpvoted] = useState(false);
+	const [isDownVoted, setisDownvoted] = useState(false);
 
 	useEffect(() => {
 		if (!comment) return;
@@ -28,9 +31,9 @@ export function PostComments({ comment, userId }) {
 		setUpVoteUsers(comment.votes.upVotes.users);
 		setDownVoteUsers(comment.votes.downVotes.users);
 		setReplies(comment.replies);
-
-		// setUpVoteUsers();
-	}, [comment]);
+		setIsUpvoted(checkUpVotes(comment, userId));
+		setisDownvoted(checkDownVotes(comment, userId));
+	}, [comment, userId]);
 
 	const voteHandler = async (voteType) => {
 		if (!userId) return;
@@ -51,6 +54,8 @@ export function PostComments({ comment, userId }) {
 						: setCommentVotes((prev) => prev + 1);
 					setUpVoteUsers((prev) => [...prev, userId]);
 					setDownVoteUsers((prev) => prev.filter((id) => id !== userId));
+					setIsUpvoted(true);
+					setisDownvoted(false);
 					break;
 				case "down":
 					console.log(userId);
@@ -65,6 +70,8 @@ export function PostComments({ comment, userId }) {
 					setUpVoteUsers((prev) => {
 						return prev.filter((id) => id != userId);
 					});
+					setIsUpvoted(false);
+					setisDownvoted(true);
 					break;
 			}
 		} catch (error) {
@@ -105,7 +112,7 @@ export function PostComments({ comment, userId }) {
 						// : null;
 					}}
 				>
-					<UpVoteLogo />
+					<UpVoteLogo voted={isUpvoted} />
 				</button>
 				<span className="text-center">{commentVotes}</span>
 				<button
@@ -116,7 +123,7 @@ export function PostComments({ comment, userId }) {
 						// : null;
 					}}
 				>
-					<DownVoteLogo />
+					<DownVoteLogo voted={isDownVoted} />
 				</button>
 			</div>
 			<div className="flex-grow">

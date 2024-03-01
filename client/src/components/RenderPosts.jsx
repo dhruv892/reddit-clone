@@ -66,54 +66,48 @@ export function RenderPosts({ post }) {
                     </div>
                 </div>
 
-                <div>
-                    <div>
-                        {post.thumbnail !== "self" && (
-                            <img src={post.thumbnail} alt="" />
-                        )}
-                    </div>
-                    <div>
-                        <div>
-                            <a
-                                className="text-xl font-bold cursor-pointer hover:underline"
-                                onClick={() => navigate(`/post/${post._id}`)}
-                            >
-                                <span>{post.title}</span>
-                            </a>
-                        </div>
-                    </div>
-                    <div>
-                        <span className="text-justify line-clamp-2 mt-2">
-                            {post.content}
-                        </span>
-                    </div>
-                    <div className="mt-2 text-gray-300 text-sm">
-                        Posted {moment(parseInt(post.createdAt)).fromNow()} by{" "}
-                        <span className="font-semibold text-gray-100">
-                            {post.author}
-                        </span>
-                    </div>
-                    <div className="mt-2 text-gray-300 flex space-x-2 text-sm ">
-                        <a href={post.url}>
-                            {post.comments
-                                ? `${post.comments.length} comments`
-                                : "comment"}
-                        </a>
-                        <a
-                            className="cursor-pointer hover:underline"
-                            onClick={shareHandler}
-                        >
-                            share
-                        </a>
-                        <a className="cursor-pointer hover:underline">save</a>
-                        <a className="cursor-pointer hover:underline">hide</a>
-                        <a className="cursor-pointer hover:underline">report</a>
-                        <a className="cursor-pointer hover:underline">delete</a>
-                    </div>
-                </div>
-            </div>
-        </>
-    );
+				<div>
+					<div>
+						{post.thumbnail !== "self" && <img src={post.thumbnail} alt="" />}
+					</div>
+					<div>
+						<div>
+							<a
+								className="text-xl font-bold cursor-pointer hover:underline"
+								onClick={() => navigate(`/post/${post._id}`)}
+							>
+								<span>{post.title}</span>
+							</a>
+						</div>
+					</div>
+					<div>
+						<span className="text-justify line-clamp-2 mt-2">
+							{post.content}
+						</span>
+					</div>
+					<div className="mt-2 text-gray-300 text-sm">
+						Posted {moment(parseInt(post.createdAt)).fromNow()} by{" "}
+						<span className="font-medium text-gray-100">{post.author}</span>
+					</div>
+					<div className="mt-2 text-gray-300 flex space-x-2 text-sm ">
+						<a href={post.url}>
+							{post.comments ? `${post.comments.length} comments` : "comment"}
+						</a>
+						<a
+							className="cursor-pointer hover:underline"
+							onClick={shareHandler}
+						>
+							share
+						</a>
+						<a className="cursor-pointer hover:underline">save</a>
+						<a className="cursor-pointer hover:underline">hide</a>
+						<a className="cursor-pointer hover:underline">report</a>
+						<a className="cursor-pointer hover:underline">delete</a>
+					</div>
+				</div>
+			</div>
+		</>
+	);
 }
 
 const CommentPropTypes = {

@@ -16,6 +16,7 @@ import // checkDownVotes,
 "../util/VotingMethods";
 import { UpVoteLogo } from "../components/UpVote";
 import { DownVoteLogo } from "../components/DownVote";
+import { checkDownVotes, checkUpVotes } from "../util/VotingMethods";
 // import { set } from "mongoose";
 
 export function PostPage() {
@@ -30,6 +31,8 @@ export function PostPage() {
 	const [upVoteUsers, setUpVoteUsers] = useState([]);
 	const [downVoteUsers, setDownVoteUsers] = useState([]);
 	const [comments, setComments] = useState([]);
+	const [isUpvoted, setIsUpvoted] = useState(false);
+	const [isDownVoted, setisDownvoted] = useState(false);
 
 	const fetchSessionData = async () => {
 		try {
@@ -42,6 +45,8 @@ export function PostPage() {
 			if (response.status === 200) {
 				setIsLoggedIn(true);
 				setUserId(response.data.userId);
+				setIsUpvoted(checkUpVotes(post, userId));
+				setisDownvoted(checkDownVotes(post, userId));
 			}
 		} catch (error) {
 			console.log("User is not authenticated");
@@ -108,10 +113,11 @@ export function PostPage() {
 						: setPostVotes((prev) => prev + 1);
 					setUpVoteUsers((prev) => [...prev, userId]);
 					setDownVoteUsers((prev) => prev.filter((id) => id !== userId));
+					setIsUpvoted(true);
+					setisDownvoted(false);
 					break;
 				case "down":
 					console.log(userId);
-					// console.log(downVoteUsers);
 					upVoteUsers.includes(userId)
 						? setPostVotes((prev) => prev - 2)
 						: setPostVotes((prev) => prev - 1);
@@ -122,8 +128,8 @@ export function PostPage() {
 					setUpVoteUsers((prev) => {
 						return prev.filter((id) => id != userId);
 					});
-					// console.log(downVoteUsers);
-					// post.votes.downVotes.users.push(userId);
+					setIsUpvoted(false);
+					setisDownvoted(true);
 					break;
 			}
 		} catch (error) {
@@ -148,28 +154,21 @@ export function PostPage() {
 					<button
 						className="p-0"
 						onClick={() => {
-							// !checkUpVotes(post, userId) &&
 							voteHandler(post, "up");
 						}}
 					>
-						<UpVoteLogo />
+						<UpVoteLogo voted={isUpvoted} />
 					</button>
 					<span className="text-center">{postVotes}</span>
-					<button
-						className="p-0"
-						onClick={() =>
-							// !checkDownVotes(post, userId) &&
-							voteHandler(post, "down")
-						}
-					>
-						<DownVoteLogo />
+					<button className="p-0" onClick={() => voteHandler(post, "down")}>
+						<DownVoteLogo voted={isDownVoted} />
 					</button>
 				</div>
 				<div className="ml-4">
 					<div>
 						<p className="text-gray-400 text-sm">
 							Posted by{" "}
-							<span className="font-semibold text-gray-100">{post.author}</span>{" "}
+							<span className="font-medium text-gray-100">{post.author}</span>{" "}
 							{moment(parseInt(post.createdAt)).fromNow()}
 						</p>
 						<p className="text-gray-200 text-3xl">{post.title}</p>

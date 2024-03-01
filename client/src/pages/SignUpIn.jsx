@@ -41,7 +41,7 @@ export function SignUpIn() {
 		<div className="text-gray-200 max-w-xl mx-auto mt-[10%] bg-zinc-900 p-5">
 			<form className="flex flex-col gap-2 " onSubmit={signUpHandler}>
 				<h1 className="text-2xl font-bold mb-3">Sign Up</h1>
-				<label className="font-semibold">First Name</label>
+				<label className="font-medium">First Name</label>
 				<input
 					type="text"
 					className="mb-3"
@@ -50,7 +50,7 @@ export function SignUpIn() {
 					onChange={(e) => setFirstName(e.target.value)}
 					placeholder="First Name"
 				/>
-				<label className="font-semibold">Last Name</label>
+				<label className="font-medium">Last Name</label>
 				<input
 					type="text"
 					className="mb-3"
@@ -59,7 +59,7 @@ export function SignUpIn() {
 					onChange={(e) => setLastName(e.target.value)}
 					placeholder="Last Name"
 				/>
-				<label className="font-semibold">Username</label>
+				<label className="font-medium">Username</label>
 				<input
 					className="mb-3"
 					type="text"
@@ -68,7 +68,7 @@ export function SignUpIn() {
 					onChange={(e) => setUsernameUp(e.target.value)}
 					placeholder="Username"
 				/>
-				<label className="font-semibold">Password</label>
+				<label className="font-medium">Password</label>
 				<input
 					className="mb-3"
 					type="password"

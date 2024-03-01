@@ -4,11 +4,14 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import { UpVoteLogo } from "./UpVote";
 import { DownVoteLogo } from "./DownVote";
+import { checkDownVotes, checkUpVotes } from "../util/VotingMethods";
 
 export function ReplyComponent({ reply, userId }) {
 	const [replyVotes, setReplyVotes] = useState(0);
 	const [upVoteUsers, setUpVoteUsers] = useState([]);
 	const [downVoteUsers, setDownVoteUsers] = useState([]);
+	const [isUpvoted, setIsUpvoted] = useState(false);
+	const [isDownVoted, setisDownvoted] = useState(false);
 
 	// const setRefreshPosts = useSetRecoilState(refreshPosts);
 
@@ -20,9 +23,9 @@ export function ReplyComponent({ reply, userId }) {
 		setReplyVotes(upVotes - downVotes);
 		setUpVoteUsers(reply.votes.upVotes.users);
 		setDownVoteUsers(reply.votes.downVotes.users);
-
-		// setUpVoteUsers();
-	}, [reply]);
+		setIsUpvoted(checkUpVotes(reply, userId));
+		setisDownvoted(checkDownVotes(reply, userId));
+	}, [reply, userId]);
 
 	const rVoteHandler = async (voteType) => {
 		if (!userId) return;
@@ -42,6 +45,8 @@ export function ReplyComponent({ reply, userId }) {
 						: setReplyVotes((prev) => prev + 1);
 					setUpVoteUsers((prev) => [...prev, userId]);
 					setDownVoteUsers((prev) => prev.filter((id) => id !== userId));
+					setIsUpvoted(true);
+					setisDownvoted(false);
 					break;
 				case "down":
 					console.log(userId);
@@ -56,6 +61,8 @@ export function ReplyComponent({ reply, userId }) {
 					setUpVoteUsers((prev) => {
 						return prev.filter((id) => id != userId);
 					});
+					setIsUpvoted(false);
+					setisDownvoted(true);
 					break;
 			}
 		} catch (error) {
@@ -69,23 +76,19 @@ export function ReplyComponent({ reply, userId }) {
 				<button
 					className="p-1"
 					onClick={() => {
-						// !checkUpVotes(reply, userId)
 						rVoteHandler("up");
-						// : null;
 					}}
 				>
-					<UpVoteLogo />
+					<UpVoteLogo voted={isUpvoted} />
 				</button>
 				<span className="text-center">{replyVotes}</span>
 				<button
 					className="p-1"
 					onClick={() => {
-						// !checkDownVotes(reply, userId)
 						rVoteHandler("down");
-						// : null;
 					}}
 				>
-					<DownVoteLogo />
+					<DownVoteLogo voted={isDownVoted} />
 				</button>
 			</div>
 			<div>

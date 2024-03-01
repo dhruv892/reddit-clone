@@ -1,57 +1,56 @@
 import axios from "axios";
 
 export const checkUpVotes = (item, userId) => {
-    if (item.votes.upVotes.users.includes(userId)) return "upvoted";
+	if (item.votes.upVotes.users.includes(userId)) return true;
 };
 
 export const checkDownVotes = (item, userId) => {
-    if (item.votes.downVotes.users.includes(userId)) return "downvoted";
+	if (item.votes.downVotes.users.includes(userId)) return true;
 };
 
 export const postVoteHandler = async (post, voteType, userId) => {
-    if (!userId) return;
-    // if (voteType === "up" && post.votes.upVotes.users.includes(userId)) return;
-    // if (voteType === "down" && post.votes.downVotes.users.includes(userId))
-    //     return;
-    try {
-        const response = await axios.post(
-            `http://localhost:3000/api/post/${voteType}vote/${post._id}`
-        );
-        console.log(response);
-    } catch (error) {
-        console.log(error);
-    }
+	if (!userId) return;
+	// if (voteType === "up" && post.votes.upVotes.users.includes(userId)) return;
+	// if (voteType === "down" && post.votes.downVotes.users.includes(userId))
+	//     return;
+	try {
+		const response = await axios.post(
+			`http://localhost:3000/api/post/${voteType}vote/${post._id}`
+		);
+		console.log(response);
+	} catch (error) {
+		console.log(error);
+	}
 };
 
 export const commentVoteHandler = async (comment, voteType, userId) => {
-    if (!userId) return;
-    if (voteType === "up" && comment.votes.upVotes.users.includes(userId))
-        return;
-    if (voteType === "down" && comment.votes.downVotes.users.includes(userId))
-        return;
-    try {
-        const response = await axios.post(
-            `http://localhost:3000/api/post/${voteType}voteComment/${comment._id}`
-        );
-        console.log(response);
-        console.log(response.status);
-        return "done";
-    } catch (error) {
-        console.log(error);
-    }
+	if (!userId) return;
+	if (voteType === "up" && comment.votes.upVotes.users.includes(userId)) return;
+	if (voteType === "down" && comment.votes.downVotes.users.includes(userId))
+		return;
+	try {
+		const response = await axios.post(
+			`http://localhost:3000/api/post/${voteType}voteComment/${comment._id}`
+		);
+		console.log(response);
+		console.log(response.status);
+		return "done";
+	} catch (error) {
+		console.log(error);
+	}
 };
 
 export const replyVoteHandler = async (reply, voteType, userId) => {
-    if (!userId) return;
-    if (voteType === "up" && reply.votes.upVotes.users.includes(userId)) return;
-    if (voteType === "down" && reply.votes.downVotes.users.includes(userId))
-        return;
-    try {
-        const response = await axios.post(
-            `http://localhost:3000/api/post/${voteType}voteReply/${reply._id}`
-        );
-        console.log(response);
-    } catch (error) {
-        console.log(error);
-    }
+	if (!userId) return;
+	if (voteType === "up" && reply.votes.upVotes.users.includes(userId)) return;
+	if (voteType === "down" && reply.votes.downVotes.users.includes(userId))
+		return;
+	try {
+		const response = await axios.post(
+			`http://localhost:3000/api/post/${voteType}voteReply/${reply._id}`
+		);
+		console.log(response);
+	} catch (error) {
+		console.log(error);
+	}
 };
