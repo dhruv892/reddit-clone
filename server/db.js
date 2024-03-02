@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
+const bcrypt = require("bcrypt");
 
 mongoose
     .connect(process.env.MONGO_URL, {
@@ -27,7 +28,7 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        // minLength: 6,
+        minLength: [6, "Password must be at least 6 characters long"],
     },
     firstName: {
         type: String,
@@ -42,6 +43,25 @@ const userSchema = new mongoose.Schema({
         maxLength: 50,
     },
 });
+
+userSchema.pre("save", async function (next) {
+    // Only run this function if password was actually modified
+    if (!this.isModified("password")) return next();
+    try {
+        // Hash the password with cost of 12
+        this.password = await bcrypt.hash(this.password, 12);
+    } catch (err) {
+        console.log(err);
+    }
+    next();
+});
+
+userSchema.methods.correctPassword = async function (
+    candidatePassword,
+    userPassword
+) {
+    return await bcrypt.compare(candidatePassword, userPassword);
+};
 
 const User = new mongoose.model("User", userSchema);
 

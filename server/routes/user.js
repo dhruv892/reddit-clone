@@ -53,19 +53,24 @@ router.post("/signup", async (req, res) => {
             message: "Already a user / Incorrect inputs",
         });
     }
-    const user = await User.create({
-        username: req.body.username,
-        password: req.body.password,
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-    });
-    const userId = user._id;
-    req.session.userId = userId;
+    try {
+        const user = await User.create({
+            username: req.body.username,
+            password: req.body.password,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+        });
+        const userId = user._id;
+        req.session.userId = userId;
 
-    res.status(200).json({
-        message: "User created",
-        // token
-    });
+        res.status(200).json({
+            message: "User created",
+        });
+    } catch (err) {
+        res.status(411).json({
+            message: "Already a user / Incorrect inputs",
+        });
+    }
 });
 
 // Method: POST
@@ -82,7 +87,14 @@ router.post("/signin", async (req, res) => {
         username: req.body.username,
         password: req.body.password,
     });
-    if (user) {
+    if (
+        !user ||
+        !(await user.correctPassword(req.body.password, user.password))
+    ) {
+        return res.status(411).json({
+            message: "Incorrect inputs",
+        });
+    } else {
         req.session.userId = user._id;
         console.log(req.session.userId);
         // req.session.authorized = true;
@@ -91,10 +103,6 @@ router.post("/signin", async (req, res) => {
             // token: token
         });
     }
-
-    res.status(411).json({
-        message: "Error while logging in",
-    });
 });
 
 router.get("/signout", async (req, res) => {
