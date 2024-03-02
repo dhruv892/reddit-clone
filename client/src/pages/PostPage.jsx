@@ -1,5 +1,10 @@
 import { useParams } from "react-router";
-import { postAtom, fetchPost } from "../store/atoms";
+import {
+    postAtom,
+    fetchPost,
+    commentAtom,
+    fetchComments,
+} from "../store/atoms";
 import moment from "moment";
 import AddComment from "../components/AddComment";
 import { PostComments } from "../components/PostComments";
@@ -12,18 +17,23 @@ import {
 import { useEffect, useState } from "react";
 
 import { VotingComponent } from "../components/VotingComponent";
-// import { set } from "mongoose";
+import { findComments } from "../util/findComments";
 
 export function PostPage() {
     const postLoadable = useRecoilValueLoadable(postAtom);
+    const commentLoadable = useRecoilValueLoadable(commentAtom);
+    // const commentRefsLoadable = useRecoilValueLoadable(commentRefsAtom);
     const params = useParams();
     axios.defaults.withCredentials = true;
     //const [refresh, setRefreshPosts] = useRecoilState(refreshPosts);
     const refreshPostsAtom = useRecoilRefresher_UNSTABLE(fetchPost);
+    const fetchAllComments = useRecoilRefresher_UNSTABLE(fetchComments);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userId, setUserId] = useState("");
 
     const [comments, setComments] = useState([]);
+    const [allComments, setAllComments] = useState([]);
+    const [commentRefs, setCommentRefs] = useState([]);
 
     const fetchSessionData = async () => {
         try {
@@ -44,7 +54,8 @@ export function PostPage() {
 
     useEffect(() => {
         refreshPostsAtom();
-    }, [refreshPostsAtom]);
+        fetchAllComments();
+    }, [fetchAllComments, refreshPostsAtom]);
     useEffect(() => {
         fetchSessionData();
     }, [isLoggedIn]);
@@ -53,15 +64,22 @@ export function PostPage() {
         if (postLoadable.state === "hasValue") {
             const post = postLoadable.contents.find((p) => p._id === params.id);
             if (post) {
-                // const upVotes = post.votes.upVotes.count;
-                // const downVotes = post.votes.downVotes.count;
-                // setPostVotes(upVotes - downVotes);
-                // setUpVoteUsers(post.votes.upVotes.users);
-                // setDownVoteUsers(post.votes.downVotes.users);
-                setComments(post.comments);
+                if (commentLoadable.state === "hasValue") {
+                    const fetchedAllComments = commentLoadable.contents;
+                    const postComments = findComments(
+                        post._id,
+                        fetchedAllComments.comments,
+                        fetchedAllComments.commentRefs
+                    );
+                    console.log(postComments);
+                    setComments(postComments);
+                    setAllComments(fetchedAllComments.comments);
+                    setCommentRefs(fetchedAllComments.commentRefs);
+                }
+                // setComments(post.comments);
             }
         }
-    }, [postLoadable, params.id]);
+    }, [postLoadable, params.id, commentLoadable]);
 
     let post;
 
@@ -116,8 +134,8 @@ export function PostPage() {
     //     }
     // };
 
-    const setCommentsHandler = (updatedComments) => {
-        setComments(updatedComments);
+    const setCommentsHandler = (newComment) => {
+        setComments((prev) => [...prev, newComment]);
     };
 
     return (
@@ -180,7 +198,7 @@ export function PostPage() {
 
             <div className="bg-zinc-900 rounded-lg">
                 <AddComment
-                    post={post}
+                    id={post._id.toString()}
                     setCommentsHandler={setCommentsHandler}
                 />
                 <p className="text-2xl pl-4">Comments</p>
@@ -191,6 +209,8 @@ export function PostPage() {
                                 key={comment._id}
                                 comment={comment}
                                 userId={userId}
+                                allComments={allComments}
+                                commentRefs={commentRefs}
                             />
                         ))
                     ) : (
