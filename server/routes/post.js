@@ -96,7 +96,8 @@ router.get("/", async (req, res) => {
 router.get("/allComments", async (req, res) => {
     try {
         const comments = await AllComments.find({});
-        res.json({ comments: comments });
+        const commentRefs = await CommentRef.find({});
+        res.json({ comments: comments, commentRefs: commentRefs });
     } catch (err) {
         res.status(500).json({ msg: "Internal Server Error" });
     }
@@ -181,23 +182,27 @@ router.post("/addComment/:id", authMiddleware, async (req, res) => {
         // console.log(post.comments);
         const newComment = await AllComments.create(comment);
         // const commentRef = await CommentRef.create({ pRef: pId, cRefs: newComment._id });
-        const parentItem = await CommentRef.findById(pId);
-        if (!parentItem) {
-            console.log("Parent item not found");
-            const newCommentRef = await CommentRef.create({
-                pRef: pId,
-                cRefs: newComment._id,
-            });
-            return res.json({
-                msg: "Comment added",
-                comment: newComment,
-                commentRef: newCommentRef,
-            });
+        const parentItem = await CommentRef.findOne({
+            currRef: pId.toString(),
+        });
+        console.log(parentItem);
+        if (parentItem) {
+            console.log("Parent item found");
+            parentItem.cRefs.push(newComment._id.toString());
         }
-        parentItem.cRefs.push(newComment._id);
-        await parentItem.save();
-        res.json({ msg: "Comment added", comment: newComment });
+        const newCommentRef = await CommentRef.create({
+            pRef: pId,
+            currRef: newComment._id.toString(),
+        });
+
+        // await parentItem.save();
+        return res.json({
+            msg: "Comment added",
+            comment: newComment,
+            commentRef: newCommentRef,
+        });
     } catch (err) {
+        console.log(err);
         res.status(500).json({ msg: "Internal Server Error" });
     }
 });

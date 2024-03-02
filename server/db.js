@@ -67,6 +67,7 @@ const User = new mongoose.model("User", userSchema);
 
 const commentRefSchema = new mongoose.Schema({
     pRef: String,
+    currRef: String,
     cRefs: [String],
 });
 const allCommentsSchema = new mongoose.Schema({

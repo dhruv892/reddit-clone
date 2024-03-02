@@ -2,46 +2,52 @@ import moment from "moment";
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
-import { refreshPosts } from "../store/atoms";
-import { useSetRecoilState } from "recoil";
-import { ReplyComponent } from "./ReplyComponent";
 import { VotingComponent } from "./VotingComponent";
+import { findComments } from "../util/findComments";
+import AddComment from "./AddComment";
 
-export function PostComments({ comment, userId }) {
+export function PostComments({ comment, userId, allComments, commentRefs }) {
     axios.defaults.withCredentials = true;
 
-    const setRefreshPosts = useSetRecoilState(refreshPosts);
+    // const setRefreshPosts = useSetRecoilState(refreshPosts);
     const [doReply, setDoReply] = useState(false);
-    const [replyContent, setReplyContent] = useState("");
+    // const [replyContent, setReplyContent] = useState("");
     const [replies, setReplies] = useState([]);
 
     useEffect(() => {
         if (!comment) return;
         // console.log(comment);
-        setReplies(comment.replies);
-
+        const commentReplies = findComments(
+            comment._id,
+            allComments,
+            commentRefs
+        );
+        setReplies(commentReplies);
         // setUpVoteUsers();
-    }, [comment]);
+    }, [allComments, comment, commentRefs]);
 
-    const replyClickHandler = async (comment) => {
-        if (!replyContent) return;
+    // const replyClickHandler = async (comment) => {
+    //     if (!replyContent) return;
 
-        try {
-            const res = await axios.post(
-                `http://localhost:3000/api/post/comments/reply/${comment._id}`,
-                {
-                    content: replyContent,
-                    createdAt: Date.now().toString(),
-                }
-            );
+    //     try {
+    //         const res = await axios.post(
+    //             `http://localhost:3000/api/post/comments/reply/${comment._id}`,
+    //             {
+    //                 content: replyContent,
+    //                 createdAt: Date.now().toString(),
+    //             }
+    //         );
 
-            setReplies(res.data.replies);
-            setRefreshPosts((prev) => !prev);
-            setReplyContent("");
-            setDoReply(false);
-        } catch (error) {
-            console.log(error);
-        }
+    //         // setReplies(res.data.replies);
+    //         // setRefreshPosts((prev) => !prev);
+    //         setReplyContent("");
+    //         setDoReply(false);
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // };
+    const setRepliesHandler = (newComment) => {
+        setReplies((prev) => [...prev, newComment]);
     };
 
     return (
@@ -76,7 +82,7 @@ export function PostComments({ comment, userId }) {
                     </span>
                 ) : (
                     <div>
-                        <input
+                        {/* <input
                             type="text"
                             placeholder="Reply"
                             value={replyContent}
@@ -86,16 +92,22 @@ export function PostComments({ comment, userId }) {
                         />
                         <button onClick={() => replyClickHandler(comment)}>
                             Reply
-                        </button>
+                        </button> */}
+                        <AddComment
+                            id={comment._id}
+                            setCommentsHandler={setRepliesHandler}
+                        />
                     </div>
                 )}
                 <div className="border-l border-l-zinc-50">
                     {replies.length > 0
                         ? replies.map((reply) => (
-                              <ReplyComponent
+                              <PostComments
                                   key={reply._id}
-                                  reply={reply}
+                                  comment={reply}
                                   userId={userId}
+                                  allComments={allComments}
+                                  commentRefs={commentRefs}
                               />
                           ))
                         : null}
@@ -126,4 +138,6 @@ const CommentPropTypes = {
 PostComments.propTypes = {
     comment: PropTypes.shape(CommentPropTypes),
     userId: PropTypes?.string,
+    allComments: PropTypes.arrayOf(PropTypes.shape(CommentPropTypes)),
+    commentRefs: PropTypes.arrayOf(PropTypes.object),
 };
