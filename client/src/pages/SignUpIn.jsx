@@ -79,7 +79,17 @@ export function SignUpIn() {
 				/>
 				<input type="submit" value="Sign up" />
 			</form>
-			{errUp ? <p>Username already exists or something went wrong</p> : null}
+			{errUp ? (
+				<div
+					className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-5"
+					role="alert"
+				>
+					<span className="block sm:inline">
+						Username already exists or something went wrong
+					</span>
+					<span className="absolute top-0 bottom-0 right-0 px-4 py-3"></span>
+				</div>
+			) : null}
 		</div>
 	);
 }
