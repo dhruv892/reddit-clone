@@ -69,6 +69,7 @@ router.post("/signup", async (req, res) => {
     } catch (err) {
         res.status(411).json({
             message: "Already a user / Incorrect inputs",
+            error: err,
         });
     }
 });
@@ -78,14 +79,13 @@ router.post("/signup", async (req, res) => {
 router.post("/signin", async (req, res) => {
     const { success } = signInBody.safeParse(req.body);
     if (!success) {
+        console.log("Incorrect inputs nadkcjb");
         return res.status(411).json({
             message: "Incorrect inputs",
         });
     }
-
     const user = await User.findOne({
         username: req.body.username,
-        password: req.body.password,
     });
     if (
         !user ||
