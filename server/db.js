@@ -107,49 +107,7 @@ const AllComments = mongoose.model("AllComments", allCommentsSchema);
 const CommentRef = mongoose.model("CommentRef", commentRefSchema);
 const NewPosts = mongoose.model("NewPosts", newPostsSchema);
 
-const commentSchema = new mongoose.Schema({
-    content: String,
-    createdAt: String,
-    author: String,
-    votes: {
-        upVotes: {
-            count: { type: Number, default: 0 },
-            users: { type: [String], default: [] },
-        },
-        downVotes: {
-            count: { type: Number, default: 0 },
-            users: { type: [String], default: [] },
-        },
-    },
-    replyingTo: { type: String, default: "" },
-    // replies: [this],
-});
-commentSchema.add({
-    replies: [commentSchema],
-});
-
-const postsSchema = new mongoose.Schema({
-    title: String,
-    content: String,
-    author: String,
-    createdAt: String,
-    comments: [commentSchema],
-    votes: {
-        upVotes: {
-            count: { type: Number, default: 0 },
-            users: { type: [String], default: [] },
-        },
-        downVotes: {
-            count: { type: Number, default: 0 },
-            users: { type: [String], default: [] },
-        },
-    },
-});
-
-const Posts = mongoose.model("Posts", postsSchema);
-
 module.exports = {
-    Posts: Posts,
     User: User,
     CommentRef: CommentRef,
     AllComments: AllComments,
