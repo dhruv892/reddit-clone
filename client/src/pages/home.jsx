@@ -1,22 +1,32 @@
-import { RenderPosts } from "../components/RenderPosts";
+import { MemoizedRenderPosts } from "../components/RenderPosts";
 import { CreatePost } from "../components/CreatePost";
-import { useRecoilValue, useRecoilRefresher_UNSTABLE } from "recoil";
-import { refreshPosts, fetchPost } from "../store/atoms";
+import { useRecoilValue } from "recoil";
+import { allPosts } from "../store/atoms";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useRecoilValueLoadable } from "recoil";
-import { postAtom } from "../store/atoms";
+// import { useRecoilValueLoadable } from "recoil";
+import { useFechMorePosts } from "../store/atoms";
 import { SignInComponent } from "../components/SignInComponent";
+// import { use } from "../../../server/routes";
+// import { use } from "../../../server/routes";
 
 export function Home() {
-    const refreshPostsAtom = useRecoilRefresher_UNSTABLE(fetchPost);
-    const refresh = useRecoilValue(refreshPosts);
+    // for infinite scrolling feature
+    // const nPosts = 10;
+    // const [currPage, setCurrPage] = useState(1);
+    const fetchedPosts = useRecoilValue(allPosts);
+    // const refreshPostsAtom = useRecoilRefresher_UNSTABLE(fetchPost);
+    // const fetchedPosts = useRecoilValue(fetchPost(currPage));
+    // const refresh = useRecoilValue(refreshPosts);
     const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [posts, setPosts] = useState([]);
     const [userId, setUserId] = useState("");
+    const [isFetching, setIsFetching] = useState(false);
+    const fetchMorePosts = useFechMorePosts();
+
     // const [posts, setPosts] = useState([]);
     // const [userId, setUserId] = useState("");
     const isLoggedInHandler = () => {
@@ -52,72 +62,109 @@ export function Home() {
         }
     };
 
-    const postsLoadable = useRecoilValueLoadable(postAtom);
+    // const postsLoadable = useRecoilValueLoadable(postAtom);
 
     useEffect(() => {
-        refreshPostsAtom();
+        // const newPosts = fetchedPosts;
+        // setPosts((prevPosts) => [...prevPosts, ...newPosts]);
+        // fetchMorePosts();
         fetchSessionData();
-    }, [refresh, refreshPostsAtom, isLoggedIn]);
+    }, [isLoggedIn]);
 
+    const isScrollingToBottom = () => {
+        return (
+            window.innerHeight + document.documentElement.scrollTop ===
+            document.documentElement.offsetHeight
+        );
+    };
+
+    // Effect to handle the scroll event
     useEffect(() => {
-        if (postsLoadable.state === "hasValue") {
-            setPosts(postsLoadable.contents);
+        const handleScroll = () => {
+            if (isScrollingToBottom() && !isFetching) {
+                setIsFetching(true);
+                fetchMorePosts(); // Fetch more posts
+            }
+        };
+
+        // Add and remove the scroll event listener
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [isFetching, fetchMorePosts]);
+
+    // useEffect(() => {
+    //     window.addEventListener("scroll", handleScroll);
+    //     return () => {
+    //         window.removeEventListener("scroll", handleScroll);
+    //     };
+    // }, [currPage]);
+
+    // Effect to reset isFetching when posts are updated
+    useEffect(() => {
+        if (isFetching) {
+            setIsFetching(false);
         }
-    }, [postsLoadable]);
+    }, [posts, isFetching]);
+
+    // useEffect(() => {
+    //     if (postsLoadable.state === "hasValue") {
+    //         const newPosts = postsLoadable.contents;
+    //         setPosts((prevPosts) => [...prevPosts, ...newPosts]);
+    //     }
+    // }, [postsLoadable]);
 
     const setPostsHandler = (newPost) => {
         setPosts((prev) => [...prev, newPost]);
     };
 
-    switch (postsLoadable.state) {
-        case "hasValue":
-            return (
-                <div className="max-w-4xl mx-auto text-wrap text-gray-200">
-                    <div className="bg-zinc-900 p-5 self-start my-5 rounded flex flex-col items-center justify-center">
-                        {isLoggedIn ? (
-                            <>
-                                <button
-                                    className="bg-zinc-800"
-                                    onClick={logoutHandler}
-                                >
-                                    Log out
-                                </button>
-                                <CreatePost setPostsHandler={setPostsHandler} />
-                            </>
-                        ) : (
-                            <SignInComponent
-                                isLoggedInHandler={isLoggedInHandler}
-                            />
-                        )}
-                        {!isLoggedIn && (
-                            <div className="mt-5 flex flex-col">
-                                <p>Dont have an account? Sign up below!</p>
-                                <button
-                                    className="bg-zinc-800 mt-2"
-                                    onClick={() => {
-                                        navigate("/signUpIn");
-                                    }}
-                                >
-                                    Sign Up
-                                </button>
-                            </div>
-                        )}
+    // switch (postsLoadable.state) {
+    //     case "hasValue":
+    return (
+        <div className="max-w-4xl mx-auto text-wrap text-gray-200">
+            <div className="bg-zinc-900 p-5 self-start my-5 rounded flex flex-col items-center justify-center">
+                {isLoggedIn ? (
+                    <>
+                        <button className="bg-zinc-800" onClick={logoutHandler}>
+                            Log out
+                        </button>
+                        <CreatePost setPostsHandler={setPostsHandler} />
+                    </>
+                ) : (
+                    <SignInComponent isLoggedInHandler={isLoggedInHandler} />
+                )}
+                {!isLoggedIn && (
+                    <div className="mt-5 flex flex-col">
+                        <p>Dont have an account? Sign up below!</p>
+                        <button
+                            className="bg-zinc-800 mt-2"
+                            onClick={() => {
+                                navigate("/signUpIn");
+                            }}
+                        >
+                            Sign Up
+                        </button>
                     </div>
-                    {posts.map((post) => (
-                        <RenderPosts
-                            key={post._id}
-                            post={post}
-                            userId={userId}
-                        />
-                    ))}
-                </div>
-            );
+                )}
+            </div>
+            {fetchedPosts.map((post) => (
+                <MemoizedRenderPosts
+                    key={post._id}
+                    post={post}
+                    userId={userId}
+                />
+            ))}
+        </div>
+    );
 
-        case "loading":
-            return <div>Loading...</div>;
-        case "hasError":
-            return <div>Error: {postsLoadable.contents.message}</div>;
-        default:
-            return null;
-    }
+    // case "loading":
+    //     return <div>Loading...</div>;
+    // case "hasError":
+    //     return <div>Error: {postsLoadable.contents.message}</div>;
+    // default:
+    //     return null;
+    // }
 }
+
+// function useFetchPosts(page) {
+//     return ()=>useRecoilValue(fetchPost(page));
+// }

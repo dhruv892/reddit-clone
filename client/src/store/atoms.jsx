@@ -1,16 +1,30 @@
-import { atom } from "recoil";
-import { selector } from "recoil";
+import { atom, waitForNone } from "recoil";
+import { selector, selectorFamily } from "recoil";
+import { useSetRecoilState } from "recoil";
 import axios from "axios";
 
-export const fetchPost = selector({
+const currPage = atom({
+    key: "fetchMorePosts",
+    default: 1,
+});
+
+export function useFechMorePosts() {
+    const setPage = useSetRecoilState(currPage);
+    return () => setPage((prev) => prev + 1);
+}
+
+export const fetchPost = selectorFamily({
     key: "fetchPost",
-    get: async () => {
-        try {
-            const res = await axios.get("http://localhost:3000/api/post/");
-            return res.data.posts;
-        } catch (error) {
-            console.log(error);
+    get: (page) => async () => {
+        // const cp = get(currPage);
+        const res = await axios.get(
+            `http://localhost:3000/api/post/10/${page}`
+        );
+        if (res.error) {
+            throw res.error;
         }
+        console.log(res.data);
+        return res.data.posts;
     },
 });
 
@@ -29,9 +43,23 @@ export const fetchComments = selector({
     },
 });
 
+export const allPosts = selector({
+    key: "allPosts",
+    get: ({ get }) => {
+        const cp = get(currPage);
+        // Create an array of fetchPost selectors with the current page
+        const postSelectors = Array.from({ length: cp }, (_, index) =>
+            fetchPost({ page: index + 1 })
+        );
+        const postsLoadables = get(waitForNone(postSelectors));
+        // Extract the posts from the loadables
+        const allPosts = postsLoadables.map((loadable) => loadable.contents);
+        return allPosts.flat();
+    },
+});
 export const postAtom = atom({
     key: "postAtom",
-    default: fetchPost,
+    defualt: fetchPost,
 });
 
 export const commentAtom = atom({

@@ -1,4 +1,5 @@
 // import { useEffect, useState } from "react";
+import React from "react";
 import moment from "moment";
 import PropTypes from "prop-types";
 // import axios from "axios";
@@ -8,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { VotingComponent } from "./VotingComponent";
 
-export function RenderPosts({ post, userId }) {
+function RenderPosts({ post, userId }) {
     const navigate = useNavigate();
 
     const shareHandler = () => {
@@ -79,6 +80,8 @@ export function RenderPosts({ post, userId }) {
         </>
     );
 }
+
+export const MemoizedRenderPosts = React.memo(RenderPosts);
 
 const CommentPropTypes = {
     votes: PropTypes.shape({

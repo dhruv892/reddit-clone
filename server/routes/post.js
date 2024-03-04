@@ -81,10 +81,19 @@ const newCreatePostSchema = zod.object({
 const router = express.Router();
 
 // api/post/
-router.get("/", async (req, res) => {
+router.get("/:nPosts/:currPage", async (req, res) => {
     try {
         // const posts = await Posts.find({});
-        const posts = await NewPosts.find({});
+        const nposts = parseInt(req.params.nPosts);
+        const currPage = parseInt(req.params.currPage);
+        const posts = await NewPosts.find({})
+            .sort({
+                "votes.upVotes.count": -1,
+                "votes.downVotes.count": 1,
+                createdAt: -1,
+            })
+            .limit(nposts)
+            .skip(nposts * (currPage - 1));
         res.json({ posts: posts });
     } catch (err) {
         res.status(500).json({ msg: "Internal Server Error" });
