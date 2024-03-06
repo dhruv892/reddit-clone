@@ -5,11 +5,13 @@ import { PostPage } from "./pages/PostPage";
 import { SignUpIn } from "./pages/SignUpIn";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { NavbarComponent } from "./components/NavbarComponent";
 
 function App() {
 	return (
 		<RecoilRoot>
 			<BrowserRouter>
+				<NavbarComponent />
 				<Routes>
 					<Route path="/" element={<Home />} />
 					<Route path="/post/:id" element={<PostPage />} />
