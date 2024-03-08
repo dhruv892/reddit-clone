@@ -88,12 +88,12 @@ router.get("/:nPosts/:currPage", async (req, res) => {
         const currPage = parseInt(req.params.currPage);
         const posts = await NewPosts.find({})
             .sort({
+                createdAt: -1,
                 "votes.upVotes.count": -1,
                 "votes.downVotes.count": 1,
-                createdAt: -1,
             })
-            .limit(nposts)
-            .skip(nposts * (currPage - 1));
+            .limit(currPage * nposts);
+        // .skip(nposts * (currPage - 1));
         res.json({ posts: posts });
     } catch (err) {
         res.status(500).json({ msg: "Internal Server Error" });
