@@ -321,7 +321,7 @@ router.post("/downvoteComment/:id", authMiddleware, async (req, res) => {
     }
 });
 
-// api/get/bulk?filter=search
+// api/post/bulk?filter=searchInput
 router.get("/bulk", async (req, res) => {
     // console.log(req.query);
     const search = req.query.filter;
