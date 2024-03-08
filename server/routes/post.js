@@ -321,6 +321,32 @@ router.post("/downvoteComment/:id", authMiddleware, async (req, res) => {
     }
 });
 
+// api/get/bulk?filter=search
+router.get("/bulk", async (req, res) => {
+    // console.log(req.query);
+    const search = req.query.filter;
+
+    try {
+        const posts = await NewPosts.find({
+            $or: [
+                {
+                    title: {
+                        $regex: search,
+                    },
+                },
+                {
+                    content: {
+                        $regex: search,
+                    },
+                },
+            ],
+        }).sort({ createdAt: -1 });
+        res.json({ posts: posts });
+    } catch (err) {
+        res.status(500).json({ msg: "Internal Server Error" });
+    }
+});
+
 // api/post/upvoteReply/:id
 // router.post("/upvoteReply/:id", authMiddleware, async (req, res) => {
 //     const replyId = req.params.id;
