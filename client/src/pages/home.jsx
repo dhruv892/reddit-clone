@@ -10,7 +10,7 @@ export function Home() {
     const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [posts, setPosts] = useState([]);
-    const [fetchedPosts, setFetchedPosts] = useFetchPosts(1);
+    // const [fetchedPosts, setFetchedPosts] = useFetchPosts(1);
     const [userId, setUserId] = useState("");
     const [page, setPage] = useState(1);
     const [isFetching, setIsFetching] = useState(false);
@@ -18,9 +18,13 @@ export function Home() {
     const isLoggedInHandler = () => {
         setIsLoggedIn(true);
     };
-    useEffect(() => {
-        if (fetchedPosts) setPosts(fetchedPosts);
-    }, [fetchedPosts]);
+    // useEffect(() => {
+    //     if (fetchedPosts) {
+    //         console.log(fetchedPosts);
+    //         setPosts(fetchedPosts);
+    //     }
+    // }, []);
+
     const fetchSessionData = async () => {
         try {
             const response = await axios.get(
@@ -56,29 +60,59 @@ export function Home() {
     }, [isLoggedIn]);
 
     const isScrollingToBottom = () => {
+        console.log(
+            window.innerHeight + document.documentElement.scrollTop ===
+                document.documentElement.offsetHeight
+        );
         return (
             window.innerHeight + document.documentElement.scrollTop ===
             document.documentElement.offsetHeight
         );
     };
 
+    // useEffect(() => {
+    //     if (fetchedPosts) {
+    //         setPosts(fetchedPosts);
+    //     }
+    // }, []);
+
+    // Fetch more posts when user scrolls to the bottom of the page
+
+    useEffect(() => {
+        (async function () {
+            const newPosts = await fetchPosts(page);
+            if (newPosts && page === 1) {
+                setPosts(newPosts);
+                return;
+            }
+            if (newPosts && isFetching) {
+                setPosts((prev) => [...prev, ...newPosts]);
+                setIsFetching((prev) => !prev);
+            }
+        })();
+    }, [isFetching, page]);
+
     useEffect(() => {
         const handleScroll = () => {
             if (isScrollingToBottom() && !isFetching) {
                 setIsFetching(true);
-                setFetchedPosts(page + 1);
+                // setFetchedPosts(page + 1);
+                // const newPosts = fetchPosts(page + 1);
+                // setPosts((prev) => [...prev, ...fetchedPosts]);
                 setPage((prev) => prev + 1);
             }
         };
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
-    }, [isFetching, page, setFetchedPosts]);
+    }, [isFetching, page]);
 
-    useEffect(() => {
-        if (isFetching) {
-            setIsFetching((prev) => !prev);
-        }
-    }, [isFetching]);
+    // useEffect(() => {
+    //     if (isFetching) {
+    //         const newPosts = fetchPosts(page);
+    //         setPosts((prev) => [...prev, ...newPosts]);
+    //         setIsFetching((prev) => !prev);
+    //     }
+    // }, [isFetching, page]);
 
     const setPostsHandler = (newPost) => {
         setPosts((prev) => [newPost, ...prev]);
@@ -111,13 +145,14 @@ export function Home() {
                 )}
             </div>
             {posts ? (
+                (console.log(posts),
                 posts.map((post) => (
                     <MemoizedRenderPosts
                         key={post._id}
                         post={post}
                         userId={userId}
                     />
-                ))
+                )))
             ) : (
                 <div>Loading</div>
             )}
@@ -125,25 +160,16 @@ export function Home() {
     );
 }
 
-function useFetchPosts(page) {
-    const [posts, setPosts] = useState([]);
-    const handleFetch = async (page) => {
-        try {
-            const res = await axios.get(
-                `http://localhost:3000/api/post/10/${page}`
-            );
-            setPosts(res.data.posts);
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const setPostsHandler = (page) => {
-        handleFetch(page);
-    };
-    useEffect(() => {
-        handleFetch(page);
-    }, [page]);
-
-    return [posts, setPostsHandler];
+async function fetchPosts(page) {
+    try {
+        const res = await axios.get(
+            `http://localhost:3000/api/post/10/${page}`
+        );
+        // console.log("fetched posts", res.data.posts);
+        const newPosts = await res.data.posts;
+        return newPosts;
+    } catch (error) {
+        console.error(error);
+        return;
+    }
 }

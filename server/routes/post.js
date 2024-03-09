@@ -5,7 +5,6 @@ const { AllComments } = require("../db");
 const { CommentRef } = require("../db");
 const zod = require("zod");
 const { authMiddleware } = require("../middleware");
-// const { ObjectId } = require("mongoose").Types;
 
 const createPostSchema = zod.object({
     title: zod.string().min(1),
@@ -60,6 +59,7 @@ const newCreatePostSchema = zod.object({
     content: zod.string(),
     author: zod.string().min(1),
     createdAt: zod.string().min(1),
+    sort: zod.string().min(1),
     votes: zod
         .object({
             upVotes: zod
@@ -86,14 +86,18 @@ router.get("/:nPosts/:currPage", async (req, res) => {
         // const posts = await Posts.find({});
         const nposts = parseInt(req.params.nPosts);
         const currPage = parseInt(req.params.currPage);
+        // prettier-ignore
         const posts = await NewPosts.find({})
             .sort({
-                createdAt: -1,
+                
+                "sort": -1,
                 "votes.upVotes.count": -1,
                 "votes.downVotes.count": 1,
+                "createdAt": -1,
+                "_id": 1
             })
-            .limit(currPage * nposts);
-        // .skip(nposts * (currPage - 1));
+            .skip(nposts * (currPage - 1))
+            .limit(nposts);
         res.json({ posts: posts });
     } catch (err) {
         res.status(500).json({ msg: "Internal Server Error" });
@@ -115,12 +119,16 @@ router.get("/allComments", async (req, res) => {
 router.post("/createPost", authMiddleware, async (req, res) => {
     // id = new ObjectId(req.session.userId);
     const user = await User.findById(req.session.userId);
+    const forSorting = parseInt(
+        Number(req.body.createdAt) / 1000 / 3600 / 24
+    ).toString();
     // console.log(user, user.username);
     const createPayload = {
         title: req.body.title,
         content: req.body.content,
         author: user.username,
         createdAt: req.body.createdAt,
+        sort: forSorting,
     };
     //const parsedPayload = await createPostSchema.safeParse(createPayload);
     const parsedPayload = newCreatePostSchema.safeParse(createPayload);
@@ -329,130 +337,5 @@ router.post("/downvoteComment/:id", authMiddleware, async (req, res) => {
         res.status(500).json({ msg: "Internal Server Error" });
     }
 });
-
-// api/post/upvoteReply/:id
-// router.post("/upvoteReply/:id", authMiddleware, async (req, res) => {
-//     const replyId = req.params.id;
-//     try {
-//         const post = await Posts.findOne({ "comments.replies._id": replyId });
-//         const comment = post.comments.find((comment) =>
-//             comment.replies.id(replyId)
-//         );
-//         const reply = comment.replies.id(replyId);
-
-//         if (
-//             reply.votes.downVotes.users.includes(req.session.userId.toString())
-//         ) {
-//             reply.votes.downVotes.count -= 1;
-//             reply.votes.downVotes.users = reply.votes.downVotes.users.filter(
-//                 (id) => id !== req.session.userId.toString()
-//             );
-//         }
-
-//         reply.votes.upVotes.count += 1;
-//         reply.votes.upVotes.users.push(req.session.userId.toString());
-//         await post.save();
-//         res.json({ msg: "Upvoted" });
-//     } catch (err) {
-//         res.status(500).json({ msg: "Internal Server Error" });
-//     }
-// });
-
-// // api/post/downvoteReply/:id
-// router.post("/downvoteReply/:id", authMiddleware, async (req, res) => {
-//     const replyId = req.params.id;
-//     try {
-//         const post = await Posts.findOne({ "comments.replies._id": replyId });
-//         const comment = post.comments.find((comment) =>
-//             comment.replies.id(replyId)
-//         );
-//         const reply = comment.replies.id(replyId);
-
-//         if (reply.votes.upVotes.users.includes(req.session.userId.toString())) {
-//             reply.votes.upVotes.count -= 1;
-//             reply.votes.upVotes.users = reply.votes.upVotes.users.filter(
-//                 (id) => id !== req.session.userId.toString()
-//             );
-//         }
-
-//         reply.votes.downVotes.count += 1;
-//         reply.votes.downVotes.users.push(req.session.userId.toString());
-//         await post.save();
-//         res.json({ msg: "Upvoted" });
-//     } catch (err) {
-//         res.status(500).json({ msg: "Internal Server Error" });
-//     }
-// });
-
-// function findCommentById(comments, id) {
-//     for (const comment of comments) {
-//         if (comment._id.toString() === id.toString()) {
-//             return comment;
-//         }
-//         if (comment.replies.length > 0) {
-//             const found = findCommentById(comment.replies, id);
-//             if (found) {
-//                 return found;
-//             }
-//         }
-//     }
-//     return null;
-// }
-
-// const replySchema = zod.object({
-//     content: zod.string(),
-//     createdAt: zod.string(),
-//     author: zod.string(),
-//     votes: zod
-//         .object({
-//             upVotes: zod.number(),
-//             downVotes: zod.number(),
-//         })
-//         .optional(),
-// });
-
-// // api/post/comments/reply/:id
-// router.post("/comments/reply/:id", authMiddleware, async (req, res) => {
-//     const user = await User.findById(req.session.userId);
-//     const createPayload = {
-//         content: req.body.content,
-//         createdAt: req.body.createdAt,
-//         author: user.username,
-//     };
-//     const parsedPayload = await replySchema.safeParse(createPayload);
-
-//     if (!parsedPayload.success) {
-//         return res.status(411).json({
-//             msg: "Payload is not valid",
-//             errors: parsedPayload.error,
-//         });
-//     }
-//     const commentId = req.params.id;
-//     try {
-//         const post = await Posts.findOne({ "comments._id": commentId });
-//         if (!post) {
-//             return res.status(404).json({ message: "Post not found" });
-//         }
-//         const comment = post.comments.id(commentId);
-//         // const comment = findCommentById(post.comments, commentId);
-//         // if (!comment) {
-//         //     return res.status(404).json({ message: "Comment not found" });
-//         // }
-//         // console.log("Comment found", comment);
-//         // const comment = post.comments.id(commentId);
-//         const reply = {
-//             content: req.body.content,
-//             createdAt: req.body.createdAt,
-//             author: user.username,
-//             replyingTo: commentId,
-//         };
-
-//         comment.replies.push(reply);
-//         await post.save();
-//         res.json({ msg: "Replied", replies: comment.replies });
-//     } catch (err) {
-//         res.status(500).json({ msg: "Internal Server Error", error: err });
-//     }
-// });
 
 module.exports = router;
