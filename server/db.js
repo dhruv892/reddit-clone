@@ -91,6 +91,7 @@ const newPostsSchema = new mongoose.Schema({
     content: String,
     author: String,
     createdAt: String,
+    sort: String,
     votes: {
         upVotes: {
             count: { type: Number, default: 0 },

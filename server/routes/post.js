@@ -5,7 +5,6 @@ const { AllComments } = require("../db");
 const { CommentRef } = require("../db");
 const zod = require("zod");
 const { authMiddleware } = require("../middleware");
-// const { ObjectId } = require("mongoose").Types;
 
 const createPostSchema = zod.object({
     title: zod.string().min(1),
@@ -60,6 +59,7 @@ const newCreatePostSchema = zod.object({
     content: zod.string(),
     author: zod.string().min(1),
     createdAt: zod.string().min(1),
+    sort: zod.string().min(1),
     votes: zod
         .object({
             upVotes: zod
@@ -86,14 +86,18 @@ router.get("/:nPosts/:currPage", async (req, res) => {
         // const posts = await Posts.find({});
         const nposts = parseInt(req.params.nPosts);
         const currPage = parseInt(req.params.currPage);
+        // prettier-ignore
         const posts = await NewPosts.find({})
             .sort({
-                createdAt: -1,
+                
+                "sort": -1,
                 "votes.upVotes.count": -1,
                 "votes.downVotes.count": 1,
+                "createdAt": -1,
+                "_id": 1
             })
-            .limit(currPage * nposts);
-        // .skip(nposts * (currPage - 1));
+            .skip(nposts * (currPage - 1))
+            .limit(nposts);
         res.json({ posts: posts });
     } catch (err) {
         res.status(500).json({ msg: "Internal Server Error" });
@@ -115,12 +119,16 @@ router.get("/allComments", async (req, res) => {
 router.post("/createPost", authMiddleware, async (req, res) => {
     // id = new ObjectId(req.session.userId);
     const user = await User.findById(req.session.userId);
+    const forSorting = parseInt(
+        Number(req.body.createdAt) / 1000 / 3600 / 24
+    ).toString();
     // console.log(user, user.username);
     const createPayload = {
         title: req.body.title,
         content: req.body.content,
         author: user.username,
         createdAt: req.body.createdAt,
+        sort: forSorting,
     };
     //const parsedPayload = await createPostSchema.safeParse(createPayload);
     const parsedPayload = newCreatePostSchema.safeParse(createPayload);
