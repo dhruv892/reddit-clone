@@ -1,19 +1,10 @@
 import { useParams } from "react-router";
-import {
-    postAtom,
-    fetchPost,
-    commentAtom,
-    fetchComments,
-} from "../store/atoms";
+import { postAtom, commentAtom, fetchComments } from "../store/atoms";
 import moment from "moment";
 import AddComment from "../components/AddComment";
 import { PostComments } from "../components/PostComments";
 import axios from "axios";
-import {
-    // useRecoilState,
-    useRecoilRefresher_UNSTABLE,
-    useRecoilValueLoadable,
-} from "recoil";
+import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from "recoil";
 import { useEffect, useState } from "react";
 
 import { VotingComponent } from "../components/VotingComponent";
@@ -22,11 +13,10 @@ import { findComments } from "../util/findComments";
 export function PostPage() {
     const postLoadable = useRecoilValueLoadable(postAtom);
     const commentLoadable = useRecoilValueLoadable(commentAtom);
-    // const commentRefsLoadable = useRecoilValueLoadable(commentRefsAtom);
     const params = useParams();
     axios.defaults.withCredentials = true;
     //const [refresh, setRefreshPosts] = useRecoilState(refreshPosts);
-    const refreshPostsAtom = useRecoilRefresher_UNSTABLE(fetchPost);
+    // const refreshPostsAtom = useRecoilRefresher_UNSTABLE(fetchPost);
     const fetchAllComments = useRecoilRefresher_UNSTABLE(fetchComments);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userId, setUserId] = useState("");
@@ -53,9 +43,9 @@ export function PostPage() {
     };
 
     useEffect(() => {
-        refreshPostsAtom();
+        // refreshPostsAtom();
         fetchAllComments();
-    }, [fetchAllComments, refreshPostsAtom]);
+    }, [fetchAllComments]);
     useEffect(() => {
         fetchSessionData();
     }, [isLoggedIn]);

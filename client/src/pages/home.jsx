@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { SignInComponent } from "../components/SignInComponent";
+import { useSetRecoilState } from "recoil";
+import { postAtom } from "../store/atoms";
 
 export function Home() {
     const navigate = useNavigate();
@@ -14,6 +16,7 @@ export function Home() {
     const [userId, setUserId] = useState("");
     const [page, setPage] = useState(1);
     const [isFetching, setIsFetching] = useState(false);
+    const setPostAtom = useSetRecoilState(postAtom);
 
     const isLoggedInHandler = () => {
         setIsLoggedIn(true);
@@ -83,14 +86,16 @@ export function Home() {
             const newPosts = await fetchPosts(page);
             if (newPosts && page === 1) {
                 setPosts(newPosts);
+                setPostAtom(newPosts);
                 return;
             }
             if (newPosts && isFetching) {
                 setPosts((prev) => [...prev, ...newPosts]);
+                setPostAtom((prev) => [...prev, ...newPosts]);
                 setIsFetching((prev) => !prev);
             }
         })();
-    }, [isFetching, page]);
+    }, [isFetching, page, setPostAtom]);
 
     useEffect(() => {
         const handleScroll = () => {

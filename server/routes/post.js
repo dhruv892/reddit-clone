@@ -5,54 +5,7 @@ const { AllComments } = require("../db");
 const { CommentRef } = require("../db");
 const zod = require("zod");
 const { authMiddleware } = require("../middleware");
-
-const createPostSchema = zod.object({
-    title: zod.string().min(1),
-    content: zod.string(),
-    author: zod.string().min(1),
-    createdAt: zod.string().min(1),
-    comments: zod
-        .array(
-            zod.object({
-                content: zod.string(),
-                createdAt: zod.string(),
-                author: zod.string(),
-                votes: zod
-                    .object({
-                        upVotes: zod
-                            .object({
-                                count: zod.number().optional(),
-                                users: zod.array(zod.string()).optional(),
-                            })
-                            .optional(),
-                        downVotes: zod
-                            .object({
-                                count: zod.number(),
-                                users: zod.array(zod.string()),
-                            })
-                            .optional(),
-                    })
-                    .optional(),
-            })
-        )
-        .optional(),
-    votes: zod
-        .object({
-            upVotes: zod
-                .object({
-                    count: zod.number().optional(),
-                    users: zod.array(zod.string()).optional(),
-                })
-                .optional(),
-            downVotes: zod
-                .object({
-                    count: zod.number(),
-                    users: zod.array(zod.string()),
-                })
-                .optional(),
-        })
-        .optional(),
-});
+const findComments = require("../util/findComments");
 
 const newCreatePostSchema = zod.object({
     title: zod.string().min(1),
@@ -100,18 +53,67 @@ router.get("/:nPosts/:currPage", async (req, res) => {
             .limit(nposts);
         res.json({ posts: posts });
     } catch (err) {
-        res.status(500).json({ msg: "Internal Server Error" });
+        res.status(500).json({ msg: "Internal Server Error in getting posts" });
+    }
+});
+
+// api/post/:id
+router.get("/getPost/:id", async (req, res) => {
+    const postId = req.params.id;
+    try {
+        const post = await NewPosts.findById(postId);
+        res.json({ post: post });
+    } catch (err) {
+        res.status(500).json({
+            msg: "Internal Server Error while getting post",
+        });
+    }
+});
+
+// api/post/:id/comments/:nComments/:currPage
+router.get("/:id/comments/:nComments/:currPage", async (req, res) => {
+    const postId = req.params.id;
+    const nComments = parseInt(req.params.nComments);
+    const currPage = parseInt(req.params.currPage);
+    try {
+        const allComments = await AllComments.find({})
+            .sort({
+                sort: -1,
+                "votes.upVotes.count": -1,
+                "votes.downVotes.count": 1,
+                createdAt: -1,
+                _id: 1,
+            })
+            .skip(nComments * (currPage - 1))
+            .limit(nComments);
+        const commentRefs = await CommentRef.find({});
+        console.log("before");
+        const comments = findComments(postId, allComments, commentRefs);
+        console.log("after");
+
+        res.json({ comments: comments });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            msg: "Internal Server Error while getting comments",
+        });
     }
 });
 
 // api/post/allComments
 router.get("/allComments", async (req, res) => {
+    console.log("allComments");
     try {
+        console.log("before Comments");
         const comments = await AllComments.find({});
+        console.log("comments");
         const commentRefs = await CommentRef.find({});
         res.json({ comments: comments, commentRefs: commentRefs });
     } catch (err) {
-        res.status(500).json({ msg: "Internal Server Error" });
+        console.log(err);
+        res.status(500).json({
+            msg: "Internal Server Error while getting allcomments",
+        });
     }
 });
 
@@ -134,9 +136,10 @@ router.post("/createPost", authMiddleware, async (req, res) => {
     const parsedPayload = newCreatePostSchema.safeParse(createPayload);
     console.log(parsedPayload);
     if (!parsedPayload.success) {
-        return res
-            .status(411)
-            .json({ msg: "Payload is not valid", errors: parsedPayload.error });
+        return res.status(411).json({
+            msg: "Payload is not valid",
+            errors: parsedPayload.error,
+        });
     }
 
     try {
@@ -146,7 +149,9 @@ router.post("/createPost", authMiddleware, async (req, res) => {
         // const posts = await NewPosts.find({});
         res.json({ msg: "Post created", post: post });
     } catch (err) {
-        res.status(500).json({ msg: "Internal Server Error" });
+        res.status(500).json({
+            msg: "Internal Server Error while in create post",
+        });
     }
 });
 
@@ -157,7 +162,9 @@ router.delete("/deletePost/:id", async (req, res) => {
         await NewPosts.findByIdAndDelete(postId);
         res.json({ msg: "Post deleted" });
     } catch (err) {
-        res.status(500).json({ msg: "Internal Server Error" });
+        res.status(500).json({
+            msg: "Internal Server Error delete post endpoint",
+        });
     }
 });
 
@@ -165,6 +172,7 @@ const addCommentSchema = zod.object({
     content: zod.string(),
     createdAt: zod.string(),
     author: zod.string(),
+    sort: zod.string(),
     votes: zod
         .object({
             upVotes: zod.number(),
@@ -175,12 +183,16 @@ const addCommentSchema = zod.object({
 // api/post/addComment
 router.post("/addComment/:id", authMiddleware, async (req, res) => {
     const user = await User.findById(req.session.userId);
+    const forSorting = parseInt(
+        Number(req.body.createdAt) / 1000 / 3600 / 24
+    ).toString();
     const createPayload = {
         content: req.body.content,
         createdAt: req.body.createdAt,
         author: user.username,
+        sort: forSorting,
     };
-    const parsedPayload = await addCommentSchema.safeParse(createPayload);
+    const parsedPayload = addCommentSchema.safeParse(createPayload);
 
     if (!parsedPayload.success) {
         return res.status(411).json({
@@ -205,6 +217,8 @@ router.post("/addComment/:id", authMiddleware, async (req, res) => {
         if (parentItem) {
             console.log("Parent item found");
             parentItem.cRefs.push(newComment._id.toString());
+            console.log(parentItem);
+            await parentItem.save();
         }
         const newCommentRef = await CommentRef.create({
             pRef: pId,
@@ -212,14 +226,16 @@ router.post("/addComment/:id", authMiddleware, async (req, res) => {
         });
 
         // await parentItem.save();
-        return res.json({
+        res.json({
             msg: "Comment added",
             comment: newComment,
             commentRef: newCommentRef,
         });
     } catch (err) {
         console.log(err);
-        res.status(500).json({ msg: "Internal Server Error" });
+        res.status(500).json({
+            msg: "Internal Server Error add comment end point",
+        });
     }
 });
 
@@ -269,7 +285,7 @@ router.post("/downvote/:id", authMiddleware, async (req, res) => {
         await post.save();
         res.json({ msg: "Downvoted" });
     } catch (err) {
-        res.status(500).json({ msg: "Internal Server Error" });
+        res.status(500).json({ msg: "Internal Server Error pd" });
     }
 });
 
@@ -302,7 +318,7 @@ router.post("/upvoteComment/:id", authMiddleware, async (req, res) => {
         await comment.save();
         res.json({ msg: "Upvoted" });
     } catch (err) {
-        res.status(500).json({ msg: "Internal Server Error" });
+        res.status(500).json({ msg: "Internal Server Error cu" });
     }
 });
 
@@ -334,7 +350,7 @@ router.post("/downvoteComment/:id", authMiddleware, async (req, res) => {
         await comment.save();
         res.json({ msg: "Downvoted" });
     } catch (err) {
-        res.status(500).json({ msg: "Internal Server Error" });
+        res.status(500).json({ msg: "Internal Server Error cd" });
     }
 });
 

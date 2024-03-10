@@ -5,5 +5,6 @@ export function findComments(id, allComments, commentRefs) {
         const comment = allComments.find((c) => c._id === ref.currRef);
         return comment;
     });
+
     return comments;
 }

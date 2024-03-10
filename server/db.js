@@ -74,6 +74,7 @@ const allCommentsSchema = new mongoose.Schema({
     content: String,
     createdAt: String,
     author: String,
+    sort: String,
     votes: {
         upVotes: {
             count: { type: Number, default: 0 },

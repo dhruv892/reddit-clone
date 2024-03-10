@@ -62,6 +62,7 @@ router.post("/signup", async (req, res) => {
         });
         const userId = user._id;
         req.session.userId = userId;
+        req.session.username = req.body.username;
 
         res.status(200).json({
             message: "User created",
@@ -96,6 +97,7 @@ router.post("/signin", async (req, res) => {
         });
     } else {
         req.session.userId = user._id;
+        req.session.username = req.body.username;
         console.log(req.session.userId);
         // req.session.authorized = true;
         return res.json({
