@@ -4,14 +4,14 @@ function findComments(id, allComments, commentRefs) {
     if (itemCommentRefs.length === 0) return [];
 
     const comments = itemCommentRefs.map((ref) => {
-        const comment = { comments: [], replies: [] };
-        comment.comments.push(
-            allComments.find((c) => c._id.toString() === ref.currRef)
+        const comment = { comments: {}, replies: [] };
+        comment.comments = allComments.find(
+            (c) => c._id.toString() === ref.currRef
         );
         comment.replies.push(
             ...findComments(ref.currRef, allComments, commentRefs)
         );
-        console.log("comment", comment);
+        // console.log("comment", comment);
 
         return comment;
     });

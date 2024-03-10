@@ -33,6 +33,20 @@ const newCreatePostSchema = zod.object({
 
 const router = express.Router();
 
+// api/post/getPost/:id
+router.get("/getPost/:id", async (req, res) => {
+    const postId = req.params.id;
+    try {
+        const post = await NewPosts.findById(postId);
+        console.log(post);
+        res.json({ post: post });
+    } catch (err) {
+        res.status(500).json({
+            msg: "Internal Server Error while getting post",
+        });
+    }
+});
+
 // api/post/
 router.get("/:nPosts/:currPage", async (req, res) => {
     try {
@@ -57,39 +71,30 @@ router.get("/:nPosts/:currPage", async (req, res) => {
     }
 });
 
-// api/post/:id
-router.get("/getPost/:id", async (req, res) => {
-    const postId = req.params.id;
-    try {
-        const post = await NewPosts.findById(postId);
-        res.json({ post: post });
-    } catch (err) {
-        res.status(500).json({
-            msg: "Internal Server Error while getting post",
-        });
-    }
-});
-
 // api/post/:id/comments/:nComments/:currPage
-router.get("/:id/comments/:nComments/:currPage", async (req, res) => {
+router.get("/comments/:id/:nComments/:currPage", async (req, res) => {
     const postId = req.params.id;
     const nComments = parseInt(req.params.nComments);
     const currPage = parseInt(req.params.currPage);
     try {
+        // prettier-ignore
         const allComments = await AllComments.find({})
             .sort({
-                sort: -1,
+                "sort": -1,
                 "votes.upVotes.count": -1,
                 "votes.downVotes.count": 1,
-                createdAt: -1,
-                _id: 1,
+                "createdAt": -1,
+                "_id": 1,
             })
             .skip(nComments * (currPage - 1))
             .limit(nComments);
+        if (allComments.length === 0) {
+            return res.json({ comments: [] });
+        }
         const commentRefs = await CommentRef.find({});
-        console.log("before");
+        // console.log("before");
         const comments = findComments(postId, allComments, commentRefs);
-        console.log("after");
+        // console.log("after");
 
         res.json({ comments: comments });
     } catch (error) {
