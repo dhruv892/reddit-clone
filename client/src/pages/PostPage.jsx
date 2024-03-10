@@ -1,29 +1,30 @@
 import { useParams } from "react-router";
-import { postAtom, commentAtom, fetchComments } from "../store/atoms";
 import moment from "moment";
 import AddComment from "../components/AddComment";
 import { PostComments } from "../components/PostComments";
 import axios from "axios";
-import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from "recoil";
 import { useEffect, useState } from "react";
 
 import { VotingComponent } from "../components/VotingComponent";
-import { findComments } from "../util/findComments";
+// import { findComments } from "../util/findComments";
 
 export function PostPage() {
-    const postLoadable = useRecoilValueLoadable(postAtom);
-    const commentLoadable = useRecoilValueLoadable(commentAtom);
+    // const postLoadable = useRecoilValueLoadable(postAtom);
+    // const commentLoadable = useRecoilValueLoadable(commentAtom);
+    const [post, setPost] = useState({});
     const params = useParams();
     axios.defaults.withCredentials = true;
-    //const [refresh, setRefreshPosts] = useRecoilState(refreshPosts);
-    // const refreshPostsAtom = useRecoilRefresher_UNSTABLE(fetchPost);
-    const fetchAllComments = useRecoilRefresher_UNSTABLE(fetchComments);
+
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userId, setUserId] = useState("");
 
     const [comments, setComments] = useState([]);
-    const [allComments, setAllComments] = useState([]);
-    const [commentRefs, setCommentRefs] = useState([]);
+    const [page, setPage] = useState(1);
+    const [isFetching, setIsFetching] = useState(false);
+
+    // useEffect(() => {
+    //     console.log("param", params.id);
+    // }, []);
 
     const fetchSessionData = async () => {
         try {
@@ -43,164 +44,125 @@ export function PostPage() {
     };
 
     useEffect(() => {
-        // refreshPostsAtom();
-        fetchAllComments();
-    }, [fetchAllComments]);
-    useEffect(() => {
         fetchSessionData();
     }, [isLoggedIn]);
 
     useEffect(() => {
-        if (postLoadable.state === "hasValue") {
-            const post = postLoadable.contents.find((p) => p._id === params.id);
-            if (post) {
-                if (commentLoadable.state === "hasValue") {
-                    const fetchedAllComments = commentLoadable.contents;
-                    const postComments = findComments(
-                        post._id,
-                        fetchedAllComments.comments,
-                        fetchedAllComments.commentRefs
-                    );
-                    console.log(postComments);
-                    setComments(postComments);
-                    setAllComments(fetchedAllComments.comments);
-                    setCommentRefs(fetchedAllComments.commentRefs);
-                }
-                // setComments(post.comments);
+        (async function () {
+            console.log(params.id);
+            const newPost = await fetchPost(params.id);
+            setPost(newPost);
+        })();
+    }, [params.id]);
+
+    const isScrollingToBottom = () => {
+        // console.log(
+        //     window.innerHeight + document.documentElement.scrollTop ===
+        //         document.documentElement.offsetHeight
+        // );
+        return (
+            window.innerHeight + document.documentElement.scrollTop ===
+            document.documentElement.offsetHeight
+        );
+    };
+
+    useEffect(() => {
+        (async function () {
+            const newComments = await fetchComments(page, params.id);
+            if (newComments && page === 1) {
+                setComments(newComments);
+                // setPostAtom(newPosts);
+                return;
             }
-        }
-    }, [postLoadable, params.id, commentLoadable]);
+            if (newComments && isFetching) {
+                console.log(page);
+                setComments((prev) => [...prev, ...newComments]);
+                // setPostAtom((prev) => [...prev, ...newPosts]);
+                setIsFetching((prev) => !prev);
+            }
+        })();
+    }, [isFetching, page, params.id]);
 
-    let post;
-
-    switch (postLoadable.state) {
-        case "hasValue":
-            post = postLoadable.contents.find((p) => p._id === params.id);
-            break;
-        case "loading":
-            return <h1>Loading...</h1>;
-        case "hasError":
-            throw postLoadable.contents;
-    }
-
-    // const voteHandler = async (post, voteType) => {
-    //     if (!userId) return;
-    //     if (voteType === "up" && upVoteUsers.includes(userId)) return;
-    //     if (voteType === "down" && downVoteUsers.includes(userId)) return;
-
-    //     const req = await postVoteHandler(post._id, voteType);
-    //     // console.log(req);
-    //     if (req === "done") {
-    //         //     console.log("done");
-    //         switch (voteType) {
-    //             case "up":
-    //                 downVoteUsers.includes(userId)
-    //                     ? setPostVotes((prev) => prev + 2)
-    //                     : setPostVotes((prev) => prev + 1);
-    //                 setUpVoteUsers((prev) => [...prev, userId]);
-    //                 setDownVoteUsers((prev) =>
-    //                     prev.filter((id) => id !== userId)
-    //                 );
-    //                 break;
-    //             case "down":
-    //                 console.log(userId);
-    //                 // console.log(downVoteUsers);
-    //                 upVoteUsers.includes(userId)
-    //                     ? setPostVotes((prev) => prev - 2)
-    //                     : setPostVotes((prev) => prev - 1);
-    //                 setDownVoteUsers((prev) => {
-    //                     return [...prev, userId];
-    //                     // console.log([...prev, userId]);
-    //                 });
-    //                 setUpVoteUsers((prev) => {
-    //                     return prev.filter((id) => id != userId);
-    //                 });
-    //                 // console.log(downVoteUsers);
-    //                 // post.votes.downVotes.users.push(userId);
-    //                 break;
-    //         }
-    //     } else {
-    //         console.log(req);
-    //     }
-    // };
+    useEffect(() => {
+        const handleScroll = () => {
+            if (isScrollingToBottom() && !isFetching) {
+                setIsFetching(true);
+                setPage((prev) => prev + 1);
+            }
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [isFetching, page]);
 
     const setCommentsHandler = (newComment) => {
-        setComments((prev) => [...prev, newComment]);
+        const tempComment = {
+            comments: newComment,
+            replies: [],
+        };
+        setComments((prev) => [tempComment, ...prev]);
     };
 
     return (
         <div className="mt-5 p-5 max-w-4xl mx-auto text-wrap text-gray-300 bg-zinc-900 pr-6">
-            <div className="flex">
-                <div className="flex flex-col mr-2 flex-initial align-center gap-1">
-                    {/* <button
-                        className="p-0"
-                        onClick={() => {
-                            // !checkUpVotes(post, userId) &&
-                            voteHandler(post, "up");
-                        }}
-                    >
-                        <UpVoteLogo />
-                    </button>
-                    <span className="text-center">{postVotes}</span>
-                    <button
-                        className="p-0"
-                        onClick={() =>
-                            // !checkDownVotes(post, userId) &&
-                            voteHandler(post, "down")
-                        }
-                    >
-                        <DownVoteLogo />
-                    </button> */}
-                    <VotingComponent
-                        votes={post.votes}
-                        userId={userId}
-                        type={"post"}
-                        itemId={post._id}
-                    />
-                </div>
-                <div className="ml-4">
-                    <div>
-                        <p className="text-gray-400 text-sm">
-                            Posted by{" "}
-                            <span className="font-semibold text-gray-100">
-                                {post.author}
-                            </span>{" "}
-                            {moment(parseInt(post.createdAt)).fromNow()}
-                        </p>
-                        <p className="text-gray-200 text-3xl">{post.title}</p>
+            {post && (
+                <div className="flex">
+                    <div className="flex flex-col mr-2 flex-initial align-center gap-1">
+                        <VotingComponent
+                            votes={post.votes}
+                            userId={userId}
+                            type={"post"}
+                            itemId={post._id}
+                        />
                     </div>
+                    <div className="ml-4">
+                        <div>
+                            <p className="text-gray-400 text-sm">
+                                Posted by{" "}
+                                <span className="font-semibold text-gray-100">
+                                    {post.author}
+                                </span>{" "}
+                                {moment(parseInt(post.createdAt)).fromNow()}
+                            </p>
+                            <p className="text-gray-200 text-3xl">
+                                {post.title}
+                            </p>
+                        </div>
 
-                    <div>
-                        <p className="text-justify mt-2 whitespace-pre-line">
-                            {post.content}
-                        </p>
+                        <div>
+                            <p className="text-justify mt-2 whitespace-pre-line">
+                                {post.content}
+                            </p>
+                        </div>
+                        <br />
+                        <div className="flex text-zinc-500">
+                            <div>{comments.length} comments</div>
+                            <div className="ml-2 hover:bg-zinc-800">share</div>
+                            <div className="ml-2 hover:bg-zinc-800">save</div>
+                            <div className="ml-2 hover:bg-zinc-800">...</div>
+                        </div>
+                        <br />
                     </div>
-                    <br />
-                    <div className="flex text-zinc-500">
-                        <div>{comments.length} comments</div>
-                        <div className="ml-2 hover:bg-zinc-800">share</div>
-                        <div className="ml-2 hover:bg-zinc-800">save</div>
-                        <div className="ml-2 hover:bg-zinc-800">...</div>
-                    </div>
-                    <br />
                 </div>
-            </div>
+            )}
 
             <div className="bg-zinc-900 rounded-lg">
-                <AddComment
-                    id={post._id.toString()}
-                    setCommentsHandler={setCommentsHandler}
-                />
+                {post && (
+                    <AddComment
+                        // id={post._id.toString()}
+                        id={params.id}
+                        setCommentsHandler={setCommentsHandler}
+                    />
+                )}
                 <p className="text-2xl pl-4">Comments</p>
                 <div className="divide-y divide-slate-50 py-2">
                     {comments.length > 0 ? (
                         comments.map((comment) => (
                             <PostComments
-                                key={comment._id}
+                                key={comment.comments._id}
                                 comment={comment}
                                 userId={userId}
-                                allComments={allComments}
-                                commentRefs={commentRefs}
+                                // allComments={comments}
+                                // commentRefs={commentRefs}
                             />
                         ))
                     ) : (
@@ -211,4 +173,30 @@ export function PostPage() {
             {/* <PostComments post={post} userId={userId} /> */}
         </div>
     );
+}
+async function fetchComments(page, id) {
+    try {
+        const res = await axios.get(
+            `http://localhost:3000/api/post/comments/${id}/10/${page}`
+        );
+
+        const newcomments = await res.data.comments;
+        console.log(newcomments);
+        return newcomments;
+    } catch (error) {
+        console.error(error);
+        return;
+    }
+}
+async function fetchPost(id) {
+    try {
+        const res = await axios.get(
+            `http://localhost:3000/api/post/getPost/${id}`
+        );
+        const newPost = await res.data.post;
+        return newPost;
+    } catch (error) {
+        console.error(error);
+        return;
+    }
 }

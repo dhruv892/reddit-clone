@@ -21,12 +21,6 @@ export function Home() {
     const isLoggedInHandler = () => {
         setIsLoggedIn(true);
     };
-    // useEffect(() => {
-    //     if (fetchedPosts) {
-    //         console.log(fetchedPosts);
-    //         setPosts(fetchedPosts);
-    //     }
-    // }, []);
 
     const fetchSessionData = async () => {
         try {
@@ -73,14 +67,6 @@ export function Home() {
         );
     };
 
-    // useEffect(() => {
-    //     if (fetchedPosts) {
-    //         setPosts(fetchedPosts);
-    //     }
-    // }, []);
-
-    // Fetch more posts when user scrolls to the bottom of the page
-
     useEffect(() => {
         (async function () {
             const newPosts = await fetchPosts(page);
@@ -101,23 +87,12 @@ export function Home() {
         const handleScroll = () => {
             if (isScrollingToBottom() && !isFetching) {
                 setIsFetching(true);
-                // setFetchedPosts(page + 1);
-                // const newPosts = fetchPosts(page + 1);
-                // setPosts((prev) => [...prev, ...fetchedPosts]);
                 setPage((prev) => prev + 1);
             }
         };
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, [isFetching, page]);
-
-    // useEffect(() => {
-    //     if (isFetching) {
-    //         const newPosts = fetchPosts(page);
-    //         setPosts((prev) => [...prev, ...newPosts]);
-    //         setIsFetching((prev) => !prev);
-    //     }
-    // }, [isFetching, page]);
 
     const setPostsHandler = (newPost) => {
         setPosts((prev) => [newPost, ...prev]);
