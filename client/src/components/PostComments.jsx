@@ -14,9 +14,10 @@ export function PostComments({ comment, userId }) {
     const [replies, setReplies] = useState([]);
 
     useEffect(() => {
-        console.log(comment.comments._id);
-        if (!comment.comments) return;
-        if (comment.replies.length > 0) setReplies(comment.replies);
+        // console.log(comment._id);
+        if (!comment) return;
+        if (comment.replies && comment.replies.length > 0)
+            setReplies(comment.replies);
         // setUpVoteUsers();
     }, [comment]);
 
@@ -28,21 +29,21 @@ export function PostComments({ comment, userId }) {
         <div className="flex gap-5 m-2 p-2">
             <div className="flex flex-col flex-initial align-center">
                 <VotingComponent
-                    votes={comment.comments.votes}
+                    votes={comment.votes}
                     userId={userId}
                     type={"comment"}
-                    itemId={comment.comments._id}
+                    itemId={comment._id}
                 />
             </div>
             <div className="flex-grow">
                 <p className="mb-1">
                     <span className="font-bold">{comment.author} </span>
                     <span className="text-zinc-500 ml-1">
-                        {moment(parseInt(comment.comments.createdAt)).fromNow()}{" "}
+                        {moment(parseInt(comment.createdAt)).fromNow()}{" "}
                     </span>
                 </p>
 
-                <p className="mb-1">{comment.comments.content}</p>
+                <p className="mb-1">{comment.content}</p>
                 {!doReply ? (
                     <span
                         style={{
@@ -57,7 +58,7 @@ export function PostComments({ comment, userId }) {
                 ) : (
                     <div>
                         <AddComment
-                            id={comment.comments._id}
+                            id={comment._id}
                             setCommentsHandler={setRepliesHandler}
                         />
                     </div>
@@ -66,7 +67,7 @@ export function PostComments({ comment, userId }) {
                     {replies.length > 0
                         ? replies.map((reply) => (
                               <PostComments
-                                  key={reply.comments._id}
+                                  key={reply._id}
                                   comment={reply}
                                   userId={userId}
                                   //   allComments={allComments}
@@ -81,28 +82,25 @@ export function PostComments({ comment, userId }) {
 }
 
 const CommentPropTypes = () => ({
-    comment: {
-        votes: PropTypes.shape({
-            upVotes: PropTypes.shape({
-                count: PropTypes.number,
-                users: PropTypes.array,
-            }),
-            downVotes: PropTypes.shape({
-                count: PropTypes.number,
-                users: PropTypes.array,
-            }),
+    votes: PropTypes.shape({
+        upVotes: PropTypes.shape({
+            count: PropTypes.number,
+            users: PropTypes.array,
         }),
-        content: PropTypes.string,
-        createdAt: PropTypes.string,
-        author: PropTypes.string,
-        _id: PropTypes.string,
-    },
+        downVotes: PropTypes.shape({
+            count: PropTypes.number,
+            users: PropTypes.array,
+        }),
+    }),
+    content: PropTypes.string,
+    createdAt: PropTypes.string,
+    author: PropTypes.string,
+    _id: PropTypes.string,
+
     replies: PropTypes.arrayOf(PropTypes.shape(CommentPropTypes)),
 });
 
 PostComments.propTypes = {
     comment: PropTypes.shape(CommentPropTypes),
     userId: PropTypes?.string,
-    // allComments: PropTypes.arrayOf(PropTypes.shape(CommentPropTypes)),
-    // commentRefs: PropTypes.arrayOf(PropTypes.object),
 };

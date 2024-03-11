@@ -2,43 +2,21 @@ const express = require("express");
 const { User } = require("../db");
 const { NewPosts } = require("../db");
 const { AllComments } = require("../db");
-const { CommentRef } = require("../db");
+
 const zod = require("zod");
 const { authMiddleware } = require("../middleware");
-const findComments = require("../util/findComments");
-
-const newCreatePostSchema = zod.object({
-    title: zod.string().min(1),
-    content: zod.string(),
-    author: zod.string().min(1),
-    createdAt: zod.string().min(1),
-    sort: zod.string().min(1),
-    votes: zod
-        .object({
-            upVotes: zod
-                .object({
-                    count: zod.number().optional(),
-                    users: zod.array(zod.string()).optional(),
-                })
-                .optional(),
-            downVotes: zod
-                .object({
-                    count: zod.number(),
-                    users: zod.array(zod.string()),
-                })
-                .optional(),
-        })
-        .optional(),
-});
+const votingMethod = require("../util/votingMethod");
 
 const router = express.Router();
+
+////////////////// Get Content //////////////////////
 
 // api/post/getPost/:id
 router.get("/getPost/:id", async (req, res) => {
     const postId = req.params.id;
     try {
         const post = await NewPosts.findById(postId);
-        console.log(post);
+        // console.log(post);
         res.json({ post: post });
     } catch (err) {
         res.status(500).json({
@@ -76,9 +54,33 @@ router.get("/comments/:id/:nComments/:currPage", async (req, res) => {
     const postId = req.params.id;
     const nComments = parseInt(req.params.nComments);
     const currPage = parseInt(req.params.currPage);
+
     try {
         // prettier-ignore
-        const allComments = await AllComments.find({})
+        const findRComments = async (foundComments) => {
+            if (foundComments.length === 0) return [];
+          
+            const commentPromises = foundComments.map(async (comment) => {
+                // prettier-ignore
+                const cReplies = await AllComments.find({pId: comment._id.toString()})
+                    .sort({
+                        "sort": -1,
+                        "votes.upVotes.count": -1,
+                        "votes.downVotes.count": 1,
+                        "createdAt": -1,
+                        "_id": 1,
+                    })
+                const replies = await findRComments(cReplies);
+                const newComment = comment.toObject();
+                newComment.replies = replies;
+                return newComment;
+            });
+          
+            const comments = await Promise.all(commentPromises);
+            return comments;
+        };
+        // prettier-ignore
+        const postIdComments = await AllComments.find({pId: postId})
             .sort({
                 "sort": -1,
                 "votes.upVotes.count": -1,
@@ -88,13 +90,12 @@ router.get("/comments/:id/:nComments/:currPage", async (req, res) => {
             })
             .skip(nComments * (currPage - 1))
             .limit(nComments);
-        if (allComments.length === 0) {
+
+        if (postIdComments.length === 0) {
             return res.json({ comments: [] });
         }
-        const commentRefs = await CommentRef.find({});
-        // console.log("before");
-        const comments = findComments(postId, allComments, commentRefs);
-        // console.log("after");
+
+        const comments = await findRComments(postIdComments);
 
         res.json({ comments: comments });
     } catch (error) {
@@ -107,11 +108,11 @@ router.get("/comments/:id/:nComments/:currPage", async (req, res) => {
 
 // api/post/allComments
 router.get("/allComments", async (req, res) => {
-    console.log("allComments");
+    // console.log("allComments");
     try {
-        console.log("before Comments");
+        // console.log("before Comments");
         const comments = await AllComments.find({});
-        console.log("comments");
+        // console.log("comments");
         const commentRefs = await CommentRef.find({});
         res.json({ comments: comments, commentRefs: commentRefs });
     } catch (err) {
@@ -120,6 +121,32 @@ router.get("/allComments", async (req, res) => {
             msg: "Internal Server Error while getting allcomments",
         });
     }
+});
+
+////////////////// Post Content //////////////////////
+
+const newCreatePostSchema = zod.object({
+    title: zod.string().min(1),
+    content: zod.string(),
+    author: zod.string().min(1),
+    createdAt: zod.string().min(1),
+    sort: zod.string().min(1),
+    votes: zod
+        .object({
+            upVotes: zod
+                .object({
+                    count: zod.number().optional(),
+                    users: zod.array(zod.string()).optional(),
+                })
+                .optional(),
+            downVotes: zod
+                .object({
+                    count: zod.number(),
+                    users: zod.array(zod.string()),
+                })
+                .optional(),
+        })
+        .optional(),
 });
 
 // api/post/createPost
@@ -139,7 +166,7 @@ router.post("/createPost", authMiddleware, async (req, res) => {
     };
     //const parsedPayload = await createPostSchema.safeParse(createPayload);
     const parsedPayload = newCreatePostSchema.safeParse(createPayload);
-    console.log(parsedPayload);
+    // console.log(parsedPayload);
     if (!parsedPayload.success) {
         return res.status(411).json({
             msg: "Payload is not valid",
@@ -148,27 +175,11 @@ router.post("/createPost", authMiddleware, async (req, res) => {
     }
 
     try {
-        // const post = await Posts.create(parsedPayload.data);
-        // const posts = await Posts.find({});
         const post = await NewPosts.create(parsedPayload.data);
-        // const posts = await NewPosts.find({});
         res.json({ msg: "Post created", post: post });
     } catch (err) {
         res.status(500).json({
             msg: "Internal Server Error while in create post",
-        });
-    }
-});
-
-// api/post/deletePost
-router.delete("/deletePost/:id", async (req, res) => {
-    const postId = req.params.id;
-    try {
-        await NewPosts.findByIdAndDelete(postId);
-        res.json({ msg: "Post deleted" });
-    } catch (err) {
-        res.status(500).json({
-            msg: "Internal Server Error delete post endpoint",
         });
     }
 });
@@ -178,6 +189,7 @@ const addCommentSchema = zod.object({
     createdAt: zod.string(),
     author: zod.string(),
     sort: zod.string(),
+    pId: zod.string(),
     votes: zod
         .object({
             upVotes: zod.number(),
@@ -187,6 +199,7 @@ const addCommentSchema = zod.object({
 });
 // api/post/addComment
 router.post("/addComment/:id", authMiddleware, async (req, res) => {
+    const pId = req.params.id;
     const user = await User.findById(req.session.userId);
     const forSorting = parseInt(
         Number(req.body.createdAt) / 1000 / 3600 / 24
@@ -196,6 +209,7 @@ router.post("/addComment/:id", authMiddleware, async (req, res) => {
         createdAt: req.body.createdAt,
         author: user.username,
         sort: forSorting,
+        pId: pId,
     };
     const parsedPayload = addCommentSchema.safeParse(createPayload);
 
@@ -206,35 +220,13 @@ router.post("/addComment/:id", authMiddleware, async (req, res) => {
         });
     }
 
-    const pId = req.params.id;
     const comment = parsedPayload.data;
     try {
-        // const post = await Posts.findById(postId);
-        // post.comments.push(comment);
-        // await post.save();
-        // console.log(post.comments);
         const newComment = await AllComments.create(comment);
-        // const commentRef = await CommentRef.create({ pRef: pId, cRefs: newComment._id });
-        const parentItem = await CommentRef.findOne({
-            currRef: pId.toString(),
-        });
-        console.log(parentItem);
-        if (parentItem) {
-            console.log("Parent item found");
-            parentItem.cRefs.push(newComment._id.toString());
-            console.log(parentItem);
-            await parentItem.save();
-        }
-        const newCommentRef = await CommentRef.create({
-            pRef: pId,
-            currRef: newComment._id.toString(),
-        });
 
-        // await parentItem.save();
         res.json({
             msg: "Comment added",
             comment: newComment,
-            commentRef: newCommentRef,
         });
     } catch (err) {
         console.log(err);
@@ -244,24 +236,15 @@ router.post("/addComment/:id", authMiddleware, async (req, res) => {
     }
 });
 
+////////////////// Vote Content //////////////////////
+
 // api/post/upvote/:id
 router.post("/upvote/:id", authMiddleware, async (req, res) => {
     const postId = req.params.id;
     try {
         const post = await NewPosts.findById(postId);
-        if (post.votes.upVotes.users.includes(req.session.userId.toString())) {
-            return res.status(409).json({ msg: "Already upvoted" });
-        }
-        if (
-            post.votes.downVotes.users.includes(req.session.userId.toString())
-        ) {
-            post.votes.downVotes.count -= 1;
-            post.votes.downVotes.users = post.votes.downVotes.users.filter(
-                (id) => id !== req.session.userId.toString()
-            );
-        }
-        post.votes.upVotes.count += 1;
-        post.votes.upVotes.users.push(req.session.userId.toString());
+        votingMethod(post, req, res, "up");
+
         await post.save();
         res.json({ msg: "Upvoted" });
     } catch (err) {
@@ -274,19 +257,8 @@ router.post("/downvote/:id", authMiddleware, async (req, res) => {
     const postId = req.params.id;
     try {
         const post = await NewPosts.findById(postId);
-        if (
-            post.votes.downVotes.users.includes(req.session.userId.toString())
-        ) {
-            return res.status(409).json({ msg: "Already downvoted" });
-        }
-        if (post.votes.upVotes.users.includes(req.session.userId.toString())) {
-            post.votes.upVotes.count -= 1;
-            post.votes.upVotes.users = post.votes.upVotes.users.filter(
-                (id) => id !== req.session.userId.toString()
-            );
-        }
-        post.votes.downVotes.count += 1;
-        post.votes.downVotes.users.push(req.session.userId.toString());
+
+        votingMethod(post, req, res, "down");
         await post.save();
         res.json({ msg: "Downvoted" });
     } catch (err) {
@@ -301,25 +273,7 @@ router.post("/upvoteComment/:id", authMiddleware, async (req, res) => {
         const comment = await AllComments.findById(commentId);
         // const comment = post.comments.id(commentId);
 
-        if (
-            comment.votes.upVotes.users.includes(req.session.userId.toString())
-        ) {
-            return res.status(409).json({ msg: "Already upvoted" });
-        }
-        if (
-            comment.votes.downVotes.users.includes(
-                req.session.userId.toString()
-            )
-        ) {
-            comment.votes.downVotes.count -= 1;
-            comment.votes.downVotes.users =
-                comment.votes.downVotes.users.filter(
-                    (id) => id !== req.session.userId.toString()
-                );
-        }
-
-        comment.votes.upVotes.count += 1;
-        comment.votes.upVotes.users.push(req.session.userId.toString());
+        votingMethod(comment, req, res, "up");
         await comment.save();
         res.json({ msg: "Upvoted" });
     } catch (err) {
@@ -333,25 +287,7 @@ router.post("/downvoteComment/:id", authMiddleware, async (req, res) => {
     try {
         const comment = await AllComments.findById(commentId);
 
-        if (
-            comment.votes.downVotes.users.includes(
-                req.session.userId.toString()
-            )
-        ) {
-            return res.status(409).json({ msg: "Already downvoted" });
-        }
-
-        if (
-            comment.votes.upVotes.users.includes(req.session.userId.toString())
-        ) {
-            comment.votes.upVotes.count -= 1;
-            comment.votes.upVotes.users = comment.votes.upVotes.users.filter(
-                (id) => id !== req.session.userId.toString()
-            );
-        }
-
-        comment.votes.downVotes.count += 1;
-        comment.votes.downVotes.users.push(req.session.userId.toString());
+        votingMethod(comment, req, res, "down");
         await comment.save();
         res.json({ msg: "Downvoted" });
     } catch (err) {

@@ -22,10 +22,6 @@ export function PostPage() {
     const [page, setPage] = useState(1);
     const [isFetching, setIsFetching] = useState(false);
 
-    // useEffect(() => {
-    //     console.log("param", params.id);
-    // }, []);
-
     const fetchSessionData = async () => {
         try {
             const response = await axios.get(
@@ -95,11 +91,11 @@ export function PostPage() {
     }, [isFetching, page]);
 
     const setCommentsHandler = (newComment) => {
-        const tempComment = {
-            comments: newComment,
-            replies: [],
-        };
-        setComments((prev) => [tempComment, ...prev]);
+        // const tempComment = {
+        //     comments: newComment,
+        //     replies: [],
+        // };
+        setComments((prev) => [newComment, ...prev]);
     };
 
     return (
@@ -158,7 +154,7 @@ export function PostPage() {
                     {comments.length > 0 ? (
                         comments.map((comment) => (
                             <PostComments
-                                key={comment.comments._id}
+                                key={comment._id}
                                 comment={comment}
                                 userId={userId}
                                 // allComments={comments}
