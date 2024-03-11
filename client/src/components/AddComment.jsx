@@ -25,6 +25,9 @@ export default function AddComment({ id, setCommentsHandler }) {
     const submitHandler = async (e) => {
         e.preventDefault();
         try {
+            if (!content) {
+                return;
+            }
             const response = await axios.post(
                 `http://localhost:3000/api/post/addComment/${id}`,
                 {
