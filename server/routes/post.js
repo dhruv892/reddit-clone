@@ -16,6 +16,8 @@ router.get("/getPost/:id", async (req, res) => {
     const postId = req.params.id;
     try {
         const post = await NewPosts.findById(postId);
+        // const ccounts = await CommentsCount.findOne({ pId: postId });
+        // const count = ccounts.count;
         // console.log(post);
         res.json({ post: post });
     } catch (err) {
@@ -176,6 +178,7 @@ router.post("/createPost", authMiddleware, async (req, res) => {
 
     try {
         const post = await NewPosts.create(parsedPayload.data);
+        // await CommentsCount.create({ pId: post._id.toString(), count: 0 });
         res.json({ msg: "Post created", post: post });
     } catch (err) {
         res.status(500).json({
@@ -219,10 +222,33 @@ router.post("/addComment/:id", authMiddleware, async (req, res) => {
             errors: parsedPayload.error,
         });
     }
+    const findTopParentId = async (id) => {
+        const comment = await AllComments.findById(id);
+        console.log(comment);
+        console.log(id);
+        // let
 
+        if (comment && comment !== undefined && comment !== null) {
+            return await findTopParentId(comment.pId);
+        } else {
+            return id;
+        }
+        // return id;
+    };
     const comment = parsedPayload.data;
     try {
         const newComment = await AllComments.create(comment);
+
+        const tempId = await findTopParentId(newComment._id.toString());
+        console.log("tempId", tempId);
+        // const commentsCount = await CommentsCount.findOne({ pId: tempId });
+        const post = await NewPosts.findById(tempId);
+        post.commentCount += 1;
+        await post.save();
+        // console.log(commentsCount);
+        // const ccounts = await CommentsCount.findOne({ pId:
+        // commentsCount.count += 1;
+        // await commentsCount.save();
 
         res.json({
             msg: "Comment added",

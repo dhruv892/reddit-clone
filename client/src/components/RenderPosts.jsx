@@ -60,8 +60,8 @@ function RenderPosts({ post, userId }) {
                     </div>
                     <div className="mt-2 text-gray-300 flex space-x-2 text-sm ">
                         <a href={post.url}>
-                            {post.comments
-                                ? `${post.comments.length} comments`
+                            {post.commentCount > 0
+                                ? `${post.commentCount} comments`
                                 : "comment"}
                         </a>
                         <a
@@ -83,22 +83,22 @@ function RenderPosts({ post, userId }) {
 
 export const MemoizedRenderPosts = React.memo(RenderPosts);
 
-const CommentPropTypes = {
-    votes: PropTypes.shape({
-        upVotes: PropTypes.shape({
-            count: PropTypes.number,
-            users: PropTypes.array,
-        }),
-        downVotes: PropTypes.shape({
-            count: PropTypes.number,
-            users: PropTypes.array,
-        }),
-    }),
-    content: PropTypes.string,
-    createdAt: PropTypes.string,
-    author: PropTypes.string,
-    _id: PropTypes.string,
-};
+// const CommentPropTypes = {
+//     votes: PropTypes.shape({
+//         upVotes: PropTypes.shape({
+//             count: PropTypes.number,
+//             users: PropTypes.array,
+//         }),
+//         downVotes: PropTypes.shape({
+//             count: PropTypes.number,
+//             users: PropTypes.array,
+//         }),
+//     }),
+//     content: PropTypes.string,
+//     createdAt: PropTypes.string,
+//     author: PropTypes.string,
+//     _id: PropTypes.string,
+// };
 
 const PostPropTypes = {
     _id: PropTypes.string.isRequired,
@@ -106,7 +106,9 @@ const PostPropTypes = {
     content: PropTypes.string,
     author: PropTypes.string.isRequired,
     createdAt: PropTypes.string.isRequired,
-    comments: PropTypes.arrayOf(PropTypes.shape(CommentPropTypes)),
+    sort: PropTypes.string,
+    commentCount: PropTypes.number,
+    // comments: PropTypes.arrayOf(PropTypes.shape(CommentPropTypes)),
     votes: PropTypes.shape({
         upVotes: PropTypes.shape({
             count: PropTypes.number,

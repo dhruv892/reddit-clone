@@ -9,6 +9,7 @@ const corsOptions = {
     origin: function (origin, callback) {
         const allowedOrigins = [
             "http://localhost:5173",
+            "http://localhost:5174",
             "http://another-origin.com",
         ];
         if (!origin || allowedOrigins.indexOf(origin) !== -1) {
