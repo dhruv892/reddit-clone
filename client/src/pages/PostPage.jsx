@@ -6,13 +6,11 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 import { VotingComponent } from "../components/VotingComponent";
-// import { findComments } from "../util/findComments";
 
 export function PostPage() {
-    // const postLoadable = useRecoilValueLoadable(postAtom);
-    // const commentLoadable = useRecoilValueLoadable(commentAtom);
     const [post, setPost] = useState({});
     const params = useParams();
+    const [count, setCount] = useState(0);
     axios.defaults.withCredentials = true;
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -48,6 +46,7 @@ export function PostPage() {
             console.log(params.id);
             const newPost = await fetchPost(params.id);
             setPost(newPost);
+            setCount(newPost.commentCount);
         })();
     }, [params.id]);
 
@@ -90,12 +89,17 @@ export function PostPage() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, [isFetching, page]);
 
+    const setCountHandler = () => {
+        setCount((prev) => prev + 1);
+    };
+
     const setCommentsHandler = (newComment) => {
         // const tempComment = {
         //     comments: newComment,
         //     replies: [],
         // };
         setComments((prev) => [newComment, ...prev]);
+        setCountHandler();
     };
 
     return (
@@ -131,7 +135,7 @@ export function PostPage() {
                         </div>
                         <br />
                         <div className="flex text-zinc-500">
-                            <div>{comments.length} comments</div>
+                            <div>{count} comments</div>
                             <div className="ml-2 hover:bg-zinc-800">share</div>
                             <div className="ml-2 hover:bg-zinc-800">save</div>
                             <div className="ml-2 hover:bg-zinc-800">...</div>
@@ -157,6 +161,8 @@ export function PostPage() {
                                 key={comment._id}
                                 comment={comment}
                                 userId={userId}
+                                setCountHandler={setCountHandler}
+
                                 // allComments={comments}
                                 // commentRefs={commentRefs}
                             />
@@ -190,6 +196,7 @@ async function fetchPost(id) {
             `http://localhost:3000/api/post/getPost/${id}`
         );
         const newPost = await res.data.post;
+        // const count = await res.data.count;
         return newPost;
     } catch (error) {
         console.error(error);

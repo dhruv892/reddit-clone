@@ -5,7 +5,7 @@ import axios from "axios";
 import { VotingComponent } from "./VotingComponent";
 import AddComment from "./AddComment";
 
-export function PostComments({ comment, userId }) {
+export function PostComments({ comment, userId, setCountHandler }) {
     axios.defaults.withCredentials = true;
 
     // const setRefreshPosts = useSetRecoilState(refreshPosts);
@@ -23,7 +23,12 @@ export function PostComments({ comment, userId }) {
 
     const setRepliesHandler = (newComment) => {
         setReplies((prev) => [...prev, newComment]);
+        setCountHandler();
     };
+
+    // const doReplyHandler = () => {
+    //     setDoReply((prev) => !prev);
+    // };
 
     return (
         <div className="flex gap-5 m-2 p-2">
@@ -60,6 +65,7 @@ export function PostComments({ comment, userId }) {
                         <AddComment
                             id={comment._id}
                             setCommentsHandler={setRepliesHandler}
+                            // doReplyHandler={doReplyHandler}
                         />
                     </div>
                 )}
@@ -70,8 +76,7 @@ export function PostComments({ comment, userId }) {
                                   key={reply._id}
                                   comment={reply}
                                   userId={userId}
-                                  //   allComments={allComments}
-                                  //   commentRefs={commentRefs}
+                                  setCountHandler={setCountHandler}
                               />
                           ))
                         : null}
@@ -103,4 +108,5 @@ const CommentPropTypes = () => ({
 PostComments.propTypes = {
     comment: PropTypes.shape(CommentPropTypes),
     userId: PropTypes?.string,
+    setCountHandler: PropTypes.func,
 };
