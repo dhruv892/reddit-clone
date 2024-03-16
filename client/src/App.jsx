@@ -7,6 +7,7 @@ import { SignUpIn } from "./pages/SignUpIn";
 import { ToastContainer } from "react-toastify";
 import { ErrorBoundary } from "react-error-boundary";
 import "react-toastify/dist/ReactToastify.css";
+import { NavbarComponent } from "./components/NavbarComponent";
 
 function App() {
     return (
