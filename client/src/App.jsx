@@ -10,8 +10,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { NavbarComponent } from "./components/NavbarComponent";
 
 function App() {
-    return (
-        <RecoilRoot>
+	return (
+	<RecoilRoot>
             <ErrorBoundary>
                 <React.Suspense fallback={<div>Loading...</div>}>
                     <BrowserRouter>
@@ -23,10 +23,21 @@ function App() {
                     </BrowserRouter>
                 </React.Suspense>
             </ErrorBoundary>
-
-            <ToastContainer />
-        </RecoilRoot>
-    );
+<ToastContainer
+				position="bottom-center"
+				autoClose={5000}
+				hideProgressBar={false}
+				newestOnTop={false}
+				closeOnClick
+				rtl={false}
+				pauseOnFocusLoss
+				draggable
+				pauseOnHover
+				theme="dark"
+				transition:Bounce
+			/>
+		</RecoilRoot>
+	);
 }
 
 export default App;

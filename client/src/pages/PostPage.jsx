@@ -4,7 +4,6 @@ import AddComment from "../components/AddComment";
 import { PostComments } from "../components/PostComments";
 import axios from "axios";
 import { useEffect, useState } from "react";
-
 import { VotingComponent } from "../components/VotingComponent";
 
 export function PostPage() {
@@ -20,22 +19,23 @@ export function PostPage() {
     const [page, setPage] = useState(1);
     const [isFetching, setIsFetching] = useState(false);
 
-    const fetchSessionData = async () => {
-        try {
-            const response = await axios.get(
-                "http://localhost:3000/api/user/session",
-                {
-                    withCredentials: true,
-                }
-            );
-            if (response.status === 200) {
-                setIsLoggedIn(true);
-                setUserId(response.data.userId);
-            }
-        } catch (error) {
-            console.log("User is not authenticated");
-        }
-    };
+	const fetchSessionData = async () => {
+		try {
+			const response = await axios.get(
+				"http://localhost:3000/api/user/session",
+				{
+					withCredentials: true,
+				}
+			);
+			console.log(response);
+			if (response.status === 200) {
+				setIsLoggedIn(true);
+				setUserId(response.data.userId);
+			}
+		} catch (error) {
+			console.log("User is not authenticated");
+		}
+	};
 
     useEffect(() => {
         fetchSessionData();
