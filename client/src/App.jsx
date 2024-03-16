@@ -11,19 +11,20 @@ import { NavbarComponent } from "./components/NavbarComponent";
 
 function App() {
 	return (
-	<RecoilRoot>
-            <ErrorBoundary>
-                <React.Suspense fallback={<div>Loading...</div>}>
-                    <BrowserRouter>
-                        <Routes>
-                            <Route path="/" element={<Home />} />
-                            <Route path="/post/:id" element={<PostPage />} />
-                            <Route path="/signupin" element={<SignUpIn />} />
-                        </Routes>
-                    </BrowserRouter>
-                </React.Suspense>
-            </ErrorBoundary>
-<ToastContainer
+		<RecoilRoot>
+			<ErrorBoundary>
+				<React.Suspense fallback={<div>Loading...</div>}>
+					<BrowserRouter>
+						<NavbarComponent />
+						<Routes>
+							<Route path="/" element={<Home />} />
+							<Route path="/post/:id" element={<PostPage />} />
+							<Route path="/signupin" element={<SignUpIn />} />
+						</Routes>
+					</BrowserRouter>
+				</React.Suspense>
+			</ErrorBoundary>
+			<ToastContainer
 				position="bottom-center"
 				autoClose={5000}
 				hideProgressBar={false}
