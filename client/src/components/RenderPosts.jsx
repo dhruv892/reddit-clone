@@ -1,4 +1,5 @@
 // import { useEffect, useState } from "react";
+import React from "react";
 import moment from "moment";
 import PropTypes from "prop-types";
 // import axios from "axios";
@@ -8,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { VotingComponent } from "./VotingComponent";
 
-export function RenderPosts({ post, userId }) {
+function RenderPosts({ post, userId }) {
     const navigate = useNavigate();
 
     const shareHandler = () => {
@@ -59,8 +60,8 @@ export function RenderPosts({ post, userId }) {
                     </div>
                     <div className="mt-2 text-gray-300 flex space-x-2 text-sm ">
                         <a href={post.url}>
-                            {post.comments
-                                ? `${post.comments.length} comments`
+                            {post.commentCount > 0
+                                ? `${post.commentCount} comments`
                                 : "comment"}
                         </a>
                         <a
@@ -80,22 +81,24 @@ export function RenderPosts({ post, userId }) {
     );
 }
 
-const CommentPropTypes = {
-    votes: PropTypes.shape({
-        upVotes: PropTypes.shape({
-            count: PropTypes.number,
-            users: PropTypes.array,
-        }),
-        downVotes: PropTypes.shape({
-            count: PropTypes.number,
-            users: PropTypes.array,
-        }),
-    }),
-    content: PropTypes.string,
-    createdAt: PropTypes.string,
-    author: PropTypes.string,
-    _id: PropTypes.string,
-};
+export const MemoizedRenderPosts = React.memo(RenderPosts);
+
+// const CommentPropTypes = {
+//     votes: PropTypes.shape({
+//         upVotes: PropTypes.shape({
+//             count: PropTypes.number,
+//             users: PropTypes.array,
+//         }),
+//         downVotes: PropTypes.shape({
+//             count: PropTypes.number,
+//             users: PropTypes.array,
+//         }),
+//     }),
+//     content: PropTypes.string,
+//     createdAt: PropTypes.string,
+//     author: PropTypes.string,
+//     _id: PropTypes.string,
+// };
 
 const PostPropTypes = {
     _id: PropTypes.string.isRequired,
@@ -103,7 +106,9 @@ const PostPropTypes = {
     content: PropTypes.string,
     author: PropTypes.string.isRequired,
     createdAt: PropTypes.string.isRequired,
-    comments: PropTypes.arrayOf(PropTypes.shape(CommentPropTypes)),
+    sort: PropTypes.string,
+    commentCount: PropTypes.number,
+    // comments: PropTypes.arrayOf(PropTypes.shape(CommentPropTypes)),
     votes: PropTypes.shape({
         upVotes: PropTypes.shape({
             count: PropTypes.number,

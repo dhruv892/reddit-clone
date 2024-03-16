@@ -5,7 +5,6 @@ import PropTypes from "prop-types";
 export default function AddComment({ id, setCommentsHandler }) {
     const [content, setContent] = useState("");
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-
     const fetchSessionData = async () => {
         try {
             const response = await axios.get(
@@ -25,6 +24,9 @@ export default function AddComment({ id, setCommentsHandler }) {
     const submitHandler = async (e) => {
         e.preventDefault();
         try {
+            if (!content) {
+                return;
+            }
             const response = await axios.post(
                 `http://localhost:3000/api/post/addComment/${id}`,
                 {
@@ -38,6 +40,7 @@ export default function AddComment({ id, setCommentsHandler }) {
             setCommentsHandler(response.data.comment);
             console.log(response);
             setContent("");
+            // doReplyHandler();
         } catch (error) {
             console.log(error);
         }

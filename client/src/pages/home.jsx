@@ -1,27 +1,27 @@
-import { RenderPosts } from "../components/RenderPosts";
+import { MemoizedRenderPosts } from "../components/RenderPosts";
 import { CreatePost } from "../components/CreatePost";
-import { useRecoilValue, useRecoilRefresher_UNSTABLE } from "recoil";
-import { refreshPosts, fetchPost } from "../store/atoms";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useRecoilValueLoadable } from "recoil";
-import { postAtom } from "../store/atoms";
 import { SignInComponent } from "../components/SignInComponent";
+import { useSetRecoilState } from "recoil";
+import { postAtom } from "../store/atoms";
 
 export function Home() {
-    const refreshPostsAtom = useRecoilRefresher_UNSTABLE(fetchPost);
-    const refresh = useRecoilValue(refreshPosts);
     const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [posts, setPosts] = useState([]);
+    // const [fetchedPosts, setFetchedPosts] = useFetchPosts(1);
     const [userId, setUserId] = useState("");
-    // const [posts, setPosts] = useState([]);
-    // const [userId, setUserId] = useState("");
+    const [page, setPage] = useState(1);
+    const [isFetching, setIsFetching] = useState(false);
+    const setPostAtom = useSetRecoilState(postAtom);
+
     const isLoggedInHandler = () => {
         setIsLoggedIn(true);
     };
+
     const fetchSessionData = async () => {
         try {
             const response = await axios.get(
@@ -52,72 +52,104 @@ export function Home() {
         }
     };
 
-    const postsLoadable = useRecoilValueLoadable(postAtom);
-
     useEffect(() => {
-        refreshPostsAtom();
         fetchSessionData();
-    }, [refresh, refreshPostsAtom, isLoggedIn]);
+    }, [isLoggedIn]);
 
-    useEffect(() => {
-        if (postsLoadable.state === "hasValue") {
-            setPosts(postsLoadable.contents);
-        }
-    }, [postsLoadable]);
-
-    const setPostsHandler = (newPost) => {
-        setPosts((prev) => [...prev, newPost]);
+    const isScrollingToBottom = () => {
+        console.log(
+            window.innerHeight + document.documentElement.scrollTop ===
+                document.documentElement.offsetHeight
+        );
+        return (
+            window.innerHeight + document.documentElement.scrollTop ===
+            document.documentElement.offsetHeight
+        );
     };
 
-    switch (postsLoadable.state) {
-        case "hasValue":
-            return (
-                <div className="max-w-4xl mx-auto text-wrap text-gray-200">
-                    <div className="bg-zinc-900 p-5 self-start my-5 rounded flex flex-col items-center justify-center">
-                        {isLoggedIn ? (
-                            <>
-                                <button
-                                    className="bg-zinc-800"
-                                    onClick={logoutHandler}
-                                >
-                                    Log out
-                                </button>
-                                <CreatePost setPostsHandler={setPostsHandler} />
-                            </>
-                        ) : (
-                            <SignInComponent
-                                isLoggedInHandler={isLoggedInHandler}
-                            />
-                        )}
-                        {!isLoggedIn && (
-                            <div className="mt-5 flex flex-col">
-                                <p>Dont have an account? Sign up below!</p>
-                                <button
-                                    className="bg-zinc-800 mt-2"
-                                    onClick={() => {
-                                        navigate("/signUpIn");
-                                    }}
-                                >
-                                    Sign Up
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                    {posts.map((post) => (
-                        <RenderPosts
-                            key={post._id}
-                            post={post}
-                            userId={userId}
-                        />
-                    ))}
-                </div>
-            );
+    useEffect(() => {
+        (async function () {
+            const newPosts = await fetchPosts(page);
+            if (newPosts && page === 1) {
+                setPosts(newPosts);
+                setPostAtom(newPosts);
+                return;
+            }
+            if (newPosts && isFetching) {
+                setPosts((prev) => [...prev, ...newPosts]);
+                setPostAtom((prev) => [...prev, ...newPosts]);
+                setIsFetching((prev) => !prev);
+            }
+        })();
+    }, [isFetching, page, setPostAtom]);
 
-        case "loading":
-            return <div>Loading...</div>;
-        case "hasError":
-            return <div>Error: {postsLoadable.contents.message}</div>;
-        default:
-            return null;
+    useEffect(() => {
+        const handleScroll = () => {
+            if (isScrollingToBottom() && !isFetching) {
+                setIsFetching(true);
+                setPage((prev) => prev + 1);
+            }
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [isFetching, page]);
+
+    const setPostsHandler = (newPost) => {
+        setPosts((prev) => [newPost, ...prev]);
+    };
+    return (
+        <div className="max-w-4xl mx-auto text-wrap text-gray-200">
+            <div className="bg-zinc-900 p-5 self-start my-5 rounded flex flex-col items-center justify-center">
+                {isLoggedIn ? (
+                    <>
+                        <button className="bg-zinc-800" onClick={logoutHandler}>
+                            Log out
+                        </button>
+                        <CreatePost setPostsHandler={setPostsHandler} />
+                    </>
+                ) : (
+                    <SignInComponent isLoggedInHandler={isLoggedInHandler} />
+                )}
+                {!isLoggedIn && (
+                    <div className="mt-5 flex flex-col">
+                        <p>Dont have an account? Sign up below!</p>
+                        <button
+                            className="bg-zinc-800 mt-2"
+                            onClick={() => {
+                                navigate("/signUpIn");
+                            }}
+                        >
+                            Sign Up
+                        </button>
+                    </div>
+                )}
+            </div>
+            {posts ? (
+                (console.log(posts),
+                posts.map((post) => (
+                    <MemoizedRenderPosts
+                        key={post._id}
+                        post={post}
+                        userId={userId}
+                    />
+                )))
+            ) : (
+                <div>Loading</div>
+            )}
+        </div>
+    );
+}
+
+async function fetchPosts(page) {
+    try {
+        const res = await axios.get(
+            `http://localhost:3000/api/post/10/${page}`
+        );
+        // console.log("fetched posts", res.data.posts);
+        const newPosts = await res.data.posts;
+        return newPosts;
+    } catch (error) {
+        console.error(error);
+        return;
     }
 }

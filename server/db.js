@@ -65,15 +65,18 @@ userSchema.methods.correctPassword = async function (
 
 const User = new mongoose.model("User", userSchema);
 
-const commentRefSchema = new mongoose.Schema({
-    pRef: String,
-    currRef: String,
-    cRefs: [String],
-});
+// const commentRefSchema = new mongoose.Schema({
+//     pRef: String,
+//     currRef: String,
+//     cRefs: [String],
+// });
+
 const allCommentsSchema = new mongoose.Schema({
     content: String,
     createdAt: String,
     author: String,
+    sort: String,
+    pId: String,
     votes: {
         upVotes: {
             count: { type: Number, default: 0 },
@@ -86,11 +89,23 @@ const allCommentsSchema = new mongoose.Schema({
     },
 });
 
+const commentsCountSchema = new mongoose.Schema({
+    pId: String,
+    count: Number,
+});
+
 const newPostsSchema = new mongoose.Schema({
-    title: String,
+    title: {
+        type: String,
+        required: [true, "required"],
+        trim: true,
+        maxLength: 200,
+    },
     content: String,
     author: String,
     createdAt: String,
+    sort: String,
+    commentCount: { type: Number, default: 0 },
     votes: {
         upVotes: {
             count: { type: Number, default: 0 },
@@ -104,12 +119,13 @@ const newPostsSchema = new mongoose.Schema({
 });
 
 const AllComments = mongoose.model("AllComments", allCommentsSchema);
-const CommentRef = mongoose.model("CommentRef", commentRefSchema);
+// const CommentRef = mongoose.model("CommentRef", commentRefSchema);
 const NewPosts = mongoose.model("NewPosts", newPostsSchema);
+const CommentsCount = mongoose.model("CommentsCount", commentsCountSchema);
 
 module.exports = {
     User: User,
-    CommentRef: CommentRef,
+    // CommentRef: CommentRef,
     AllComments: AllComments,
     NewPosts: NewPosts,
 };
