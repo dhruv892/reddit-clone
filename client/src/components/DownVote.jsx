@@ -1,7 +1,7 @@
-export function DownVoteLogo({ fillColor = "#eee" }) {
+export function DownVoteLogo({ voted = false }) {
 	return (
 		<svg
-			fill={fillColor}
+			fill={voted ? "#7193ff" : "#eee"}
 			width="24px"
 			height="24px"
 			viewBox="0 0 24 24"

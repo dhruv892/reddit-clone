@@ -10,19 +10,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { NavbarComponent } from "./components/NavbarComponent";
 
 function App() {
-    // return (
-    //     <RecoilRoot>
-    //         <BrowserRouter>
-    //             <NavbarComponent />
-    //             <Routes>
-    //                 <Route path="/" element={<Home />} />
-    //                 <Route path="/post/:id" element={<PostPage />} />
-    //                 <Route path="/signupin" element={<SignUpIn />} />
-    //             </Routes>
-    //         </BrowserRouter>
-    //         <ToastContainer />
-    //     </RecoilRoot>
-    // );
     return (
         <RecoilRoot>
             <ErrorBoundary>
@@ -37,8 +24,19 @@ function App() {
                     </BrowserRouter>
                 </React.Suspense>
             </ErrorBoundary>
-
-            <ToastContainer />
+            <ToastContainer
+                position="bottom-center"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+                transition:Bounce
+            />
         </RecoilRoot>
     );
 }
