@@ -104,8 +104,7 @@ export function PostPage() {
 		setCountHandler();
 	};
 
-	if (Object.keys(post).length === 0)
-		return <div className="text-gray-300">Loading...</div>;
+	if (Object.keys(post).length === 0) return <div className="text-gray-300">Loading...</div>;
 
 	return (
 		<div className="mt-5 p-5 max-w-4xl mx-auto text-wrap text-gray-300 bg-zinc-900 pr-6">
@@ -154,6 +153,7 @@ export function PostPage() {
 						// id={post._id.toString()}
 						id={params.id}
 						setCommentsHandler={setCommentsHandler}
+                        setDoReply={() => {}}
 					/>
 				)}
 				<p className="text-2xl pl-4">Comments</p>
