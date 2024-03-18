@@ -1,60 +1,36 @@
 import { MemoizedRenderPosts } from "../components/RenderPosts";
 import { CreatePost } from "../components/CreatePost";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { SignInComponent } from "../components/SignInComponent";
 import { useSetRecoilState } from "recoil";
 import { postAtom } from "../store/atoms";
+import { UserContext } from "../App";
 
 export function Home() {
 	const navigate = useNavigate();
-	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [posts, setPosts] = useState([]);
-	// const [fetchedPosts, setFetchedPosts] = useFetchPosts(1);
-	const [userId, setUserId] = useState("");
 	const [page, setPage] = useState(1);
 	const [isFetching, setIsFetching] = useState(false);
 	const setPostAtom = useSetRecoilState(postAtom);
 
-	const isLoggedInHandler = () => {
-		setIsLoggedIn(true);
-	};
-
-	const fetchSessionData = async () => {
-		try {
-			const response = await axios.get(
-				"http://localhost:3000/api/user/session",
-				{
-					withCredentials: true,
-				}
-			);
-			if (response.status === 200) {
-				setIsLoggedIn(true);
-				setUserId(response.data.userId);
-			}
-		} catch (error) {
-			console.log("User is not authenticated");
-		}
-	};
+	const { isLoggedIn, updateContext, user } = useContext(UserContext);
 
 	const logoutHandler = async () => {
 		try {
 			await axios.get("http://localhost:3000/api/user/signout", {
 				withCredentials: true,
 			});
-			setIsLoggedIn(false);
+
+			updateContext();
 			toast.success("Successfully logged out!");
 		} catch (error) {
 			console.error(error);
 			toast.error("Error occurred while logging out.");
 		}
 	};
-
-	useEffect(() => {
-		fetchSessionData();
-	}, [isLoggedIn]);
 
 	const isScrollingToBottom = () => {
 		return (
@@ -104,7 +80,7 @@ export function Home() {
 						<CreatePost setPostsHandler={setPostsHandler} />
 					</>
 				) : (
-					<SignInComponent isLoggedInHandler={isLoggedInHandler} />
+					<SignInComponent updateContext={updateContext} />
 				)}
 				{!isLoggedIn && (
 					<div className="mt-5 flex flex-col">
@@ -122,7 +98,11 @@ export function Home() {
 			</div>
 			{posts ? (
 				posts.map((post) => (
-					<MemoizedRenderPosts key={post._id} post={post} userId={userId} />
+					<MemoizedRenderPosts
+						key={post._id}
+						post={post}
+						userId={user && user.userId}
+					/>
 				))
 			) : (
 				<div>Loading</div>

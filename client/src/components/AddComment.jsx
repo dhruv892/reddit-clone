@@ -1,25 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
+import { UserContext } from "../App";
 
 export default function AddComment({ id, setCommentsHandler, setDoReply }) {
     const [content, setContent] = useState("");
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const fetchSessionData = async () => {
-        try {
-            const response = await axios.get(
-                "http://localhost:3000/api/user/session",
-                {
-                    withCredentials: true,
-                }
-            );
-            if (response.status === 200) {
-                setIsLoggedIn(true);
-            }
-        } catch (error) {
-            console.log("User is not authenticated");
-        }
-    };
+    const {isLoggedIn} = useContext(UserContext)
 
     const submitHandler = async (e) => {
         e.preventDefault();
@@ -46,10 +32,6 @@ export default function AddComment({ id, setCommentsHandler, setDoReply }) {
             console.log(error);
         }
     };
-
-    useEffect(() => {
-        fetchSessionData();
-    }, []);
 
     if (!isLoggedIn) {
         return <h4>Log in to comment</h4>;

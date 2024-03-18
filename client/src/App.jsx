@@ -15,6 +15,11 @@ export const UserContext = React.createContext();
 function App() {
 	const [user, setUser] = useState(null);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	const [update, setUpdate] = useState(0);
+
+	const updateContext = () => {
+		setUpdate((prev) => prev + 1);
+	};
 
 	useEffect(() => {
 		const fetchSessionData = async () => {
@@ -38,14 +43,14 @@ function App() {
 		};
 
 		fetchSessionData();
-	}, []);
+	}, [update]);
 
 	return (
 		<RecoilRoot>
 			<ErrorBoundary>
 				<React.Suspense fallback={<div>Loading...</div>}>
 					<BrowserRouter>
-						<UserContext.Provider value={{ user, isLoggedIn }}>
+						<UserContext.Provider value={{ user, isLoggedIn, updateContext }}>
 							<NavbarComponent />
 							<Routes>
 								<Route path="/" element={<Home />} />

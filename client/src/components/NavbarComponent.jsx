@@ -1,7 +1,11 @@
+import { useContext } from "react";
 import { useNavigate } from "react-router";
+import { UserContext } from "../App";
 
 export function NavbarComponent() {
 	const navigate = useNavigate();
+	const { user } = useContext(UserContext);
+	console.log(user);
 
 	return (
 		<nav className="flex items-center justify-between flex-wrap bg-zinc-800 p-3">
@@ -82,14 +86,7 @@ export function NavbarComponent() {
 						Blog
 					</a> */}
 				</div>
-				<div>
-					<a
-						href="#"
-						className="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-zinc-500 hover:bg-white mt-4 lg:mt-0"
-					>
-						Download
-					</a>
-				</div>
+				<div className="text-gray-200 text-xl">{user && user.username}</div>
 			</div>
 		</nav>
 	);

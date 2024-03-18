@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 // import { useNavigate } from "react-router";
 import PropTypes from "prop-types";
 
-export function SignInComponent({ isLoggedInHandler }) {
+export function SignInComponent({ updateContext }) {
 	const [usernameIn, setUsernameIn] = useState("");
 	const [passwordIn, setPasswordIn] = useState("");
 	const [errIn, setErrIn] = useState(false);
@@ -27,7 +27,7 @@ export function SignInComponent({ isLoggedInHandler }) {
 				}
 			);
 			// navigate("/");
-			isLoggedInHandler();
+			updateContext();
 			toast.success("Logged in successfully!");
 			console.log(usernameIn, passwordIn);
 		} catch (err) {
@@ -79,5 +79,5 @@ export function SignInComponent({ isLoggedInHandler }) {
 }
 
 SignInComponent.propTypes = {
-	isLoggedInHandler: PropTypes.func.isRequired,
+	updateContext: PropTypes.func.isRequired,
 };
