@@ -1,4 +1,8 @@
+import { useNavigate } from "react-router";
+
 export function NavbarComponent() {
+	const navigate = useNavigate();
+
 	return (
 		<nav className="flex items-center justify-between flex-wrap bg-zinc-800 p-3">
 			<div className="flex items-center flex-shrink-0 text-white mr-6">
@@ -38,7 +42,10 @@ export function NavbarComponent() {
 						<circle cx="321" cy="287" r="31" />
 					</g>
 				</svg>
-				<span className="font-semibold text-xl tracking-tight ml-2">
+				<span
+					onClick={() => navigate("/")}
+					className="font-semibold text-xl tracking-tight ml-2 cursor-pointer"
+				>
 					Reddit
 				</span>
 			</div>
@@ -56,7 +63,7 @@ export function NavbarComponent() {
 			</div>
 			<div className="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
 				<div className="text-sm lg:flex-grow">
-					<a
+					{/* <a
 						href="#responsive-header"
 						className="block mt-4 lg:inline-block lg:mt-0 text-zinc-200 hover:text-white mr-4"
 					>
@@ -73,7 +80,7 @@ export function NavbarComponent() {
 						className="block mt-4 lg:inline-block lg:mt-0 text-zinc-200 hover:text-white"
 					>
 						Blog
-					</a>
+					</a> */}
 				</div>
 				<div>
 					<a

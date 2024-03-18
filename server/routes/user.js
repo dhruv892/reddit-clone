@@ -31,6 +31,7 @@ router.get("/session", authMiddleware, (req, res) => {
     res.status(200).json({
         message: "Session is active",
         userId: req.session.userId,
+        username: req.session.username,
     });
 });
 
