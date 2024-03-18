@@ -3,7 +3,6 @@ import { CreatePost } from "../components/CreatePost";
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { toast } from "react-toastify";
 import { SignInComponent } from "../components/SignInComponent";
 import { useSetRecoilState } from "recoil";
 import { postAtom } from "../store/atoms";
@@ -18,19 +17,6 @@ export function Home() {
 
 	const { isLoggedIn, updateContext, user } = useContext(UserContext);
 
-	const logoutHandler = async () => {
-		try {
-			await axios.get("http://localhost:3000/api/user/signout", {
-				withCredentials: true,
-			});
-
-			updateContext();
-			toast.success("Successfully logged out!");
-		} catch (error) {
-			console.error(error);
-			toast.error("Error occurred while logging out.");
-		}
-	};
 
 	const isScrollingToBottom = () => {
 		return (
@@ -73,12 +59,7 @@ export function Home() {
 		<div className="max-w-4xl mx-auto text-wrap text-gray-200">
 			<div className="bg-zinc-900 p-5 self-start my-5 rounded flex flex-col items-center justify-center">
 				{isLoggedIn ? (
-					<>
-						<button className="bg-zinc-800" onClick={logoutHandler}>
-							Log out
-						</button>
 						<CreatePost setPostsHandler={setPostsHandler} />
-					</>
 				) : (
 					<SignInComponent updateContext={updateContext} />
 				)}
