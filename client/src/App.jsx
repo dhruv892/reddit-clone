@@ -8,6 +8,7 @@ import { ToastContainer } from "react-toastify";
 import { ErrorBoundary } from "react-error-boundary";
 import "react-toastify/dist/ReactToastify.css";
 import { NavbarComponent } from "./components/NavbarComponent";
+import { Search } from "./pages/Search";
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
                             <Route path="/" element={<Home />} />
                             <Route path="/post/:id" element={<PostPage />} />
                             <Route path="/signupin" element={<SignUpIn />} />
+                            <Route path="/search/:text" element={<Search />} />
                         </Routes>
                     </BrowserRouter>
                 </React.Suspense>
