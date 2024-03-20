@@ -1,4 +1,26 @@
+import { useContext } from "react";
+import { useNavigate } from "react-router";
+import { UserContext } from "../contexts/SessionContext";
+import { toast } from "react-toastify";
+import axios from "axios";
+
 export function NavbarComponent() {
+	const navigate = useNavigate();
+	const { user, setIsLoggedIn } = useContext(UserContext);
+	const logoutHandler = async () => {
+		try {
+			await axios.get("http://localhost:3000/api/user/signout", {
+				withCredentials: true,
+			});
+
+			setIsLoggedIn(false);
+			toast.success("Successfully logged out!");
+		} catch (error) {
+			console.error(error);
+			toast.error("Error occurred while logging out.");
+		}
+	};
+
 	return (
 		<nav className="flex items-center justify-between flex-wrap bg-zinc-800 p-3">
 			<div className="flex items-center flex-shrink-0 text-white mr-6">
@@ -38,7 +60,10 @@ export function NavbarComponent() {
 						<circle cx="321" cy="287" r="31" />
 					</g>
 				</svg>
-				<span className="font-semibold text-xl tracking-tight ml-2">
+				<span
+					onClick={() => navigate("/")}
+					className="font-semibold text-xl tracking-tight ml-2 cursor-pointer"
+				>
 					Reddit
 				</span>
 			</div>
@@ -56,7 +81,7 @@ export function NavbarComponent() {
 			</div>
 			<div className="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
 				<div className="text-sm lg:flex-grow">
-					<a
+					{/* <a
 						href="#responsive-header"
 						className="block mt-4 lg:inline-block lg:mt-0 text-zinc-200 hover:text-white mr-4"
 					>
@@ -73,16 +98,19 @@ export function NavbarComponent() {
 						className="block mt-4 lg:inline-block lg:mt-0 text-zinc-200 hover:text-white"
 					>
 						Blog
-					</a>
+					</a> */}
 				</div>
-				<div>
-					<a
-						href="#"
-						className="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-zinc-500 hover:bg-white mt-4 lg:mt-0"
-					>
-						Download
-					</a>
-				</div>
+				{user && (
+					<div>
+						<span className="text-gray-200 text-xl">{user.username}</span>
+						<button
+							className="inline-block ml-5 text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-gray-500 hover:bg-white mt-4 lg:mt-0"
+							onClick={logoutHandler}
+						>
+							Log out
+						</button>
+					</div>
+				)}
 			</div>
 		</nav>
 	);
