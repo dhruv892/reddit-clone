@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 export function NavbarComponent() {
     const navigate = useNavigate();
     const searchHandler = (text) => {
+        if (text === "") return;
         navigate(`/search/${text}`);
     };
 

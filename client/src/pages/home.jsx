@@ -125,7 +125,7 @@ export function Home() {
                 )}
             </div>
             {posts ? (
-                (console.log(posts),
+                (console.log("userId", typeof userId),
                 posts.map((post) => (
                     <MemoizedRenderPosts
                         key={post._id}
