@@ -137,7 +137,6 @@ export function PostPage() {
 							<PostComments
 								key={comment._id}
 								comment={comment}
-								userId={user && user.userId}
 								setCountHandler={setCountHandler}
 
 								// allComments={comments}

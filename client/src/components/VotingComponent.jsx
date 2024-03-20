@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
 import {
 	postVoteHandler,
@@ -8,13 +8,15 @@ import {
 import { UpVoteLogo } from "./UpVote";
 import { DownVoteLogo } from "./DownVote";
 import { toast } from "react-toastify";
+import { UserContext } from "../App";
 
-export function VotingComponent({ votes, userId, type, itemId }) {
+export function VotingComponent({ votes, type, itemId }) {
 	const [postVotes, setPostVotes] = useState(0);
 	const [upVoteUsers, setUpVoteUsers] = useState([]);
 	const [downVoteUsers, setDownVoteUsers] = useState([]);
 	const [isUpvoted, setIsUpvoted] = useState(false);
 	const [isDownVoted, setIsDownVoted] = useState(false);
+	const { userId } = useContext(UserContext);
 
 	useEffect(() => {
 		if (!votes) {
