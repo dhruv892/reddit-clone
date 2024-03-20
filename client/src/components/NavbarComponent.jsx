@@ -6,14 +6,14 @@ import axios from "axios";
 
 export function NavbarComponent() {
 	const navigate = useNavigate();
-	const { user, updateContext } = useContext(UserContext);
+	const { user, setIsLoggedIn } = useContext(UserContext);
 	const logoutHandler = async () => {
 		try {
 			await axios.get("http://localhost:3000/api/user/signout", {
 				withCredentials: true,
 			});
 
-			updateContext();
+			setIsLoggedIn(false);
 			toast.success("Successfully logged out!");
 		} catch (error) {
 			console.error(error);

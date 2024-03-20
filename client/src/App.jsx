@@ -15,11 +15,6 @@ export const UserContext = React.createContext();
 function App() {
 	const [user, setUser] = useState(null);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
-	const [update, setUpdate] = useState(0);
-
-	const updateContext = () => {
-		setUpdate((prev) => prev + 1);
-	};
 
 	useEffect(() => {
 		const fetchSessionData = async () => {
@@ -30,10 +25,12 @@ function App() {
 						withCredentials: true,
 					}
 				);
+				console.log("FETCHING SESSION");
 				if (response.status === 200) {
 					setIsLoggedIn(true);
 					const { userId, username } = response.data;
 					setUser({ userId, username });
+					console.log("LOGGED IN");
 				}
 			} catch (error) {
 				console.log("User is not authenticated");
@@ -43,14 +40,14 @@ function App() {
 		};
 
 		fetchSessionData();
-	}, [update]);
+	}, [isLoggedIn]);
 
 	return (
 		<RecoilRoot>
 			<ErrorBoundary>
 				<React.Suspense fallback={<div>Loading...</div>}>
 					<BrowserRouter>
-						<UserContext.Provider value={{ user, isLoggedIn, updateContext }}>
+						<UserContext.Provider value={{ user, isLoggedIn, setIsLoggedIn }}>
 							<NavbarComponent />
 							<Routes>
 								<Route path="/" element={<Home />} />

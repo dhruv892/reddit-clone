@@ -11,7 +11,7 @@ export function PostComments({ comment, setCountHandler }) {
 
 	const [doReply, setDoReply] = useState(false);
 	const [replies, setReplies] = useState([]);
-	const { userId } = useContext(UserContext);
+	const { user } = useContext(UserContext);
 
 	useEffect(() => {
 		// console.log(comment._id);
@@ -35,7 +35,7 @@ export function PostComments({ comment, setCountHandler }) {
 			<div className="flex flex-col flex-initial align-center">
 				<VotingComponent
 					votes={comment.votes}
-					userId={userId}
+					userId={user && user.userId}
 					type={"comment"}
 					itemId={comment._id}
 				/>
@@ -76,7 +76,7 @@ export function PostComments({ comment, setCountHandler }) {
 								<PostComments
 									key={reply._id}
 									comment={reply}
-									userId={userId}
+									userId={user && user.userId}
 									setCountHandler={setCountHandler}
 								/>
 						  ))
@@ -108,6 +108,5 @@ const CommentPropTypes = () => ({
 
 PostComments.propTypes = {
 	comment: PropTypes.shape(CommentPropTypes),
-	userId: PropTypes?.string,
 	setCountHandler: PropTypes.func,
 };

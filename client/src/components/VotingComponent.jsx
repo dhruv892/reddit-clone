@@ -16,7 +16,7 @@ export function VotingComponent({ votes, type, itemId }) {
 	const [downVoteUsers, setDownVoteUsers] = useState([]);
 	const [isUpvoted, setIsUpvoted] = useState(false);
 	const [isDownVoted, setIsDownVoted] = useState(false);
-	const { userId } = useContext(UserContext);
+	const { user } = useContext(UserContext);
 
 	useEffect(() => {
 		if (!votes) {
@@ -28,19 +28,19 @@ export function VotingComponent({ votes, type, itemId }) {
 		setPostVotes(upVotes - downVotes);
 		setUpVoteUsers(votes.upVotes.users);
 		setDownVoteUsers(votes.downVotes.users);
-		setIsUpvoted(votes.upVotes.users.includes(userId));
-		setIsDownVoted(votes.downVotes.users.includes(userId));
-	}, [userId, votes]);
+		setIsUpvoted(votes.upVotes.users.includes(user && user.userId));
+		setIsDownVoted(votes.downVotes.users.includes(user && user.userId));
+	}, [user, votes]);
 
 	const voteHandler = async (voteType) => {
-		if (!userId || userId === "") {
+		if (!user || !user.userId || user.userId === "") {
 			setIsDownVoted(false);
 			setIsUpvoted(false);
 			toast.error("You need to be logged in to vote");
 			return;
 		}
-		if (voteType === "up" && upVoteUsers.includes(userId)) return;
-		if (voteType === "down" && downVoteUsers.includes(userId)) return;
+		if (voteType === "up" && upVoteUsers.includes(user.userId)) return;
+		if (voteType === "down" && downVoteUsers.includes(user.userId)) return;
 		let req;
 		if (type === "post") {
 			req = await postVoteHandler(itemId, voteType);
@@ -56,26 +56,25 @@ export function VotingComponent({ votes, type, itemId }) {
 			//     console.log("done");
 			switch (voteType) {
 				case "up":
-					downVoteUsers.includes(userId)
+					downVoteUsers.includes(user.userId)
 						? setPostVotes((prev) => prev + 2)
 						: setPostVotes((prev) => prev + 1);
-					setUpVoteUsers((prev) => [...prev, userId]);
-					setDownVoteUsers((prev) => prev.filter((id) => id !== userId));
+					setUpVoteUsers((prev) => [...prev, user.userId]);
+					setDownVoteUsers((prev) => prev.filter((id) => id !== user.userId));
 					setIsUpvoted(true);
 					setIsDownVoted(false);
 					break;
 				case "down":
-					console.log(userId);
 					// console.log(downVoteUsers);
-					upVoteUsers.includes(userId)
+					upVoteUsers.includes(user.userId)
 						? setPostVotes((prev) => prev - 2)
 						: setPostVotes((prev) => prev - 1);
 					setDownVoteUsers((prev) => {
-						return [...prev, userId];
+						return [...prev, user.userId];
 						// console.log([...prev, userId]);
 					});
 					setUpVoteUsers((prev) => {
-						return prev.filter((id) => id != userId);
+						return prev.filter((id) => id != user.userId);
 					});
 					setIsUpvoted(false);
 					setIsDownVoted(true);

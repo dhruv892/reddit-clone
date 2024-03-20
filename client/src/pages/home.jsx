@@ -15,7 +15,7 @@ export function Home() {
 	const [isFetching, setIsFetching] = useState(false);
 	const setPostAtom = useSetRecoilState(postAtom);
 
-	const { isLoggedIn, updateContext, user } = useContext(UserContext);
+	const { isLoggedIn, user } = useContext(UserContext);
 
 
 	const isScrollingToBottom = () => {
@@ -61,7 +61,7 @@ export function Home() {
 				{isLoggedIn ? (
 						<CreatePost setPostsHandler={setPostsHandler} />
 				) : (
-					<SignInComponent updateContext={updateContext} />
+					<SignInComponent />
 				)}
 				{!isLoggedIn && (
 					<div className="mt-5 flex flex-col">

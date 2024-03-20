@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 // import { useNavigate } from "react-router";
 import PropTypes from "prop-types";
+import { UserContext } from "../App";
 
-export function SignInComponent({ updateContext }) {
+export function SignInComponent() {
 	const [usernameIn, setUsernameIn] = useState("");
 	const [passwordIn, setPasswordIn] = useState("");
 	const [errIn, setErrIn] = useState(false);
+	const { setIsLoggedIn } = useContext(UserContext);
 	// const navigate = useNavigate();
 
 	const signInHandler = async (e) => {
@@ -27,7 +29,7 @@ export function SignInComponent({ updateContext }) {
 				}
 			);
 			// navigate("/");
-			updateContext();
+			setIsLoggedIn(true);
 			toast.success("Logged in successfully!");
 			console.log(usernameIn, passwordIn);
 		} catch (err) {
@@ -77,7 +79,3 @@ export function SignInComponent({ updateContext }) {
 		</div>
 	);
 }
-
-SignInComponent.propTypes = {
-	updateContext: PropTypes.func.isRequired,
-};
