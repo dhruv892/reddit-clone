@@ -5,7 +5,7 @@ import { PostComments } from "../components/PostComments";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { VotingComponent } from "../components/VotingComponent";
-import { UserContext } from "../App";
+import { UserContext } from "../contexts/SessionContext";
 
 export function PostPage() {
 	const [post, setPost] = useState({});

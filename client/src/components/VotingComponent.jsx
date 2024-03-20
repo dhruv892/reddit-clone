@@ -8,7 +8,7 @@ import {
 import { UpVoteLogo } from "./UpVote";
 import { DownVoteLogo } from "./DownVote";
 import { toast } from "react-toastify";
-import { UserContext } from "../App";
+import { UserContext } from "../contexts/SessionContext";
 
 export function VotingComponent({ votes, type, itemId }) {
 	const [postVotes, setPostVotes] = useState(0);

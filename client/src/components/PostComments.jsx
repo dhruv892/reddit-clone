@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import { VotingComponent } from "./VotingComponent";
 import AddComment from "./AddComment";
-import { UserContext } from "../App";
+import { UserContext } from "../contexts/SessionContext";
 
 export function PostComments({ comment, setCountHandler }) {
 	axios.defaults.withCredentials = true;

@@ -1,9 +1,7 @@
 import { useContext, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-// import { useNavigate } from "react-router";
-import PropTypes from "prop-types";
-import { UserContext } from "../App";
+import { UserContext } from "../contexts/SessionContext";
 
 export function SignInComponent() {
 	const [usernameIn, setUsernameIn] = useState("");

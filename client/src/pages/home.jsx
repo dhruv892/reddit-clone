@@ -6,7 +6,7 @@ import axios from "axios";
 import { SignInComponent } from "../components/SignInComponent";
 import { useSetRecoilState } from "recoil";
 import { postAtom } from "../store/atoms";
-import { UserContext } from "../App";
+import { UserContext } from "../contexts/SessionContext";
 
 export function Home() {
 	const navigate = useNavigate();
@@ -16,7 +16,6 @@ export function Home() {
 	const setPostAtom = useSetRecoilState(postAtom);
 
 	const { isLoggedIn, user } = useContext(UserContext);
-
 
 	const isScrollingToBottom = () => {
 		return (
@@ -59,7 +58,7 @@ export function Home() {
 		<div className="max-w-4xl mx-auto text-wrap text-gray-200">
 			<div className="bg-zinc-900 p-5 self-start my-5 rounded flex flex-col items-center justify-center">
 				{isLoggedIn ? (
-						<CreatePost setPostsHandler={setPostsHandler} />
+					<CreatePost setPostsHandler={setPostsHandler} />
 				) : (
 					<SignInComponent />
 				)}

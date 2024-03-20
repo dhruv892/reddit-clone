@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
-import { UserContext } from "../App";
+import { UserContext } from "../contexts/SessionContext";
 
 export default function AddComment({ id, setCommentsHandler, setDoReply }) {
 	const [content, setContent] = useState("");
