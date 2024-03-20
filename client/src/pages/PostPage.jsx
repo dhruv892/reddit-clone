@@ -14,7 +14,6 @@ export function PostPage() {
 	axios.defaults.withCredentials = true;
 
 	const { user } = useContext(UserContext);
-	console.log("Darshan", user);
 
 	const [comments, setComments] = useState([]);
 	const [page, setPage] = useState(1);
@@ -88,7 +87,7 @@ export function PostPage() {
 					<div className="flex flex-col mr-2 flex-initial align-center gap-1">
 						<VotingComponent
 							votes={post.votes}
-							userId={user.userId}
+							userId={user && user.userId}
 							type={"post"}
 							itemId={post._id}
 						/>
@@ -138,7 +137,7 @@ export function PostPage() {
 							<PostComments
 								key={comment._id}
 								comment={comment}
-								userId={user.userId}
+								userId={user && user.userId}
 								setCountHandler={setCountHandler}
 
 								// allComments={comments}
