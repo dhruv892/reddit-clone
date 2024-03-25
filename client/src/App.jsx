@@ -1,5 +1,4 @@
 import { Home } from "./pages/home";
-import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { RecoilRoot } from "recoil";
 import { PostPage } from "./pages/PostPage";
