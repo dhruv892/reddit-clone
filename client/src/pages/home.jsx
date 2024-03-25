@@ -88,8 +88,6 @@ export function Home() {
 			) : (
 				<LoaderComponent />
 			)}
-
-			{isFetching && <LoaderComponent />}
 		</div>
 	);
 }

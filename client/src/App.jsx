@@ -9,22 +9,21 @@ import "react-toastify/dist/ReactToastify.css";
 import { NavbarComponent } from "./components/NavbarComponent";
 import SessionContext from "./contexts/SessionContext";
 import { Suspense } from "react";
-
+import { LoaderComponent } from "./components/LoaderComponent";
 
 function App() {
-
 	return (
 		<RecoilRoot>
 			<ErrorBoundary>
-				<Suspense fallback={<div>Loading...</div>}>
+				<Suspense fallback={<LoaderComponent />}>
 					<SessionContext>
 						<BrowserRouter>
-								<NavbarComponent />
-								<Routes>
-									<Route path="/" element={<Home />} />
-									<Route path="/post/:id" element={<PostPage />} />
-									<Route path="/signupin" element={<SignUpIn />} />
-								</Routes>
+							<NavbarComponent />
+							<Routes>
+								<Route path="/" element={<Home />} />
+								<Route path="/post/:id" element={<PostPage />} />
+								<Route path="/signupin" element={<SignUpIn />} />
+							</Routes>
 						</BrowserRouter>
 					</SessionContext>
 				</Suspense>
