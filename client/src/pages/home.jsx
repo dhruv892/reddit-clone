@@ -7,6 +7,7 @@ import { SignInComponent } from "../components/SignInComponent";
 import { useSetRecoilState } from "recoil";
 import { postAtom } from "../store/atoms";
 import { UserContext } from "../contexts/SessionContext";
+import { LoaderComponent } from "../components/LoaderComponent";
 
 export function Home() {
 	const navigate = useNavigate();
@@ -35,10 +36,10 @@ export function Home() {
 			if (newPosts && isFetching) {
 				setPosts((prev) => [...prev, ...newPosts]);
 				setPostAtom((prev) => [...prev, ...newPosts]);
-				setIsFetching((prev) => !prev);
 			}
+			setIsFetching(false);
 		})();
-	}, [isFetching, page, setPostAtom]);
+	}, [isFetching, page, posts, setPostAtom]);
 
 	useEffect(() => {
 		const handleScroll = () => {
@@ -76,7 +77,7 @@ export function Home() {
 					</div>
 				)}
 			</div>
-			{posts ? (
+			{posts && Object.keys(posts).length !== 0 ? (
 				posts.map((post) => (
 					<MemoizedRenderPosts
 						key={post._id}
@@ -85,8 +86,10 @@ export function Home() {
 					/>
 				))
 			) : (
-				<div>Loading</div>
+				<LoaderComponent />
 			)}
+
+			{isFetching && <LoaderComponent />}
 		</div>
 	);
 }
