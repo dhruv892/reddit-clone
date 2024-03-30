@@ -16,12 +16,10 @@ export default function SessionContext({ children }) {
 						withCredentials: true,
 					}
 				);
-				console.log("FETCHING SESSION");
 				if (response.status === 200) {
 					setIsLoggedIn(true);
 					const { userId, username } = response.data;
 					setUser({ userId, username });
-					console.log("LOGGED IN");
 				}
 			} catch (error) {
 				console.log("User is not authenticated");

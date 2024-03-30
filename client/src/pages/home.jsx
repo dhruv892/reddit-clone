@@ -7,6 +7,7 @@ import { SignInComponent } from "../components/SignInComponent";
 import { useSetRecoilState } from "recoil";
 import { postAtom } from "../store/atoms";
 import { UserContext } from "../contexts/SessionContext";
+import { LoaderComponent } from "../components/LoaderComponent";
 
 export function Home() {
     const navigate = useNavigate();
@@ -35,8 +36,8 @@ export function Home() {
             if (newPosts && isFetching) {
                 setPosts((prev) => [...prev, ...newPosts]);
                 setPostAtom((prev) => [...prev, ...newPosts]);
-                setIsFetching((prev) => !prev);
             }
+            setIsFetching(false);
         })();
     }, [isFetching, page, setPostAtom]);
 
@@ -55,7 +56,7 @@ export function Home() {
         setPosts((prev) => [newPost, ...prev]);
     };
     return (
-        <div className="max-w-4xl mx-auto mt-16 text-wrap text-gray-200">
+        <div className="max-w-4xl mx-auto text-wrap text-gray-200">
             <div className="bg-zinc-900 p-5 self-start my-5 rounded flex flex-col items-center justify-center">
                 {isLoggedIn ? (
                     <CreatePost setPostsHandler={setPostsHandler} />
@@ -76,7 +77,7 @@ export function Home() {
                     </div>
                 )}
             </div>
-            {posts ? (
+            {posts && Object.keys(posts).length !== 0 ? (
                 posts.map((post) => (
                     <MemoizedRenderPosts
                         key={post._id}
@@ -85,7 +86,7 @@ export function Home() {
                     />
                 ))
             ) : (
-                <div>Loading</div>
+                <LoaderComponent />
             )}
         </div>
     );

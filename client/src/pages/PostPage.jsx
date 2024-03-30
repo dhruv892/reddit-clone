@@ -6,6 +6,7 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { VotingComponent } from "../components/VotingComponent";
 import { UserContext } from "../contexts/SessionContext";
+import { LoaderComponent } from "../components/LoaderComponent";
 
 export function PostPage() {
     const [post, setPost] = useState({});
@@ -77,8 +78,7 @@ export function PostPage() {
         setCountHandler();
     };
 
-    if (Object.keys(post).length === 0)
-        return <div className="text-gray-300">Loading...</div>;
+    if (Object.keys(post).length === 0) return <LoaderComponent />;
 
     return (
         <div className="mt-5 p-5 max-w-4xl mx-auto text-wrap text-gray-300 bg-zinc-900 pr-6">
