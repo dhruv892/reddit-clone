@@ -56,7 +56,7 @@ export function Home() {
         setPosts((prev) => [newPost, ...prev]);
     };
     return (
-        <div className="max-w-4xl mx-auto text-wrap text-gray-200">
+        <div className="max-w-4xl mx-auto mt-16 text-wrap text-gray-200">
             <div className="bg-zinc-900 p-5 self-start my-5 rounded flex flex-col items-center justify-center">
                 {isLoggedIn ? (
                     <CreatePost setPostsHandler={setPostsHandler} />

@@ -78,10 +78,15 @@ export function PostPage() {
         setCountHandler();
     };
 
-    if (Object.keys(post).length === 0) return <LoaderComponent />;
+    if (Object.keys(post).length === 0)
+        return (
+            <div className="mt-16">
+                <LoaderComponent />
+            </div>
+        );
 
     return (
-        <div className="mt-5 p-5 max-w-4xl mx-auto text-wrap text-gray-300 bg-zinc-900 pr-6">
+        <div className="p-5 mt-16 max-w-4xl mx-auto text-wrap text-gray-300 bg-zinc-900 pr-6">
             {post && (
                 <div className="flex">
                     <div className="flex flex-col mr-2 flex-initial align-center gap-1">

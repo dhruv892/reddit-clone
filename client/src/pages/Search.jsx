@@ -59,7 +59,10 @@ export function Search() {
             {posts ? (
                 (console.log(posts),
                 posts.map((post) => (
-                    <div key={post._id} className="flex">
+                    <div
+                        key={post._id}
+                        className="bg-zinc-900 mb-4 p-4 rounded-lg flex gap-1"
+                    >
                         <div className="ml-4">
                             <div>
                                 <p className="text-gray-400 text-sm">
@@ -87,12 +90,6 @@ export function Search() {
                                         post.votes.downVotes.count}{" "}
                                     votes
                                 </div>
-                                {/* <div className="ml-2 hover:bg-zinc-800">
-                                    save
-                                </div>
-                                <div className="ml-2 hover:bg-zinc-800">
-                                    ...
-                                </div> */}
                             </div>
                             <br />
                         </div>

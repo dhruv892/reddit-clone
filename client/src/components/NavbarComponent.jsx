@@ -1,12 +1,19 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router";
 import { UserContext } from "../contexts/SessionContext";
 import { toast } from "react-toastify";
 import axios from "axios";
+// import { CreatePost } from "./CreatePost";
 
 export function NavbarComponent() {
     const navigate = useNavigate();
     const { user, setIsLoggedIn } = useContext(UserContext);
+    // const { addClicked, setAddClicked } = useState(false);
+
+    // const addClickedHandler = () => {
+    //     setAddClicked((prev) => !prev);
+    // }
+
     const logoutHandler = async () => {
         try {
             await axios.get("http://localhost:3000/api/user/signout", {
@@ -27,11 +34,14 @@ export function NavbarComponent() {
     };
 
     return (
-        <nav className="fixed top-0 left-0 right-0  bg-zinc-800 p-1">
+        <nav className="fixed top-0 left-0 right-0 bg-zinc-800 p-1">
             {/* <div className="mx-2"></div> */}
             <div className="flex items-center flex-wrap mx-2 ">
                 <div className="flex justify-between items-center  text-white w-3/4">
-                    <div className="flex items-center ">
+                    <div
+                        className="flex items-center cursor-pointer"
+                        onClick={() => navigate("/")}
+                    >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             aria-label="Reddit"
@@ -39,6 +49,7 @@ export function NavbarComponent() {
                             viewBox="0 0 512 512"
                             width="44"
                             height="44"
+                            className="hover:scale-100"
                         >
                             <rect
                                 width="512"
@@ -121,7 +132,12 @@ export function NavbarComponent() {
                     </div>
                 </div>
                 <div className="flex justify-between w-1/4">
-                    <div>
+                    <div
+                        className="cursor-pointer"
+                        // onClick={() => {
+                        //     if (user) setAddClicked((prev) => !prev);
+                        // }}
+                    >
                         <i>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -160,6 +176,7 @@ export function NavbarComponent() {
                     </div>
                 </div>
             </div>
+            {/* {addClicked && <CreatePost />} */}
         </nav>
     );
 }
