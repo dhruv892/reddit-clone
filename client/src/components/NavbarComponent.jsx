@@ -1,18 +1,21 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import { UserContext } from "../contexts/SessionContext";
+
 import { toast } from "react-toastify";
 import axios from "axios";
-// import { CreatePost } from "./CreatePost";
+import { CreatePost } from "./CreatePost";
 
 export function NavbarComponent() {
     const navigate = useNavigate();
     const { user, setIsLoggedIn } = useContext(UserContext);
-    // const { addClicked, setAddClicked } = useState(false);
+    const [addClicked, setAddClicked] = useState(false);
 
-    // const addClickedHandler = () => {
-    //     setAddClicked((prev) => !prev);
-    // }
+    const addClickedHandler = () => {
+        if (!user) return toast.error("Please login to create a post.");
+        setAddClicked((prev) => !prev);
+    };
 
     const logoutHandler = async () => {
         try {
@@ -132,12 +135,7 @@ export function NavbarComponent() {
                     </div>
                 </div>
                 <div className="flex justify-between w-1/4">
-                    <div
-                        className="cursor-pointer"
-                        // onClick={() => {
-                        //     if (user) setAddClicked((prev) => !prev);
-                        // }}
-                    >
+                    <div className="cursor-pointer" onClick={addClickedHandler}>
                         <i>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -176,7 +174,7 @@ export function NavbarComponent() {
                     </div>
                 </div>
             </div>
-            {/* {addClicked && <CreatePost />} */}
+            {addClicked && <CreatePost addClickedHandler={addClickedHandler} />}
         </nav>
     );
 }

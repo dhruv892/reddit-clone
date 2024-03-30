@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { NavbarComponent } from "./components/NavbarComponent";
 import { Search } from "./pages/Search";
 import SessionContext from "./contexts/SessionContext";
+import PostsContext from "./contexts/PostsContex";
 import { Suspense } from "react";
 import { LoaderComponent } from "./components/LoaderComponent";
 
@@ -18,24 +19,26 @@ function App() {
             <ErrorBoundary>
                 <Suspense fallback={<LoaderComponent />}>
                     <SessionContext>
-                        <BrowserRouter>
-                            <NavbarComponent />
-                            <Routes>
-                                <Route path="/" element={<Home />} />
-                                <Route
-                                    path="/post/:id"
-                                    element={<PostPage />}
-                                />
-                                <Route
-                                    path="/signupin"
-                                    element={<SignUpIn />}
-                                />
-                                <Route
-                                    path="/search/:text"
-                                    element={<Search />}
-                                />
-                            </Routes>
-                        </BrowserRouter>
+                        <PostsContext>
+                            <BrowserRouter>
+                                <NavbarComponent />
+                                <Routes>
+                                    <Route path="/" element={<Home />} />
+                                    <Route
+                                        path="/post/:id"
+                                        element={<PostPage />}
+                                    />
+                                    <Route
+                                        path="/signupin"
+                                        element={<SignUpIn />}
+                                    />
+                                    <Route
+                                        path="/search/:text"
+                                        element={<Search />}
+                                    />
+                                </Routes>
+                            </BrowserRouter>
+                        </PostsContext>
                     </SessionContext>
                 </Suspense>
             </ErrorBoundary>
