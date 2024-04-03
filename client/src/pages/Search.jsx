@@ -6,26 +6,11 @@ import moment from "moment";
 
 export function Search() {
     const params = useParams();
-    // const navigate = useNavigate();
-    // const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [posts, setPosts] = useState([]);
-    // const [userId, setUserId] = useState("");
-    // const [page, setPage] = useState(1);
     const page = 1;
     const [isFetching, setIsFetching] = useState(false);
 
     axios.defaults.withCredentials = true;
-
-    // const isScrollingToBottom = () => {
-    //     console.log(
-    //         window.innerHeight + document.documentElement.scrollTop ===
-    //             document.documentElement.offsetHeight
-    //     );
-    //     return (
-    //         window.innerHeight + document.documentElement.scrollTop ===
-    //         document.documentElement.offsetHeight
-    //     );
-    // };
 
     useEffect(() => {
         (async function () {
@@ -42,18 +27,6 @@ export function Search() {
         })();
     }, [isFetching, page, params.text]);
 
-    // useEffect(() => {
-    //     const handleScroll = () => {
-    //         if (isScrollingToBottom() && !isFetching) {
-    //             setIsFetching(true);
-    //             setPage((prev) => prev + 1);
-    //         }
-    //     };
-    //     window.addEventListener("scroll", handleScroll);
-    //     return () => window.removeEventListener("scroll", handleScroll);
-    // }, [isFetching, page]);
-
-    // console.log(params.text);
     return (
         <div className="max-w-4xl mx-auto text-wrap text-gray-200 mt-16">
             {posts ? (

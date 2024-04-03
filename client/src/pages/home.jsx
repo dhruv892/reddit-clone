@@ -4,8 +4,6 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { SignInComponent } from "../components/SignInComponent";
-import { useSetRecoilState } from "recoil";
-import { postAtom } from "../store/atoms";
 import { UserContext } from "../contexts/SessionContext";
 import { PostContext } from "../contexts/PostsContex";
 import { LoaderComponent } from "../components/LoaderComponent";
@@ -17,7 +15,6 @@ export function Home() {
     const { posts, setPosts } = useContext(PostContext);
     const [page, setPage] = useState(1);
     const [isFetching, setIsFetching] = useState(false);
-    const setPostAtom = useSetRecoilState(postAtom);
 
     const { isLoggedIn, user } = useContext(UserContext);
 
@@ -33,7 +30,6 @@ export function Home() {
             const newPosts = await fetchPosts(page);
             if (newPosts && page === 1) {
                 setPosts(newPosts);
-                setPostAtom(newPosts);
                 return;
             }
             if (newPosts && isFetching) {
@@ -41,11 +37,10 @@ export function Home() {
                     console.log(prev);
                     return discardDuplicateItem(prev, newPosts);
                 });
-                setPostAtom((prev) => [...prev, ...newPosts]);
             }
             setIsFetching(false);
         })();
-    }, [isFetching, page, setPostAtom, setPosts]);
+    }, [isFetching, page, setPosts]);
 
     useEffect(() => {
         const handleScroll = () => {
