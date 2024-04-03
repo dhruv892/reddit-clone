@@ -9,6 +9,7 @@ import { postAtom } from "../store/atoms";
 import { UserContext } from "../contexts/SessionContext";
 import { PostContext } from "../contexts/PostsContex";
 import { LoaderComponent } from "../components/LoaderComponent";
+import { discardDuplicateItem } from "../util/discardDuplicateItem";
 
 export function Home() {
     const navigate = useNavigate();
@@ -36,7 +37,10 @@ export function Home() {
                 return;
             }
             if (newPosts && isFetching) {
-                setPosts((prev) => [...prev, ...newPosts]);
+                setPosts((prev) => {
+                    console.log(prev);
+                    return discardDuplicateItem(prev, newPosts);
+                });
                 setPostAtom((prev) => [...prev, ...newPosts]);
             }
             setIsFetching(false);

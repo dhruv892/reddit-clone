@@ -7,6 +7,7 @@ import { useContext, useEffect, useState } from "react";
 import { VotingComponent } from "../components/VotingComponent";
 import { UserContext } from "../contexts/SessionContext";
 import { LoaderComponent } from "../components/LoaderComponent";
+import { discardDuplicateItem } from "../util/discardDuplicateItem";
 
 export function PostPage() {
     const [post, setPost] = useState({});
@@ -47,7 +48,11 @@ export function PostPage() {
             }
             if (newComments && isFetching) {
                 console.log(page);
-                setComments((prev) => [...prev, ...newComments]);
+                // setComments((prev) => [...prev, ...newComments]);
+                setComments((prev) => {
+                    return discardDuplicateItem(prev, newComments);
+                });
+
                 // setPostAtom((prev) => [...prev, ...newPosts]);
                 setIsFetching((prev) => !prev);
             }
