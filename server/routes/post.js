@@ -325,10 +325,14 @@ router.post("/downvoteComment/:id", authMiddleware, async (req, res) => {
 
 // api/post/bulk?filter=searchInput
 router.get("/bulk", async (req, res) => {
+    console.log("in search bulk");
     // console.log(req.query);
     const search = req.query.filter;
+    const nposts = parseInt(req.query.nPosts) || 10;
+    const currPage = parseInt(req.query.currPage) || 1;
 
     try {
+        // prettier-ignore
         const posts = await NewPosts.find({
             $or: [
                 {
@@ -342,35 +346,19 @@ router.get("/bulk", async (req, res) => {
                     },
                 },
             ],
-        });
-        res.json({ posts: posts });
-    } catch (err) {
-        res.status(500).json({ msg: "Internal Server Error" });
-    }
-});
+        })
+            .sort({
+                    
+                "sort": -1,
+                "votes.upVotes.count": -1,
+                "votes.downVotes.count": 1,
+                "createdAt": -1,
+                "_id": 1
+            })
+            .skip(nposts * (currPage - 1))
+            .limit(nposts);
 
-////////////////// Search Content //////////////////////
-
-// api/post/bulk?filter=searchInput
-router.get("/bulk", async (req, res) => {
-    // console.log(req.query);
-    const search = req.query.filter;
-
-    try {
-        const posts = await NewPosts.find({
-            $or: [
-                {
-                    title: {
-                        $regex: search,
-                    },
-                },
-                {
-                    content: {
-                        $regex: search,
-                    },
-                },
-            ],
-        });
+        // console.log(posts);
         res.json({ posts: posts });
     } catch (err) {
         res.status(500).json({ msg: "Internal Server Error cd" });

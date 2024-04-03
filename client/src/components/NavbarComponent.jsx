@@ -6,11 +6,18 @@ import { UserContext } from "../contexts/SessionContext";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { CreatePost } from "./CreatePost";
+// import { useParams } from "react-router";
+// import { useEffect } from "react";
+// import { Search } from "../pages/Search";
+// import { set } from "mongoose";
 
 export function NavbarComponent() {
     const navigate = useNavigate();
     const { user, setIsLoggedIn } = useContext(UserContext);
     const [addClicked, setAddClicked] = useState(false);
+    const [searchText, setSearchText] = useState("");
+    // const param = useParams();
+    // console.log(param);
 
     const addClickedHandler = () => {
         if (!user) return toast.error("Please login to create a post.");
@@ -30,11 +37,17 @@ export function NavbarComponent() {
             toast.error("Error occurred while logging out.");
         }
     };
-
-    const searchHandler = (text) => {
-        if (text === "") return;
-        navigate(`/search/${text}`);
+    const searchHandler = () => {
+        if (searchText === "") return;
+        // setSearchText("");
+        navigate(`/search/${searchText}`);
     };
+    // useEffect(() => {
+
+    //     if (searchText === "") return;
+
+    //     searchHandler();
+    // }, [navigate, searchText]);
 
     return (
         <nav className="fixed top-0 left-0 right-0 bg-zinc-800 p-1">
@@ -124,10 +137,12 @@ export function NavbarComponent() {
                                 type="text"
                                 placeholder="Search Reddit"
                                 className="focus:outline-none"
-                                // onChange={(e) => searchHandler(e.target.value)}
+                                value={searchText}
+                                onChange={(e) => setSearchText(e.target.value)}
                                 onKeyDown={(e) => {
                                     if (e.key === "Enter") {
-                                        searchHandler(e.target.value);
+                                        // setSearchText(e.target.value);
+                                        searchHandler();
                                     }
                                 }}
                             />
