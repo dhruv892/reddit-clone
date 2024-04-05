@@ -70,7 +70,8 @@ export function Search() {
                 posts.map((post) => (
                     <div
                         key={post._id}
-                        className="bg-zinc-900 mb-4 p-4 rounded-lg flex gap-1"
+                        className="bg-zinc-900 mb-4 p-4 rounded-lg flex gap-1 hover:bg-zinc-700 cursor-pointer"
+                        onClick={() => navigate(`/post/${post._id}`)}
                     >
                         <div className="ml-4">
                             <div>
@@ -81,12 +82,7 @@ export function Search() {
                                     </span>{" "}
                                     {moment(parseInt(post.createdAt)).fromNow()}
                                 </p>
-                                <p
-                                    className="text-gray-200 text-3xl cursor-pointer hover:underline"
-                                    onClick={() =>
-                                        navigate(`/post/${post._id}`)
-                                    }
-                                >
+                                <p className="text-gray-200 text-3xl">
                                     {post.title}
                                 </p>
                             </div>

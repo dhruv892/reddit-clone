@@ -93,14 +93,21 @@ export function VotingComponent({ votes, type, itemId }) {
         <>
             <button
                 className="p-0"
-                onClick={() => {
+                onClick={(e) => {
+                    e.stopPropagation();
                     voteHandler("up");
                 }}
             >
                 <UpVoteLogo voted={isUpvoted} />
             </button>
             <span className="text-center">{postVotes}</span>
-            <button className="p-0" onClick={() => voteHandler("down")}>
+            <button
+                className="p-0"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    voteHandler("down");
+                }}
+            >
                 <DownVoteLogo voted={isDownVoted} />
             </button>
         </>

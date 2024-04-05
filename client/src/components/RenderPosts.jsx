@@ -8,14 +8,18 @@ import { VotingComponent } from "./VotingComponent";
 function RenderPosts({ post, userId }) {
     const navigate = useNavigate();
 
-    const shareHandler = () => {
+    const shareHandler = (e) => {
+        e.stopPropagation();
         navigator.clipboard.writeText(`http://localhost:5173/post/${post._id}`);
         toast.info("Post link copied to clipboard!");
     };
 
     return (
         <>
-            <div className="bg-zinc-900 mb-4 p-4 rounded-lg flex gap-1">
+            <div
+                className="bg-zinc-900 mb-4 p-4 rounded-lg flex gap-1 cursor-pointer hover:bg-zinc-700"
+                onClick={() => navigate(`/post/${post._id}`)}
+            >
                 <div>
                     <div className="flex flex-col mr-2 flex-initial align-center">
                         <VotingComponent
@@ -35,10 +39,7 @@ function RenderPosts({ post, userId }) {
                     </div>
                     <div>
                         <div>
-                            <a
-                                className="text-xl font-bold cursor-pointer hover:underline"
-                                onClick={() => navigate(`/post/${post._id}`)}
-                            >
+                            <a className="text-xl font-bold  hover:underline">
                                 <span>{post.title}</span>
                             </a>
                         </div>
@@ -66,10 +67,30 @@ function RenderPosts({ post, userId }) {
                         >
                             share
                         </a>
-                        <a className="cursor-pointer hover:underline">save</a>
-                        <a className="cursor-pointer hover:underline">hide</a>
-                        <a className="cursor-pointer hover:underline">report</a>
-                        <a className="cursor-pointer hover:underline">delete</a>
+                        <a
+                            className="cursor-pointer hover:underline"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            save
+                        </a>
+                        <a
+                            className="cursor-pointer hover:underline"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            hide
+                        </a>
+                        <a
+                            className="cursor-pointer hover:underline"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            report
+                        </a>
+                        <a
+                            className="cursor-pointer hover:underline"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            delete
+                        </a>
                     </div>
                 </div>
             </div>
