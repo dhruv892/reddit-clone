@@ -14,6 +14,8 @@ export function NavbarComponent() {
     const [searchText, setSearchText] = useState("");
     const [showDropdown, setShowDropdown] = useState(false);
     const dropDownRef = useRef(null);
+    const dropDownRef2 = useRef(null);
+
     // const param = useParams();
     // console.log(param);
 
@@ -27,7 +29,7 @@ export function NavbarComponent() {
             await axios.get("http://localhost:3000/api/user/signout", {
                 withCredentials: true,
             });
-
+            setShowDropdown(false);
             setIsLoggedIn(false);
             toast.success("Successfully logged out!");
         } catch (error) {
@@ -47,7 +49,9 @@ export function NavbarComponent() {
             if (
                 showDropdown &&
                 dropDownRef.current &&
-                !dropDownRef.current.contains(e.target)
+                !dropDownRef.current.contains(e.target) &&
+                dropDownRef2.current &&
+                !dropDownRef2.current.contains(e.target)
             ) {
                 // console.log("clicked outside", dropDownRef);
                 setShowDropdown(false);
@@ -237,11 +241,11 @@ export function NavbarComponent() {
             </nav>
             {showDropdown && (
                 <div
-                    // ref={dropDownRef}
+                    ref={dropDownRef2}
                     className="fixed top-12 mt-1 right-2 bg-zinc-800 "
                 >
                     <ul className="pt-2 text-white">
-                        <li className="flex items-center hover:bg-zinc-600">
+                        <li className="flex items-center cursor-pointer hover:bg-zinc-600">
                             <div className="p-2">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -263,8 +267,11 @@ export function NavbarComponent() {
                             <div className="pr-2">View Profile</div>
                         </li>
                         <li
-                            className="flex items-center hover:bg-zinc-600"
-                            onClick={logoutHandler}
+                            className="flex items-center cursor-pointer hover:bg-zinc-600"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                logoutHandler();
+                            }}
                         >
                             <div className="p-2">
                                 <svg
