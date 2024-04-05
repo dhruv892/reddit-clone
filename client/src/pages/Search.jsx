@@ -5,9 +5,11 @@ import { useEffect, useState } from "react";
 import moment from "moment";
 import { discardDuplicateItem } from "../util/discardDuplicateItem";
 import { LoaderComponent } from "../components/LoaderComponent";
+import { useNavigate } from "react-router";
 
 export function Search() {
     const param = useParams();
+    const navigate = useNavigate();
 
     const [text, setText] = useState(param.text);
 
@@ -79,7 +81,12 @@ export function Search() {
                                     </span>{" "}
                                     {moment(parseInt(post.createdAt)).fromNow()}
                                 </p>
-                                <p className="text-gray-200 text-3xl">
+                                <p
+                                    className="text-gray-200 text-3xl cursor-pointer hover:underline"
+                                    onClick={() =>
+                                        navigate(`/post/${post._id}`)
+                                    }
+                                >
                                     {post.title}
                                 </p>
                             </div>
