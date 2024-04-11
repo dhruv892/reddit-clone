@@ -29,7 +29,7 @@ router.use(
         cookie: {
             secure: true,
             httpOnly: true,
-            sameSite: "lax",
+            sameSite: "secure",
             maxAge: 1000 * 60 * 60 * 24,
         },
     })
