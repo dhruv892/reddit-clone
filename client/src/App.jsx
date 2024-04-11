@@ -1,6 +1,5 @@
 import { Home } from "./pages/home";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { RecoilRoot } from "recoil";
 import { PostPage } from "./pages/PostPage";
 import { SignUpIn } from "./pages/SignUpIn";
 import { ToastContainer } from "react-toastify";
@@ -14,49 +13,40 @@ import { Suspense } from "react";
 import { LoaderComponent } from "./components/LoaderComponent";
 
 function App() {
-    return (
-        <RecoilRoot>
-            <ErrorBoundary>
-                <Suspense fallback={<LoaderComponent />}>
-                    <SessionContext>
-                        <PostsContext>
-                            <BrowserRouter>
-                                <NavbarComponent />
-                                <Routes>
-                                    <Route path="/" element={<Home />} />
-                                    <Route
-                                        path="/post/:id"
-                                        element={<PostPage />}
-                                    />
-                                    <Route
-                                        path="/signupin"
-                                        element={<SignUpIn />}
-                                    />
-                                    <Route
-                                        path="/search/:text"
-                                        element={<Search />}
-                                    />
-                                </Routes>
-                            </BrowserRouter>
-                        </PostsContext>
-                    </SessionContext>
-                </Suspense>
-            </ErrorBoundary>
-            <ToastContainer
-                position="bottom-center"
-                autoClose={5000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="dark"
-                transition:Bounce
-            />
-        </RecoilRoot>
-    );
+	return (
+		<>
+			<ErrorBoundary>
+				<Suspense fallback={<LoaderComponent />}>
+					<SessionContext>
+						<PostsContext>
+							<BrowserRouter>
+								<NavbarComponent />
+								<Routes>
+									<Route path="/" element={<Home />} />
+									<Route path="/post/:id" element={<PostPage />} />
+									<Route path="/signupin" element={<SignUpIn />} />
+									<Route path="/search/:text" element={<Search />} />
+								</Routes>
+							</BrowserRouter>
+						</PostsContext>
+					</SessionContext>
+				</Suspense>
+			</ErrorBoundary>
+			<ToastContainer
+				position="bottom-center"
+				autoClose={5000}
+				hideProgressBar={false}
+				newestOnTop={false}
+				closeOnClick
+				rtl={false}
+				pauseOnFocusLoss
+				draggable
+				pauseOnHover
+				theme="dark"
+				transition:Bounce
+			/>
+		</>
+	);
 }
 
 export default App;
