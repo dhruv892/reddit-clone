@@ -9,7 +9,7 @@
 				"http://localhost:5173",
 				"http://localhost:5174",
 				"http://another-origin.com",
-				"https://reddit-clone.darshanv.dev/",
+				"https://reddit-clone.darshanv.dev",
 			];
 			if (!origin || allowedOrigins.indexOf(origin) !== -1) {
 				callback(null, true);
