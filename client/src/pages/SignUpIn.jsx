@@ -17,7 +17,7 @@ export function SignUpIn() {
 		if (!usernameUp || !passwordUp || !firstName || !lastName) return;
 		try {
 			await axios.post(
-				"http://localhost:3000/api/user/signup",
+				"https://reddit-clone-dd-server-84d948f492df.herokuapp.com/api/user/signup",
 				{
 					username: usernameUp,
 					firstName: firstName,

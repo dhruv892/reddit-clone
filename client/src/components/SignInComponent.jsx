@@ -17,7 +17,7 @@ export function SignInComponent() {
 		if (!usernameIn || !passwordIn) return;
 		try {
 			await axios.post(
-				"http://localhost:3000/api/user/signin",
+				"https://reddit-clone-dd-server-84d948f492df.herokuapp.com/api/user/signin",
 				{
 					username: usernameIn,
 					password: passwordIn,
