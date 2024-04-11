@@ -23,11 +23,11 @@ router.use(
         name: "sessionForRedditClone",
         secret: process.env.SESSION_SECRET,
         resave: false,
-        // sameSite: true,
+        sameSite: true,
         saveUninitialized: false,
         store: MongoStore.create({ mongoUrl: process.env.MONGO_URL }),
         cookie: {
-            secure: false,
+            secure: true,
             httpOnly: true,
             maxAge: 1000 * 60 * 60 * 24,
         },
