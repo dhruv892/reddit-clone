@@ -14,7 +14,7 @@ export default function AddComment({ id, setCommentsHandler, setDoReply }) {
 				return;
 			}
 			const response = await axios.post(
-				`https://reddit-clone-dd-server-84d948f492df.herokuapp.com/api/post/addComment/${id}`,
+				`https://red-srv.darshanv.dev/api/post/addComment/${id}`,
 				{
 					content,
 					createdAt: String(Date.now()),

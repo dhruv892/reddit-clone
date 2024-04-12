@@ -12,7 +12,7 @@ export default function SessionContext({ children }) {
 		const fetchSessionData = async () => {
 			try {
 				const response = await axios.get(
-					"https://reddit-clone-dd-server-84d948f492df.herokuapp.com/api/user/session",
+					"https://red-srv.darshanv.dev/api/user/session",
 					{
 						withCredentials: true,
 					}

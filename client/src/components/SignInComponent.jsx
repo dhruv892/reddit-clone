@@ -8,6 +8,7 @@ export function SignInComponent() {
 	const [passwordIn, setPasswordIn] = useState("");
 	const [errIn, setErrIn] = useState(false);
 	const { setIsLoggedIn } = useContext(UserContext);
+	axios.defaults.withCredentials = true;
 	// const navigate = useNavigate();
 
 	const signInHandler = async (e) => {
@@ -17,7 +18,7 @@ export function SignInComponent() {
 		if (!usernameIn || !passwordIn) return;
 		try {
 			await axios.post(
-				"https://reddit-clone-dd-server-84d948f492df.herokuapp.com/api/user/signin",
+				"https://red-srv.darshanv.dev/api/user/signin",
 				{
 					username: usernameIn,
 					password: passwordIn,

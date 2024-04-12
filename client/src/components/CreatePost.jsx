@@ -12,7 +12,7 @@ export function CreatePost({ addClickedHandler }) {
 	const onClickSubmitHandler = async () => {
 		try {
 			const res = await axios.post(
-				`https://reddit-clone-dd-server-84d948f492df.herokuapp.com/api/post/createPost`,
+				`https://red-srv.darshanv.dev/api/post/createPost`,
 				{
 					title: title,
 					content: content,

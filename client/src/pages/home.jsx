@@ -93,7 +93,7 @@ export function Home() {
 async function fetchPosts(page) {
 	try {
 		const res = await axios.get(
-			`https://reddit-clone-dd-server-84d948f492df.herokuapp.com/api/post/10/${page}`
+			`https://red-srv.darshanv.dev/api/post/10/${page}`
 		);
 		const newPosts = await res.data.posts;
 		return newPosts;
