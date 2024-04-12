@@ -17,6 +17,10 @@ mongoose
 	.then(() => console.log("MongoDB connected"))
 	.catch((err) => console.error("MongoDB connection error:", err));
 
+console.log(
+	"####################################################################"
+);
+console.log(process.env);
 // Initialize session middleware
 router.use(
 	session({
@@ -28,7 +32,7 @@ router.use(
 		store: MongoStore.create({ mongoUrl: process.env.MONGO_URL }),
 		cookie: {
 			secure: true,
-			httpOnly: false,
+			httpOnly: true,
 			sameSite: "lax",
 			maxAge: 1000 * 60 * 60 * 24,
 		},
