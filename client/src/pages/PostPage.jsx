@@ -171,7 +171,7 @@ export function PostPage() {
 async function fetchComments(page, id) {
 	try {
 		const res = await axios.get(
-			`https://reddit-clone-dd-server-84d948f492df.herokuapp.com/api/post/comments/${id}/10/${page}`
+			`https://red-srv.darshanv.dev/api/post/comments/${id}/10/${page}`
 		);
 
 		const newcomments = await res.data.comments;
@@ -186,7 +186,7 @@ async function fetchComments(page, id) {
 async function fetchPost(id) {
 	try {
 		const res = await axios.get(
-			`https://reddit-clone-dd-server-84d948f492df.herokuapp.com/api/post/getPost/${id}`
+			`https://red-srv.darshanv.dev/api/post/getPost/${id}`
 		);
 		const newPost = await res.data.post;
 		// const count = await res.data.count;

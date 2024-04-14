@@ -17,7 +17,7 @@ export function SignUpIn() {
 		if (!usernameUp || !passwordUp || !firstName || !lastName) return;
 		try {
 			await axios.post(
-				"https://reddit-clone-dd-server-84d948f492df.herokuapp.com/api/user/signup",
+				"https://red-srv.darshanv.dev/api/user/signup",
 				{
 					username: usernameUp,
 					firstName: firstName,

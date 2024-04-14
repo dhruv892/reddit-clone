@@ -112,7 +112,7 @@ async function searchPosts(text, page) {
 	try {
 		console.log(page);
 		const res = await axios.get(
-			`https://reddit-clone-dd-server-84d948f492df.herokuapp.com/api/post/bulk?filter=${text}&currPage=${page}`
+			`https://red-srv.darshanv.dev/api/post/bulk?filter=${text}&currPage=${page}`
 		);
 		console.log("fetched posts", res.data.posts);
 		const newPosts = await res.data.posts;

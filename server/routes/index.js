@@ -17,6 +17,10 @@ mongoose
     .then(() => console.log("MongoDB connected"))
     .catch((err) => console.error("MongoDB connection error:", err));
 
+console.log(
+    "####################################################################"
+);
+console.log(process.env);
 // Initialize session middleware
 router.use(
     session({

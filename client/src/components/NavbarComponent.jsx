@@ -26,12 +26,9 @@ export function NavbarComponent() {
 
 	const logoutHandler = async () => {
 		try {
-			await axios.get(
-				"https://reddit-clone-dd-server-84d948f492df.herokuapp.com/api/user/signout",
-				{
-					withCredentials: true,
-				}
-			);
+			await axios.get("https://red-srv.darshanv.dev/api/user/signout", {
+				withCredentials: true,
+			});
 			setShowDropdown(false);
 			setIsLoggedIn(false);
 			toast.success("Successfully logged out!");
