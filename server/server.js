@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
-app.set("trust proxy", true);
+app.set("trust proxy", 1);
 const rootRouter = require("./routes/index");
 
 const corsOptions = {
@@ -11,7 +11,7 @@ const corsOptions = {
             "http://localhost:5173",
             "http://localhost:5174",
             "http://another-origin.com",
-            "https://reddit-clone.darshanv.dev",
+            process.env.CLIENT_URL,
         ];
         if (!origin || allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
