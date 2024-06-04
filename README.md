@@ -91,10 +91,8 @@ Check out the live demo of the application [here](https://reddit-clone.darshanv.
 
 ## Technologies Used
 
-- **Frontend**: ReactJS, Redux, CSS3, HTML5
-- **Backend**: NodeJS, ExpressJS, MongoDB
-- **Authentication**: JWT (JSON Web Tokens)
-- **Real-Time Features**: WebSockets, Socket.IO
+- **Frontend**: ReactJS,CSS3, HTML5
+- **Backend**: NodeJS, ExpressJS, MongoDB 
 
 ## Contributing
 
