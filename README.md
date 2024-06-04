@@ -87,7 +87,7 @@ Check out the live demo of the application [here](https://reddit-clone.darshanv.
 - **Create Posts**: Share your thoughts by creating new posts.
 - **Comment**: Engage in discussions by commenting on posts.
 - **Vote**: Upvote or downvote posts and comments. <!-- - **Profile Management**: View and edit your profile details. -->
-- **Search**: Use the search bar to find posts and users in real-time.
+- **Search**: Use the search bar to find posts in real-time.
 
 ## Technologies Used
 
