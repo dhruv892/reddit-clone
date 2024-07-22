@@ -83,7 +83,6 @@ export function NavbarComponent() {
     return (
         <>
             <nav className="fixed top-0 left-0 right-0 bg-zinc-800 p-1">
-                {/* <div className="mx-2"></div> */}
                 <div className="flex items-center flex-wrap mx-1 md:mx-2 ">
                     <div className="flex justify-between items-center  text-white md:w-1/4">
                         <div

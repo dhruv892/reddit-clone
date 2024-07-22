@@ -14,11 +14,9 @@ export function PostComments({ comment, setCountHandler }) {
     const { user } = useContext(UserContext);
 
     useEffect(() => {
-        // console.log(comment._id);
         if (!comment) return;
         if (comment.replies && comment.replies.length > 0)
             setReplies(comment.replies);
-        // setUpVoteUsers();
     }, [comment]);
 
     const setRepliesHandler = (newComment) => {

@@ -51,9 +51,7 @@ export function VotingComponent({ votes, type, itemId }) {
         if (type === "reply") {
             req = await replyVoteHandler(itemId, voteType);
         }
-        // console.log(req);
         if (req === "done") {
-            //     console.log("done");
             switch (voteType) {
                 case "up":
                     downVoteUsers.includes(user.userId)
@@ -73,15 +71,12 @@ export function VotingComponent({ votes, type, itemId }) {
                         : setPostVotes((prev) => prev - 1);
                     setDownVoteUsers((prev) => {
                         return [...prev, user.userId];
-                        // console.log([...prev, userId]);
                     });
                     setUpVoteUsers((prev) => {
                         return prev.filter((id) => id != user.userId);
                     });
                     setIsUpvoted(false);
                     setIsDownVoted(true);
-                    // console.log(downVoteUsers);
-                    // post.votes.downVotes.users.push(userId);
                     break;
             }
         } else {

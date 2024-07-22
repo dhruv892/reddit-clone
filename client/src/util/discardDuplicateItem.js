@@ -9,10 +9,4 @@ export function discardDuplicateItem(oldItems, newItems) {
     });
     console.log(uniqueItems);
     return uniqueItems;
-
-    // const uniquePostIds = new Set([...oldPostIds, ...newPostIds]);
-    // const uniquePosts = Array.from(uniquePostIds).map((id) => {
-    //     return newPosts.find((post) => post._id === id);
-    // });
-    // return uniquePosts;
 }

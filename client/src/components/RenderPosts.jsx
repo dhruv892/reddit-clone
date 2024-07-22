@@ -100,23 +100,6 @@ function RenderPosts({ post, userId }) {
 
 export const MemoizedRenderPosts = React.memo(RenderPosts);
 
-// const CommentPropTypes = {
-//     votes: PropTypes.shape({
-//         upVotes: PropTypes.shape({
-//             count: PropTypes.number,
-//             users: PropTypes.array,
-//         }),
-//         downVotes: PropTypes.shape({
-//             count: PropTypes.number,
-//             users: PropTypes.array,
-//         }),
-//     }),
-//     content: PropTypes.string,
-//     createdAt: PropTypes.string,
-//     author: PropTypes.string,
-//     _id: PropTypes.string,
-// };
-
 const PostPropTypes = {
     _id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
