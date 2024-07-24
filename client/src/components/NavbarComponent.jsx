@@ -2,7 +2,6 @@ import { useContext } from "react";
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { UserContext } from "../contexts/SessionContext";
-
 import { toast } from "react-toastify";
 import axios from "axios";
 import { CreatePost } from "./CreatePost";
@@ -210,9 +209,9 @@ export function NavbarComponent() {
                             {!user ? (
                                 <button
                                     className="bg-orange-600 text-white rounded-full hover:bg-orange-800"
-                                    // onClick={() => {
-                                    //     navigate("/signupin");
-                                    // }}
+                                    onClick={() => {
+                                        navigate("/signin");
+                                    }}
                                 >
                                     Log In
                                 </button>

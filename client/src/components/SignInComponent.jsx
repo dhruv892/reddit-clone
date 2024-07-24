@@ -2,12 +2,14 @@ import { useContext, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { UserContext } from "../contexts/SessionContext";
+import { useNavigate } from "react-router-dom";
 
 export function SignInComponent() {
     const [usernameIn, setUsernameIn] = useState("");
     const [passwordIn, setPasswordIn] = useState("");
     const [errIn, setErrIn] = useState(false);
     const { setIsLoggedIn } = useContext(UserContext);
+    const navigate = useNavigate();
     axios.defaults.withCredentials = true;
 
     const signInHandler = async (e) => {
@@ -28,9 +30,10 @@ export function SignInComponent() {
             );
             setIsLoggedIn(true);
             toast.success("Logged in successfully!");
-            console.log(usernameIn, passwordIn);
+            navigate("/");
+            // console.log(usernameIn, passwordIn);
         } catch (err) {
-            console.log(err);
+            // console.log(err);
             setErrIn(true);
         }
     };
@@ -61,6 +64,17 @@ export function SignInComponent() {
                     />
                 </div>
                 <input className="mt-2" type="submit" value="Sign in" />
+                <div className="mt-5 flex flex-col">
+                    <p>Dont have an account? Sign up below!</p>
+                    <button
+                        className="bg-zinc-800 mt-2"
+                        onClick={() => {
+                            navigate("/signUp");
+                        }}
+                    >
+                        Sign Up
+                    </button>
+                </div>
             </form>
             {errIn ? (
                 <div

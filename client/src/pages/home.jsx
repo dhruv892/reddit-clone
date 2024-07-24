@@ -1,22 +1,19 @@
 import { MemoizedRenderPosts } from "../components/RenderPosts";
-// import { CreatePost } from "../components/CreatePost";
 import { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { SignInComponent } from "../components/SignInComponent";
 import { UserContext } from "../contexts/SessionContext";
 import { PostContext } from "../contexts/PostsContex";
 import { LoaderComponent } from "../components/LoaderComponent";
 import { discardDuplicateItem } from "../util/discardDuplicateItem";
 
 export function Home() {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const { posts, setPosts } = useContext(PostContext);
     const [page, setPage] = useState(1);
     const [isFetching, setIsFetching] = useState(false);
 
-    const { isLoggedIn, user } = useContext(UserContext);
+    const { user } = useContext(UserContext);
 
     const isScrollingToBottom = () => {
         return (
@@ -55,23 +52,6 @@ export function Home() {
 
     return (
         <div className="max-w-4xl mx-auto mt-16 text-wrap text-gray-200">
-            {!isLoggedIn && (
-                <div className="bg-zinc-900 p-5 self-start my-5 rounded flex flex-col items-center justify-center">
-                    <SignInComponent />
-
-                    <div className="mt-5 flex flex-col">
-                        <p>Dont have an account? Sign up below!</p>
-                        <button
-                            className="bg-zinc-800 mt-2"
-                            onClick={() => {
-                                navigate("/signUpIn");
-                            }}
-                        >
-                            Sign Up
-                        </button>
-                    </div>
-                </div>
-            )}
             {posts && Object.keys(posts).length !== 0 ? (
                 posts.map((post) => (
                     <MemoizedRenderPosts
