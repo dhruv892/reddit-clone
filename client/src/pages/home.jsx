@@ -31,7 +31,7 @@ export function Home() {
             }
             if (newPosts && isFetching) {
                 setPosts((prev) => {
-                    console.log(prev);
+                    // console.log(prev);
                     return discardDuplicateItem(prev, newPosts);
                 });
             }

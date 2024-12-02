@@ -7,22 +7,22 @@ import { LoaderComponent } from "../components/LoaderComponent";
 export function SignIn() {
     // const { user } = useContext(UserContext);
     const navigate = useNavigate();
-    const { user, isFetching, setIsFetchingHandler } = useContext(UserContext);
+    const { user } = useContext(UserContext);
 
     useEffect(() => {
         if (user) {
             navigate("/");
         }
     }, [navigate, user]);
-    useEffect(() => {
-        if (!user) {
-            setIsFetchingHandler();
-        }
-    }, [setIsFetchingHandler, user]);
+    // useEffect(() => {
+    //     if (!user) {
+    //         // setIsFetchingHandler();
+    //     }
+    // }, [setIsFetchingHandler, user]);
 
     return (
         <>
-            {isFetching ? (
+            {user ? (
                 <div className="mt-16">
                     <LoaderComponent />
                 </div>

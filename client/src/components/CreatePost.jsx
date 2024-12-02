@@ -25,7 +25,7 @@ export function CreatePost({ addClickedHandler }) {
                     withCredentials: true,
                 }
             );
-            console.log(res.data.post);
+            // console.log(res.data.post);
             setPosts((prev) => [res.data.post, ...prev]);
             setTitle("");
             setContent("");

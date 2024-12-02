@@ -23,7 +23,7 @@ export function PostPage() {
 
     useEffect(() => {
         (async function () {
-            console.log(params.id);
+            // console.log(params.id);
             const newPost = await fetchPost(params.id);
             setPost(newPost);
             setCount(newPost.commentCount);
@@ -47,7 +47,7 @@ export function PostPage() {
                 return;
             }
             if (newComments && isFetching) {
-                console.log(page);
+                // console.log(page);
                 // setComments((prev) => [...prev, ...newComments]);
                 setComments((prev) => {
                     return discardDuplicateItem(prev, newComments);
@@ -168,7 +168,7 @@ async function fetchComments(page, id) {
         );
 
         const newcomments = await res.data.comments;
-        console.log(newcomments);
+        // console.log(newcomments);
         return newcomments;
     } catch (error) {
         console.error(error);

@@ -224,8 +224,8 @@ router.post("/addComment/:id", authMiddleware, async (req, res) => {
     }
     const findTopParentId = async (id) => {
         const comment = await AllComments.findById(id);
-        console.log(comment);
-        console.log(id);
+        // console.log(comment);
+        // console.log(id);
         // let
 
         if (comment && comment !== undefined && comment !== null) {
@@ -325,7 +325,7 @@ router.post("/downvoteComment/:id", authMiddleware, async (req, res) => {
 
 // api/post/bulk?filter=searchInput
 router.get("/bulk", async (req, res) => {
-    console.log("in search bulk");
+    // console.log("in search bulk");
     // console.log(req.query);
     const search = req.query.filter;
     const nposts = parseInt(req.query.nPosts) || 10;

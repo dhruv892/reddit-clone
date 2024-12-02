@@ -7,6 +7,6 @@ export function discardDuplicateItem(oldItems, newItems) {
     const uniqueItems = Array.from(uniqueItemIds).map((id) => {
         return allItems.find((item) => item._id === id);
     });
-    console.log(uniqueItems);
+    // console.log(uniqueItems);
     return uniqueItems;
 }

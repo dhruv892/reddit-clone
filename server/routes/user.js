@@ -99,7 +99,7 @@ router.post("/signin", async (req, res) => {
     } else {
         req.session.userId = user._id;
         req.session.username = req.body.username;
-        console.log(req.session.userId);
+        // console.log(req.session.userId);
         // req.session.authorized = true;
         return res.json({
             message: "Logged in",

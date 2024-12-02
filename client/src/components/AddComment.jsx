@@ -24,7 +24,7 @@ export default function AddComment({ id, setCommentsHandler, setDoReply }) {
                 }
             );
             setCommentsHandler(response.data.comment);
-            console.log(response);
+            // console.log(response);
             setContent("");
             setDoReply();
             // doReplyHandler();

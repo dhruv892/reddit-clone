@@ -22,6 +22,7 @@ export function NavbarComponent() {
     // console.log(param);
 
     const addClickedHandler = () => {
+        setMenuClicked(false);
         if (!user) return toast.error("Please login to create a post.");
         setAddClicked((prev) => !prev);
     };
@@ -373,12 +374,13 @@ export function NavbarComponent() {
                                 <div className="pr-2">View Profile</div>
                             </li>
                         )}
-                        {user && (
+                        {user ? (
                             <li
                                 className="flex items-center cursor-pointer hover:bg-zinc-600"
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     logoutHandler();
+                                    setMenuClicked(false);
                                 }}
                             >
                                 <div className="p-2">
@@ -400,6 +402,35 @@ export function NavbarComponent() {
                                     </svg>
                                 </div>
                                 <div className="pr-2">Log Out</div>
+                            </li>
+                        ) : (
+                            <li
+                                className="flex items-center cursor-pointer hover:bg-zinc-600"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setMenuClicked(false);
+                                    navigate("/signin");
+                                }}
+                            >
+                                <div className="p-2">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="1.2em"
+                                        height="1.2em"
+                                        viewBox="0 0 24 24"
+                                        className="hover:scale-100"
+                                    >
+                                        <path
+                                            fill="none"
+                                            stroke="#b2aeae"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M20 12h-9.5m7.5 3l3-3l-3-3m-5-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2v-1"
+                                        ></path>
+                                    </svg>
+                                </div>
+                                <div className="pr-2">Log In</div>
                             </li>
                         )}
                         <li

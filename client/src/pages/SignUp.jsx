@@ -12,7 +12,7 @@ export function SignUp() {
     const [passwordUp, setPasswordUp] = useState("");
     const [errUp, setErrUp] = useState(false);
     const navigate = useNavigate();
-    const { user, isFetching, setIsFetchingHandler } = useContext(UserContext);
+    const { user } = useContext(UserContext);
 
     useEffect(() => {
         if (user) {
@@ -38,7 +38,7 @@ export function SignUp() {
                 }
             );
             navigate("/");
-            console.log(firstName, lastName, usernameUp, passwordUp);
+            // console.log(firstName, lastName, usernameUp, passwordUp);
             toast.success("Signed up successfully!");
         } catch (err) {
             console.log(err);
@@ -46,15 +46,9 @@ export function SignUp() {
         }
     };
 
-    useEffect(() => {
-        if (!user) {
-            setIsFetchingHandler();
-        }
-    }, [setIsFetchingHandler, user]);
-
     return (
         <>
-            {isFetching ? (
+            {user ? (
                 <div className="mt-16">
                     <LoaderComponent />
                 </div>

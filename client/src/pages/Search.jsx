@@ -110,11 +110,11 @@ export function Search() {
 
 async function searchPosts(text, page) {
     try {
-        console.log(page);
+        // console.log(page);
         const res = await axios.get(
             `https://red-srv.darshanv.dev/api/post/bulk?filter=${text}&currPage=${page}`
         );
-        console.log("fetched posts", res.data.posts);
+        // console.log("fetched posts", res.data.posts);
         const newPosts = await res.data.posts;
         return newPosts;
     } catch (error) {
