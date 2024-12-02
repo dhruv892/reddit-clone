@@ -15,6 +15,7 @@ Welcome to the Reddit-Clone Web Application! This project is a responsive social
 
 ## Live Demo
 Check out the live demo of the application [here](https://reddit-clone.darshanv.dev).
+Beta [here](reddit-clone.dhruvb.tech)
 
 ## Features
 
