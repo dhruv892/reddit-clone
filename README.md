@@ -14,8 +14,8 @@
 Welcome to the Reddit-Clone Web Application! This project is a responsive social platform built using ReactJS and NodeJS. It features authentication, real-time search, <!---   user profile management,  --> infinite scroll, dynamic content sorting, and more. The aim is to provide a seamless and engaging user experience similar to Reddit.
 
 ## Live Demo
-Check out the live demo of the application [here](https://reddit-clone.darshanv.dev).
-Beta [here](reddit-clone.dhruvb.tech)
+Check out the live demo of the application [here](https://reddit-clone.darshanv.dev), 
+Beta [here](https://reddit-clone.dhruvb.tech).
 
 ## Features
 
