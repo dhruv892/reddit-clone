@@ -11,7 +11,8 @@ const corsOptions = {
             "http://localhost:5173",
             "http://localhost:5174",
             "http://another-origin.com",
-            process.env.CLIENT_URL,
+            process.env.CLIENT_URL1,
+            process.env.CLIENT_URL2,
         ];
         if (!origin || allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
