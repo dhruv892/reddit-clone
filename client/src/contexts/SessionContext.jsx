@@ -3,6 +3,7 @@ import axios from "axios";
 import PropTypes from "prop-types";
 
 export const UserContext = createContext();
+import API_BASE_URL from "../api";
 
 export default function SessionContext({ children }) {
   const [user, setUser] = useState(null);
@@ -12,7 +13,7 @@ export default function SessionContext({ children }) {
   useEffect(() => {
     const fetchSessionData = async () => {
       try {
-        const response = await axios.get("/api/user/session", {
+        const response = await axios.get(`${API_BASE_URL}/user/session`, {
           withCredentials: true,
         });
         if (response.status === 200) {

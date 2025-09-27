@@ -1,66 +1,65 @@
 const mongoose = require("mongoose");
-require("dotenv").config();
 const bcrypt = require("bcrypt");
 
 mongoose
-    .connect(process.env.MONGO_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    })
-    .then(() => {
-        console.log("Database connected");
-    })
-    .catch((err) => {
-        console.log("Database connection failed");
-        console.log(err);
-    });
+  .connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("Database connected");
+  })
+  .catch((err) => {
+    console.log("Database connection failed");
+    console.log(err);
+  });
 
 const userSchema = new mongoose.Schema({
-    username: {
-        type: String,
-        required: true,
-        trim: true,
-        unique: [true, "Username already exists"],
-        lowercase: true,
-        minLength: 3,
-        maxLength: 50,
-    },
-    password: {
-        type: String,
-        required: true,
-        minLength: [6, "Password must be at least 6 characters long"],
-    },
-    firstName: {
-        type: String,
-        required: true,
-        trim: true,
-        maxLength: 50,
-    },
-    lastName: {
-        type: String,
-        required: true,
-        trim: true,
-        maxLength: 50,
-    },
+  username: {
+    type: String,
+    required: true,
+    trim: true,
+    unique: [true, "Username already exists"],
+    lowercase: true,
+    minLength: 3,
+    maxLength: 50,
+  },
+  password: {
+    type: String,
+    required: true,
+    minLength: [6, "Password must be at least 6 characters long"],
+  },
+  firstName: {
+    type: String,
+    required: true,
+    trim: true,
+    maxLength: 50,
+  },
+  lastName: {
+    type: String,
+    required: true,
+    trim: true,
+    maxLength: 50,
+  },
 });
 
 userSchema.pre("save", async function (next) {
-    // Only run this function if password was actually modified
-    if (!this.isModified("password")) return next();
-    try {
-        // Hash the password with cost of 12
-        this.password = await bcrypt.hash(this.password, 12);
-    } catch (err) {
-        console.log(err);
-    }
-    next();
+  // Only run this function if password was actually modified
+  if (!this.isModified("password")) return next();
+  try {
+    // Hash the password with cost of 12
+    this.password = await bcrypt.hash(this.password, 12);
+  } catch (err) {
+    console.log(err);
+  }
+  next();
 });
 
 userSchema.methods.correctPassword = async function (
-    candidatePassword,
-    userPassword
+  candidatePassword,
+  userPassword
 ) {
-    return await bcrypt.compare(candidatePassword, userPassword);
+  return await bcrypt.compare(candidatePassword, userPassword);
 };
 
 const User = new mongoose.model("User", userSchema);
@@ -72,50 +71,50 @@ const User = new mongoose.model("User", userSchema);
 // });
 
 const allCommentsSchema = new mongoose.Schema({
-    content: String,
-    createdAt: String,
-    author: String,
-    sort: String,
-    pId: String,
-    votes: {
-        upVotes: {
-            count: { type: Number, default: 0 },
-            users: { type: [String], default: [] },
-        },
-        downVotes: {
-            count: { type: Number, default: 0 },
-            users: { type: [String], default: [] },
-        },
+  content: String,
+  createdAt: String,
+  author: String,
+  sort: String,
+  pId: String,
+  votes: {
+    upVotes: {
+      count: { type: Number, default: 0 },
+      users: { type: [String], default: [] },
     },
+    downVotes: {
+      count: { type: Number, default: 0 },
+      users: { type: [String], default: [] },
+    },
+  },
 });
 
 const commentsCountSchema = new mongoose.Schema({
-    pId: String,
-    count: Number,
+  pId: String,
+  count: Number,
 });
 
 const newPostsSchema = new mongoose.Schema({
-    title: {
-        type: String,
-        required: [true, "required"],
-        trim: true,
-        maxLength: 200,
+  title: {
+    type: String,
+    required: [true, "required"],
+    trim: true,
+    maxLength: 200,
+  },
+  content: String,
+  author: String,
+  createdAt: String,
+  sort: String,
+  commentCount: { type: Number, default: 0 },
+  votes: {
+    upVotes: {
+      count: { type: Number, default: 0 },
+      users: { type: [String], default: [] },
     },
-    content: String,
-    author: String,
-    createdAt: String,
-    sort: String,
-    commentCount: { type: Number, default: 0 },
-    votes: {
-        upVotes: {
-            count: { type: Number, default: 0 },
-            users: { type: [String], default: [] },
-        },
-        downVotes: {
-            count: { type: Number, default: 0 },
-            users: { type: [String], default: [] },
-        },
+    downVotes: {
+      count: { type: Number, default: 0 },
+      users: { type: [String], default: [] },
     },
+  },
 });
 
 const AllComments = mongoose.model("AllComments", allCommentsSchema);
@@ -124,8 +123,8 @@ const NewPosts = mongoose.model("NewPosts", newPostsSchema);
 const CommentsCount = mongoose.model("CommentsCount", commentsCountSchema);
 
 module.exports = {
-    User: User,
-    // CommentRef: CommentRef,
-    AllComments: AllComments,
-    NewPosts: NewPosts,
+  User: User,
+  // CommentRef: CommentRef,
+  AllComments: AllComments,
+  NewPosts: NewPosts,
 };

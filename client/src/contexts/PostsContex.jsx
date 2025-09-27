@@ -5,15 +5,15 @@ import PropTypes from "prop-types";
 export const PostContext = createContext();
 
 export default function PostsContext({ children }) {
-    const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState([]);
 
-    return (
-        <PostContext.Provider value={{ posts, setPosts }}>
-            {children}
-        </PostContext.Provider>
-    );
+  return (
+    <PostContext.Provider value={{ posts, setPosts }}>
+      {children}
+    </PostContext.Provider>
+  );
 }
 
 PostsContext.propTypes = {
-    children: PropTypes.node.isRequired,
+  children: PropTypes.node.isRequired,
 };

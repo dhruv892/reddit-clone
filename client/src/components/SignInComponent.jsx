@@ -3,6 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { UserContext } from "../contexts/SessionContext";
 import { useNavigate } from "react-router-dom";
+import API_BASE_URL from "../api";
 
 export function SignInComponent() {
   const [usernameIn, setUsernameIn] = useState("");
@@ -19,7 +20,7 @@ export function SignInComponent() {
     if (!usernameIn || !passwordIn) return;
     try {
       await axios.post(
-        "/api/user/signin",
+        `${API_BASE_URL}/user/signin`,
         {
           username: usernameIn,
           password: passwordIn,
