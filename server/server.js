@@ -11,6 +11,7 @@ const rootRouter = require("./routes/index");
 const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = [
+      process.env.CLIENT_URL0,
       process.env.CLIENT_URL1,
       process.env.CLIENT_URL2,
       process.env.CLIENT_URL3,
