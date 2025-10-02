@@ -1,4 +1,6 @@
-require("dotenv").config();
+const path = require("path");
+
+require("dotenv").config({ path: path.join(__dirname, "../.env") });
 const express = require("express");
 const cors = require("cors");
 const app = express();
@@ -9,10 +11,10 @@ const rootRouter = require("./routes/index");
 const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = [
-      "http://localhost:5173",
-      "http://localhost:5174",
-      "http://localhost:3000",
-      process.env.PRODUCTION_URL,
+      process.env.CLIENT_URL1,
+      process.env.CLIENT_URL2,
+      process.env.CLIENT_URL3,
+      process.env.CLIENT_URL4,
     ];
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
@@ -26,7 +28,6 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use;
-const path = require("path");
 
 app.use("/api", rootRouter);
 
@@ -34,7 +35,7 @@ app.use("/api", rootRouter);
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../client/dist")));
   app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../client/dist/index.html"));
+    res.sendFile(path.join(__dirname, "../client", "dist", "index.html"));
   });
 }
 // Use the PORT environment variable provided by Heroku, or default to 3000

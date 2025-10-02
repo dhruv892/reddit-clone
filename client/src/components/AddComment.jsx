@@ -15,7 +15,7 @@ export default function AddComment({ id, setCommentsHandler, setDoReply }) {
         return;
       }
       const response = await axios.post(
-        `${API_BASE_URL}/api/post/addComment/${id}`,
+        `${API_BASE_URL}/post/addComment/${id}`,
         {
           content,
           createdAt: String(Date.now()),

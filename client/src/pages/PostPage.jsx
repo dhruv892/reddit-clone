@@ -163,7 +163,10 @@ export function PostPage() {
 async function fetchComments(page, id) {
   try {
     const res = await axios.get(
-      `${API_BASE_URL}/post/comments/${id}/10/${page}`
+      `${API_BASE_URL}/post/comments/${id}/10/${page}`,
+      {
+        withCredentials: true,
+      }
     );
 
     const newcomments = await res.data.comments;
@@ -177,7 +180,9 @@ async function fetchComments(page, id) {
 
 async function fetchPost(id) {
   try {
-    const res = await axios.get(`${API_BASE_URL}/post/getPost/${id}`);
+    const res = await axios.get(`${API_BASE_URL}/post/getPost/${id}`, {
+      withCredentials: true,
+    });
     const newPost = await res.data.post;
     // const count = await res.data.count;
     return newPost;

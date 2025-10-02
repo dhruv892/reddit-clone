@@ -70,7 +70,9 @@ export function Home() {
 
 async function fetchPosts(page) {
   try {
-    const res = await axios.get(`${API_BASE_URL}/post/10/${page}`);
+    const res = await axios.get(`${API_BASE_URL}/post/10/${page}`, {
+      withCredentials: true,
+    });
     const newPosts = await res.data.posts;
     return newPosts;
   } catch (error) {

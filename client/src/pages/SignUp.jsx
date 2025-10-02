@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { UserContext } from "../contexts/SessionContext";
 import { LoaderComponent } from "../components/LoaderComponent";
+import API_BASE_URL from "../api";
 
 export function SignUp() {
   const [firstName, setFirstName] = useState("");
@@ -26,7 +27,7 @@ export function SignUp() {
     if (!usernameUp || !passwordUp || !firstName || !lastName) return;
     try {
       await axios.post(
-        "/api/user/signup",
+        `${API_BASE_URL}/user/signup`,
         {
           username: usernameUp,
           firstName: firstName,

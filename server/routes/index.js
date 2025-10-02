@@ -7,6 +7,9 @@ const postRouter = require("./post");
 
 const router = express.Router();
 
+console.log("MONGO_URL:", process.env.MONGO_URL);
+console.log("SESSION_SECRET:", process.env.SESSION_SECRET);
+
 mongoose
   .connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
@@ -24,10 +27,10 @@ router.use(
     saveUninitialized: false,
     store: MongoStore.create({ mongoUrl: process.env.MONGO_URL }),
     cookie: {
-      sameSite: "lax", // must be 'none' to enable cross-site delivery
-      secure: process.env.NODE_ENV === "production", // must be true if sameSite='none'
-      httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24,
+      maxAge: 7 * 24 * 60 * 60 * 1000, // MS
+      httpOnly: true, // prevent XSS attacks cross-site scripting attacks
+      sameSite: "strict", // CSRF attacks cross-site request forgery attacks
+      secure: process.env.NODE_ENV !== "development",
     },
   })
 );

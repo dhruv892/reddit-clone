@@ -57,3 +57,5 @@ dist-ssr
 client/package-lock.json
 
 package-lock.json
+.DS_Store
+.DS_Store
