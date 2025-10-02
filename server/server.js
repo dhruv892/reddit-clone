@@ -15,6 +15,7 @@ const corsOptions = {
       process.env.CLIENT_URL2,
       process.env.CLIENT_URL3,
       process.env.CLIENT_URL4,
+      process.env.CLIENT_URL5,
     ];
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
