@@ -9,6 +9,7 @@ import { UserContext } from "../contexts/SessionContext";
 import { LoaderComponent } from "../components/LoaderComponent";
 import { discardDuplicateItem } from "../util/discardDuplicateItem";
 import API_BASE_URL from "../api";
+import { sanitizeHTML } from "../utils/sanitize";
 
 export function PostPage() {
   const [post, setPost] = useState({});
@@ -108,13 +109,18 @@ export function PostPage() {
                 </span>{" "}
                 {moment(parseInt(post.createdAt)).fromNow()}
               </p>
+              {/* Title should be plain text - no HTML needed */}
               <p className="text-gray-200 text-3xl">{post.title}</p>
             </div>
 
             <div>
-              <p className="text-justify mt-2 whitespace-pre-line">
-                {post.content}
-              </p>
+              {/* Sanitize HTML content before rendering */}
+              <div
+                className="text-justify mt-2 whitespace-pre-line"
+                dangerouslySetInnerHTML={{
+                  __html: sanitizeHTML(post.content),
+                }}
+              />
             </div>
             <br />
             <div className="flex text-zinc-500">
